@@ -1,7 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   ArrowLeft,
+  ArrowRight,
   Building2,
   CalendarDays,
   CheckCircle2,
@@ -16,7 +17,6 @@ import {
   Printer,
   RefreshCw,
   ShieldCheck,
-  UserRound,
 } from "lucide-react";
 
 import Header from "../../components/student/Header";
@@ -24,12 +24,72 @@ import Sidebar from "../../components/student/Sidebar";
 
 export default function TrainingAccepted() {
   const navigate = useNavigate();
+  const { id } = useParams();
+
+  /* =========================================================
+     ACCEPTED APPLICATION DATA
+     Front-End Mock Data
+     لاحقا تأتي من الـ API حسب id
+  ========================================================= */
+
+  const acceptedApplications = {
+    "TR-2025-031": {
+      id: "TR-2025-031",
+      placementNumber: "TRN-2025-0844",
+      reference: "AXZ-844",
+
+      organizationName: "شركة القدس للاتصالات",
+      organizationCode: "PAL-TEL-GZ-2025",
+      category: "هندسة شبكات",
+
+      description:
+        "تدريب ميداني متخصص في مجال هندسة الاتصالات والبنية التحتية للشبكات السلكية واللاسلكية وتقنيات الألياف الضوئية.",
+
+      academicSupervisor: "د. أحمد محمود",
+      academicSupervisorSub: "كلية الدراسات المتوسطة",
+
+      fieldSupervisor: "م. سمير خليل",
+      fieldSupervisorSub: "رئيس قسم الشبكات والتقنية",
+
+      location: "غزة - الرمال",
+      locationSub: "برج الأمل - ط 4",
+
+      startDate: "2025/10/01",
+      startDateSub: "الأربعاء 08:30 ص",
+
+      endDate: "2025/12/01",
+      endDateSub: "التاريخ المتوقع للفصل",
+
+      duration: "8 أسابيع",
+      hours: 120,
+
+      address:
+        "شارع عمر المختار - مفترق الرمال",
+
+      student: {
+        name: "أمل أحمد سعيد",
+        number: "145892023",
+        major: "علوم شبكات وتكنولوجيا",
+        college:
+          "كلية الدراسات المتوسطة - جامعة الأزهر",
+      },
+    },
+  };
+
+  const application =
+    acceptedApplications[id] ||
+    acceptedApplications["TR-2025-031"];
+
+  /* =========================================================
+     NEXT STEPS
+  ========================================================= */
 
   const steps = [
     {
       id: 1,
       title: "توقيع اتفاقية التدريب",
-      description: "تم الاعتماد والتوقيع الرسمي للطرفين",
+      description:
+        "تم الاعتماد والتوقيع الرسمي للطرفين",
       date: "2025/09/20",
       time: "11:24 ص",
       status: "completed",
@@ -37,7 +97,8 @@ export default function TrainingAccepted() {
     {
       id: 2,
       title: "رفع المستندات المطلوبة",
-      description: "تم تدقيق كشف العلامات والهوية الجامعية",
+      description:
+        "تم تدقيق كشف العلامات والهوية الجامعية بنجاح",
       date: "2025/09/22",
       time: "02:15 م",
       status: "completed",
@@ -46,7 +107,7 @@ export default function TrainingAccepted() {
       id: 3,
       title: "إعداد خطة التدريب",
       description:
-        "بانتظار اعتماد خطة التدريب الميداني الموقع والمصادقة في الموعد المحدد",
+        "بانتظار الاجتماع مع المشرف الميداني لوضع ومصادقة المهام العملية",
       date: "2025/10/05",
       time: "",
       status: "current",
@@ -61,6 +122,10 @@ export default function TrainingAccepted() {
       status: "upcoming",
     },
   ];
+
+  /* =========================================================
+     HOURS
+  ========================================================= */
 
   const hourDistribution = [
     {
@@ -87,176 +152,274 @@ export default function TrainingAccepted() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
-        bg-white
+        bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
-      {/* SIDEBAR */}
+      {/* =====================================================
+          SIDEBAR
+      ====================================================== */}
       <Sidebar />
 
-      {/* MAIN AREA */}
+      {/* =====================================================
+          MAIN AREA
+      ====================================================== */}
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
-          bg-white
+          bg-[#F8FAFC]
         "
       >
         {/* HEADER */}
         <div className="relative shrink-0">
           <Header />
-
-          {/* Breadcrumb */}
-          <div
-            className="
-              absolute
-              top-0
-              right-[40px]
-              h-[72px]
-              flex
-              items-center
-              gap-[8px]
-              text-[13px]
-            "
-          >
-            <button
-              type="button"
-              onClick={() => navigate("/student/dashboard")}
-              className="
-                border-0
-                bg-transparent
-                p-0
-                text-[#64748B]
-                cursor-pointer
-              "
-            >
-              الرئيسية
-            </button>
-
-            <span className="text-[#94A3B8]">›</span>
-
-            <button
-              type="button"
-              onClick={() => navigate("/student/applications/status")}
-              className="
-                border-0
-                bg-transparent
-                p-0
-                text-[#64748B]
-                cursor-pointer
-              "
-            >
-              طلباتي
-            </button>
-
-            <span className="text-[#94A3B8]">›</span>
-
-            <span className="font-bold text-[#1E293B]">
-              متابعة حالة الطلب
-            </span>
-          </div>
-
-          {/* Header actions */}
-          <div
-            className="
-              absolute
-              top-0
-              left-[165px]
-              h-[72px]
-              flex
-              items-center
-              gap-[10px]
-            "
-          >
-            <button
-              type="button"
-              className="
-                h-[34px]
-                px-[12px]
-                rounded-[8px]
-                border
-                border-[#D9E2EC]
-                bg-white
-                text-[#334155]
-                flex
-                items-center
-                gap-[7px]
-                text-[10px]
-                font-bold
-                hover:bg-[#F8FAFC]
-              "
-            >
-              <Printer size={14} />
-              طباعة الإشعار
-            </button>
-
-            <button
-              type="button"
-              className="
-                h-[34px]
-                px-[12px]
-                rounded-[8px]
-                border
-                border-[#D9E2EC]
-                bg-white
-                text-[#334155]
-                flex
-                items-center
-                gap-[7px]
-                text-[10px]
-                font-bold
-                hover:bg-[#F8FAFC]
-              "
-            >
-              <Download size={14} className="text-[#09379A]" />
-              كتاب التنسيب (PDF)
-            </button>
-          </div>
         </div>
 
-        {/* SCROLL CONTENT */}
+        {/* =====================================================
+            SCROLL CONTENT
+        ====================================================== */}
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+            md:pt-7
+
             xl:px-[40px]
-            pt-[24px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
-          <div className="w-full max-w-[1080px] mx-auto">
-
-            {/* =====================================
-                PAGE TITLE
-            ====================================== */}
+          <div
+            className="
+              mx-auto
+              w-full
+              max-w-[1080px]
+            "
+          >
+            {/* =================================================
+                TOP BAR
+            ================================================== */}
             <section
               className="
                 flex
-                items-start
-                justify-between
-                gap-[20px]
+                flex-col
+                gap-3
+
+                lg:flex-row
+                lg:items-center
+                lg:justify-between
+              "
+            >
+              {/* BREADCRUMB */}
+              <nav
+                aria-label="مسار التنقل"
+                className="
+                  flex
+                  flex-wrap
+                  items-center
+                  gap-[7px]
+                  text-[11px]
+                  font-medium
+
+                  sm:text-[12px]
+
+                  xl:text-[13px]
+                "
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate("/student/dashboard")
+                  }
+                  className="
+                    border-0
+                    bg-transparent
+                    p-0
+                    text-[#64748B]
+                    transition
+                    hover:text-[#09379A]
+                  "
+                >
+                  الرئيسية
+                </button>
+
+                <span className="text-[#94A3B8]">
+                  ›
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate(
+                      "/student/applications"
+                    )
+                  }
+                  className="
+                    border-0
+                    bg-transparent
+                    p-0
+                    text-[#64748B]
+                    transition
+                    hover:text-[#09379A]
+                  "
+                >
+                  طلباتي
+                </button>
+
+                <span className="text-[#94A3B8]">
+                  ›
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate(
+                      `/student/applications/${application.id}/status`
+                    )
+                  }
+                  className="
+                    border-0
+                    bg-transparent
+                    p-0
+                    text-[#64748B]
+                    transition
+                    hover:text-[#09379A]
+                  "
+                >
+                  متابعة حالة الطلب
+                </button>
+
+                <span className="text-[#94A3B8]">
+                  ›
+                </span>
+
+                <span
+                  className="
+                    font-bold
+                    text-[#09379A]
+                  "
+                >
+                  قبول التدريب
+                </span>
+              </nav>
+
+              {/* TOP ACTIONS */}
+              <div
+                className="
+                  flex
+                  flex-wrap
+                  items-center
+                  gap-2
+                "
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    window.print()
+                  }
+                  className="
+                    flex
+                    h-[34px]
+                    items-center
+                    gap-[7px]
+                    rounded-[8px]
+                    border
+                    border-[#D9E2EC]
+                    bg-white
+                    px-[12px]
+                    text-[10px]
+                    font-bold
+                    text-[#334155]
+                    transition
+
+                    hover:bg-[#F8FAFC]
+                  "
+                >
+                  <Printer size={14} />
+
+                  طباعة الإشعار
+                </button>
+
+                <button
+                  type="button"
+                  className="
+                    flex
+                    h-[34px]
+                    items-center
+                    gap-[7px]
+                    rounded-[8px]
+                    border
+                    border-[#D9E2EC]
+                    bg-white
+                    px-[12px]
+                    text-[10px]
+                    font-bold
+                    text-[#334155]
+                    transition
+
+                    hover:bg-[#F8FAFC]
+                  "
+                >
+                  <Download
+                    size={14}
+                    className="text-[#09379A]"
+                  />
+
+                  كتاب التنسيب (PDF)
+                </button>
+              </div>
+            </section>
+
+            {/* =================================================
+                PAGE TITLE
+            ================================================== */}
+            <section
+              className="
+                mt-4
+                flex
+                flex-col
+                gap-2
+
+                sm:flex-row
+                sm:items-start
+                sm:justify-between
               "
             >
               <div>
                 <h1
                   className="
                     m-0
-                    text-[28px]
-                    leading-[40px]
+                    text-[24px]
                     font-bold
+                    leading-[35px]
                     text-[#09379A]
+
+                    sm:text-[26px]
+
+                    xl:text-[28px]
+                    xl:leading-[40px]
                   "
                 >
                   قبول التدريب
@@ -266,19 +429,24 @@ export default function TrainingAccepted() {
                   className="
                     m-0
                     mt-[2px]
-                    text-[13px]
-                    leading-[21px]
+                    text-[11px]
+                    leading-[20px]
                     text-[#64748B]
+
+                    sm:text-[12px]
+
+                    xl:text-[13px]
+                    xl:leading-[21px]
                   "
                 >
-                  تهانينا! تم اعتماد وترشيح ملفك التدريبي رسميا لدى جهة التدريب
+                  تهانينا! تم اعتماد وترشيح ملفك
+                  التدريبي رسميا لدى جهة التدريب
                   الشريكة.
                 </p>
               </div>
 
               <div
                 className="
-                  mt-[4px]
                   flex
                   items-center
                   gap-[6px]
@@ -288,8 +456,8 @@ export default function TrainingAccepted() {
               >
                 <span
                   className="
-                    w-[7px]
                     h-[7px]
+                    w-[7px]
                     rounded-full
                     bg-[#FF6B35]
                   "
@@ -299,42 +467,59 @@ export default function TrainingAccepted() {
               </div>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 ACCEPTANCE BANNER
-            ====================================== */}
+            ================================================== */}
             <section
               className="
-                mt-[20px]
+                mt-5
+                flex
+                flex-col
+                gap-5
                 rounded-[14px]
                 border
                 border-[#CFE0FB]
                 bg-[#F5F9FF]
-                px-[24px]
-                py-[20px]
-                flex
-                items-center
-                justify-between
-                gap-[20px]
+                p-4
+
+                sm:p-5
+
+                md:flex-row
+                md:items-center
+                md:justify-between
+
+                xl:px-[24px]
+                xl:py-[20px]
               "
             >
-              <div className="flex items-start gap-[14px]">
+              <div
+                className="
+                  flex
+                  min-w-0
+                  items-start
+                  gap-[14px]
+                "
+              >
                 <div
                   className="
-                    w-[46px]
+                    flex
                     h-[46px]
+                    w-[46px]
                     shrink-0
+                    items-center
+                    justify-center
                     rounded-[10px]
                     bg-[#E4EEFF]
                     text-[#09379A]
-                    flex
-                    items-center
-                    justify-center
                   "
                 >
-                  <ShieldCheck size={23} strokeWidth={1.8} />
+                  <ShieldCheck
+                    size={23}
+                    strokeWidth={1.8}
+                  />
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   <div
                     className="
                       flex
@@ -346,9 +531,13 @@ export default function TrainingAccepted() {
                     <h2
                       className="
                         m-0
-                        text-[18px]
+                        text-[16px]
                         font-bold
                         text-[#1E293B]
+
+                        sm:text-[17px]
+
+                        xl:text-[18px]
                       "
                     >
                       تم قبولك في التدريب بنجاح
@@ -357,36 +546,41 @@ export default function TrainingAccepted() {
                     <span
                       dir="ltr"
                       className="
+                        flex
                         h-[23px]
-                        px-[8px]
+                        items-center
                         rounded-[6px]
                         border
                         border-[#C7D7F7]
                         bg-[#EDF3FF]
-                        text-[#2563EB]
-                        flex
-                        items-center
+                        px-[8px]
                         text-[9px]
                         font-medium
+                        text-[#2563EB]
                       "
                     >
-                      TRN-2025-0844
+                      {application.placementNumber}
                     </span>
                   </div>
 
                   <p
                     className="
                       m-0
-                      mt-[10px]
+                      mt-[8px]
                       max-w-[620px]
-                      text-[11px]
-                      leading-[20px]
+                      text-[10px]
+                      leading-[19px]
                       text-[#64748B]
+
+                      sm:text-[11px]
+                      sm:leading-[20px]
                     "
                   >
-                    تهانينا! تم قبولك في فرصة التدريب. يرجى الاطلاع على
-                    التفاصيل التالية والبدء بإجراءات مباشرة التدريب المعتمدة
-                    أكاديميا لمتابعة المهام في الموعد المحدد.
+                    تهانينا! تم قبولك في فرصة التدريب.
+                    يرجى الاطلاع على التفاصيل التالية
+                    والبدء بإجراءات مباشرة التدريب
+                    المعتمدة أكاديميا لمتابعة المهام في
+                    الموعد المحدد.
                   </p>
                 </div>
               </div>
@@ -394,27 +588,35 @@ export default function TrainingAccepted() {
               <div
                 className="
                   shrink-0
-                  text-left
+
+                  md:text-left
                 "
               >
                 <button
                   type="button"
                   className="
-                    h-[35px]
-                    px-[13px]
+                    flex
+                    h-[36px]
+                    w-full
+                    items-center
+                    justify-center
+                    gap-[7px]
                     rounded-[8px]
                     border-0
                     bg-[#09379A]
-                    text-white
-                    flex
-                    items-center
-                    gap-[7px]
+                    px-[13px]
                     text-[10px]
                     font-bold
+                    text-white
+                    transition
+
                     hover:bg-[#072E81]
+
+                    md:w-auto
                   "
                 >
                   <ExternalLink size={14} />
+
                   معاينة التنسيب
                 </button>
 
@@ -430,6 +632,7 @@ export default function TrainingAccepted() {
                   "
                 >
                   <CheckCircle2 size={12} />
+
                   كتاب التنسيب معتمد وموقع رسميا
                 </div>
 
@@ -438,49 +641,59 @@ export default function TrainingAccepted() {
                   className="
                     m-0
                     mt-[2px]
+                    text-right
                     text-[7px]
                     text-[#94A3B8]
                   "
                 >
-                  REF: AXZ-844
+                  REF: {application.reference}
                 </p>
               </div>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 MAIN GRID
-            ====================================== */}
+            ================================================== */}
             <section
               dir="ltr"
               className="
-                mt-[22px]
+                mt-5
                 grid
                 grid-cols-1
-                lg:grid-cols-[315px_minmax(0,1fr)]
-                gap-[22px]
                 items-start
+                gap-5
+
+                lg:grid-cols-[315px_minmax(0,1fr)]
+
+                xl:mt-[22px]
+                xl:gap-[22px]
               "
             >
-              {/* ===================================
+              {/* =================================================
                   LEFT COLUMN
-              ==================================== */}
+              ================================================== */}
               <div
                 dir="rtl"
                 className="
                   flex
+                  min-w-0
                   flex-col
-                  gap-[20px]
+                  gap-5
                 "
               >
-                {/* NEXT STEPS */}
+                {/* =============================================
+                    NEXT STEPS
+                ============================================== */}
                 <section
                   className="
                     rounded-[14px]
                     border
                     border-[#E2E8F0]
                     bg-white
-                    px-[18px]
-                    py-[18px]
+                    p-4
+
+                    xl:px-[18px]
+                    xl:py-[18px]
                   "
                 >
                   <div
@@ -488,15 +701,18 @@ export default function TrainingAccepted() {
                       flex
                       items-center
                       justify-between
+                      gap-3
                     "
                   >
                     <div>
                       <h2
                         className="
                           m-0
-                          text-[16px]
+                          text-[15px]
                           font-bold
                           text-[#1E293B]
+
+                          xl:text-[16px]
                         "
                       >
                         خطواتك القادمة
@@ -507,22 +723,25 @@ export default function TrainingAccepted() {
                           m-0
                           mt-[2px]
                           text-[9px]
+                          leading-[16px]
                           text-[#94A3B8]
                         "
                       >
-                        استكمل الإجراءات التالية لبدء تدريبك رسميا
+                        استكمل الإجراءات التالية
+                        لبدء تدريبك رسميا
                       </p>
                     </div>
 
                     <div
                       className="
-                        w-[34px]
-                        h-[34px]
-                        rounded-[8px]
-                        bg-[#F1F5F9]
                         flex
+                        h-[34px]
+                        w-[34px]
+                        shrink-0
                         items-center
                         justify-center
+                        rounded-[8px]
+                        bg-[#F1F5F9]
                         text-[#64748B]
                       "
                     >
@@ -532,7 +751,7 @@ export default function TrainingAccepted() {
 
                   <div
                     className="
-                      mt-[16px]
+                      mt-4
                       flex
                       flex-col
                       gap-[9px]
@@ -542,21 +761,23 @@ export default function TrainingAccepted() {
                       <article
                         key={step.id}
                         className={`
+                          flex
+                          items-start
+                          gap-[10px]
                           rounded-[10px]
                           border
                           px-[12px]
                           py-[11px]
-                          flex
-                          items-start
-                          gap-[10px]
 
                           ${
-                            step.status === "completed"
+                            step.status ===
+                            "completed"
                               ? `
                                 border-[#D5E2F5]
                                 bg-[#F8FBFF]
                               `
-                              : step.status === "current"
+                              : step.status ===
+                                "current"
                               ? `
                                 border-[#FDBA74]
                                 bg-[#FFF7ED]
@@ -570,21 +791,23 @@ export default function TrainingAccepted() {
                       >
                         <div
                           className={`
-                            w-[31px]
-                            h-[31px]
-                            shrink-0
-                            rounded-full
                             flex
+                            h-[31px]
+                            w-[31px]
+                            shrink-0
                             items-center
                             justify-center
+                            rounded-full
 
                             ${
-                              step.status === "completed"
+                              step.status ===
+                              "completed"
                                 ? `
                                   bg-[#0E4BB7]
                                   text-white
                                 `
-                                : step.status === "current"
+                                : step.status ===
+                                  "current"
                                 ? `
                                   bg-[#FF6B35]
                                   text-white
@@ -596,16 +819,25 @@ export default function TrainingAccepted() {
                             }
                           `}
                         >
-                          {step.status === "completed" ? (
-                            <CheckCircle2 size={17} />
-                          ) : step.status === "current" ? (
+                          {step.status ===
+                          "completed" ? (
+                            <CheckCircle2
+                              size={17}
+                            />
+                          ) : step.status ===
+                            "current" ? (
                             <RefreshCw size={16} />
                           ) : (
                             <Clock3 size={15} />
                           )}
                         </div>
 
-                        <div className="flex-1 min-w-0">
+                        <div
+                          className="
+                            min-w-0
+                            flex-1
+                          "
+                        >
                           <div
                             className="
                               flex
@@ -617,9 +849,12 @@ export default function TrainingAccepted() {
                             <h3
                               className="
                                 m-0
-                                text-[11px]
+                                text-[10px]
                                 font-bold
+                                leading-[17px]
                                 text-[#334155]
+
+                                xl:text-[11px]
                               "
                             >
                               {step.id}. {step.title}
@@ -627,22 +862,27 @@ export default function TrainingAccepted() {
 
                             <span
                               className={`
+                                shrink-0
+                                whitespace-nowrap
                                 text-[8px]
                                 font-bold
-                                whitespace-nowrap
 
                                 ${
-                                  step.status === "completed"
+                                  step.status ===
+                                  "completed"
                                     ? "text-[#2563EB]"
-                                    : step.status === "current"
+                                    : step.status ===
+                                      "current"
                                     ? "text-[#EA580C]"
                                     : "text-[#94A3B8]"
                                 }
                               `}
                             >
-                              {step.status === "completed"
+                              {step.status ===
+                              "completed"
                                 ? "مكتمل"
-                                : step.status === "current"
+                                : step.status ===
+                                  "current"
                                 ? "قيد المتابعة"
                                 : "قادم"}
                             </span>
@@ -660,19 +900,22 @@ export default function TrainingAccepted() {
                             {step.description}
                           </p>
 
-                          {(step.date || step.time) && (
+                          {(step.date ||
+                            step.time) && (
                             <p
                               dir="ltr"
                               className="
                                 m-0
                                 mt-[4px]
+                                text-right
                                 text-[7px]
                                 text-[#94A3B8]
-                                text-right
                               "
                             >
                               {step.date}
-                              {step.time && ` • ${step.time}`}
+
+                              {step.time &&
+                                ` • ${step.time}`}
                             </p>
                           )}
                         </div>
@@ -681,15 +924,19 @@ export default function TrainingAccepted() {
                   </div>
                 </section>
 
-                {/* DIRECT ACTIONS */}
+                {/* =============================================
+                    DIRECT ACTIONS
+                ============================================== */}
                 <section
                   className="
                     rounded-[14px]
                     border
                     border-[#E2E8F0]
                     bg-white
-                    px-[18px]
-                    py-[18px]
+                    p-4
+
+                    xl:px-[18px]
+                    xl:py-[18px]
                   "
                 >
                   <span
@@ -722,34 +969,40 @@ export default function TrainingAccepted() {
                       text-[#64748B]
                     "
                   >
-                    الانتقال الفوري إلى بيئة العمل الميدانية
-                    ومتابعة المهام المعتمدة والمتطلبات مع المشرف.
+                    الانتقال الفوري إلى بيئة العمل
+                    الميدانية ومتابعة المهام المعتمدة
+                    والأنشطة الأسبوعية مع المشرف.
                   </p>
 
                   <button
                     type="button"
                     onClick={() =>
-                      navigate("/student/training-profile")
+                      navigate(
+                        "/student/training-profile"
+                      )
                     }
                     className="
                       mt-[13px]
-                      w-full
-                      h-[42px]
-                      rounded-[8px]
-                      border-0
-                      bg-[#09379A]
-                      text-white
                       flex
+                      h-[42px]
+                      w-full
                       items-center
                       justify-center
                       gap-[8px]
+                      rounded-[8px]
+                      border-0
+                      bg-[#09379A]
                       text-[11px]
                       font-bold
+                      text-white
                       shadow-[0_3px_7px_rgba(9,55,154,0.18)]
+                      transition
+
                       hover:bg-[#072E81]
                     "
                   >
                     الانتقال إلى ملف التدريب
+
                     <ArrowLeft size={15} />
                   </button>
 
@@ -757,44 +1010,54 @@ export default function TrainingAccepted() {
                     type="button"
                     className="
                       mt-[10px]
-                      w-full
+                      flex
                       min-h-[42px]
+                      w-full
+                      items-center
+                      justify-center
+                      gap-[8px]
                       rounded-[8px]
                       border
                       border-[#D9E2EC]
                       bg-white
-                      text-[#334155]
-                      flex
-                      items-center
-                      justify-center
-                      gap-[8px]
                       px-[10px]
                       text-[10px]
                       font-bold
+                      text-[#334155]
+                      transition
+
                       hover:bg-[#F8FAFC]
                     "
                   >
-                    <Download size={14} className="text-[#09379A]" />
-                    تحميل كتاب القبول والتنسيب الرسمي (PDF)
+                    <Download
+                      size={14}
+                      className="text-[#09379A]"
+                    />
+
+                    تحميل كتاب القبول والتنسيب الرسمي
+                    (PDF)
                   </button>
 
                   <div
                     className="
                       mt-[11px]
+                      flex
+                      items-center
+                      gap-[8px]
                       rounded-[8px]
                       border
                       border-[#E2E8F0]
                       bg-[#F8FAFC]
                       px-[11px]
                       py-[10px]
-                      flex
-                      items-center
-                      gap-[8px]
                     "
                   >
                     <Mail
                       size={15}
-                      className="text-[#09379A] shrink-0"
+                      className="
+                        shrink-0
+                        text-[#09379A]
+                      "
                     />
 
                     <div className="min-w-0">
@@ -805,7 +1068,8 @@ export default function TrainingAccepted() {
                           text-[#64748B]
                         "
                       >
-                        لأي استفسار تواصل مع منسق التدريب:
+                        لأي استفسار تواصل مع منسق
+                        التدريب:
                       </p>
 
                       <p
@@ -813,10 +1077,10 @@ export default function TrainingAccepted() {
                         className="
                           m-0
                           mt-[2px]
+                          truncate
                           text-[9px]
                           font-bold
                           text-[#2563EB]
-                          truncate
                         "
                       >
                         training@alazhar.edu.ps
@@ -825,22 +1089,24 @@ export default function TrainingAccepted() {
                   </div>
                 </section>
 
-                {/* STUDENT INFO */}
+                {/* =============================================
+                    STUDENT INFO
+                ============================================== */}
                 <section
                   className="
+                    flex
+                    items-center
+                    justify-between
+                    gap-[12px]
                     rounded-[14px]
                     border
                     border-[#CFE0FB]
                     bg-[#F3F8FF]
                     px-[17px]
                     py-[15px]
-                    flex
-                    items-center
-                    justify-between
-                    gap-[12px]
                   "
                 >
-                  <div>
+                  <div className="min-w-0">
                     <h3
                       className="
                         m-0
@@ -849,7 +1115,7 @@ export default function TrainingAccepted() {
                         text-[#1E293B]
                       "
                     >
-                      أمل أحمد سعيد
+                      {application.student.name}
                     </h3>
 
                     <p
@@ -857,10 +1123,13 @@ export default function TrainingAccepted() {
                         m-0
                         mt-[3px]
                         text-[8px]
+                        leading-[15px]
                         text-[#64748B]
                       "
                     >
-                      الرقم الجامعي: 145892023 • علوم شبكات وتكنولوجيا
+                      الرقم الجامعي:{" "}
+                      {application.student.number} •{" "}
+                      {application.student.major}
                     </p>
 
                     <p
@@ -871,21 +1140,21 @@ export default function TrainingAccepted() {
                         text-[#09379A]
                       "
                     >
-                      كلية الدراسات المتوسطة - جامعة الأزهر
+                      {application.student.college}
                     </p>
                   </div>
 
                   <div
                     className="
-                      w-[36px]
+                      flex
                       h-[36px]
+                      w-[36px]
                       shrink-0
+                      items-center
+                      justify-center
                       rounded-full
                       bg-[#09379A]
                       text-white
-                      flex
-                      items-center
-                      justify-center
                     "
                   >
                     <Info size={17} />
@@ -893,57 +1162,73 @@ export default function TrainingAccepted() {
                 </section>
               </div>
 
-              {/* ===================================
+              {/* =================================================
                   RIGHT COLUMN
-              ==================================== */}
+              ================================================== */}
               <div
                 dir="rtl"
                 className="
-                  min-w-0
                   flex
+                  min-w-0
                   flex-col
                   gap-[22px]
                 "
               >
-                {/* ORGANIZATION DETAILS */}
+                {/* =============================================
+                    ORGANIZATION DETAILS
+                ============================================== */}
                 <section
                   className="
                     rounded-[14px]
                     border
                     border-[#E2E8F0]
                     bg-white
-                    px-[22px]
-                    py-[20px]
+                    p-4
+
+                    sm:p-5
+
+                    xl:px-[22px]
+                    xl:py-[20px]
                   "
                 >
                   <div
                     className="
                       flex
-                      items-start
-                      justify-between
-                      gap-[20px]
+                      flex-col
+                      gap-4
+
+                      sm:flex-row
+                      sm:items-start
+                      sm:justify-between
                     "
                   >
-                    <div className="flex items-start gap-[14px]">
+                    <div
+                      className="
+                        flex
+                        min-w-0
+                        items-start
+                        gap-[14px]
+                      "
+                    >
                       <div
                         className="
-                          w-[58px]
-                          h-[58px]
-                          rounded-[10px]
-                          bg-[#F1F5F9]
-                          border
-                          border-[#E2E8F0]
                           flex
+                          h-[58px]
+                          w-[58px]
+                          shrink-0
                           items-center
                           justify-center
+                          rounded-[10px]
+                          border
+                          border-[#E2E8F0]
+                          bg-[#F1F5F9]
                           text-[#09379A]
-                          shrink-0
                         "
                       >
                         <Building2 size={25} />
                       </div>
 
-                      <div>
+                      <div className="min-w-0">
                         <div
                           className="
                             flex
@@ -954,18 +1239,18 @@ export default function TrainingAccepted() {
                         >
                           <span
                             className="
+                              flex
                               h-[23px]
-                              px-[9px]
+                              items-center
                               rounded-[10px]
                               bg-[#E7EEFF]
-                              text-[#2563EB]
-                              flex
-                              items-center
+                              px-[9px]
                               text-[9px]
                               font-bold
+                              text-[#2563EB]
                             "
                           >
-                            هندسة شبكات
+                            {application.category}
                           </span>
 
                           <span
@@ -984,7 +1269,7 @@ export default function TrainingAccepted() {
                               text-[#94A3B8]
                             "
                           >
-                            PAL-TEL-GZ-2025
+                            {application.organizationCode}
                           </span>
                         </div>
 
@@ -992,12 +1277,16 @@ export default function TrainingAccepted() {
                           className="
                             m-0
                             mt-[6px]
-                            text-[20px]
+                            text-[18px]
                             font-bold
                             text-[#1E293B]
+
+                            sm:text-[19px]
+
+                            xl:text-[20px]
                           "
                         >
-                          شركة القدس للاتصالات
+                          {application.organizationName}
                         </h2>
 
                         <p
@@ -1010,38 +1299,38 @@ export default function TrainingAccepted() {
                             text-[#64748B]
                           "
                         >
-                          تدريب ميداني متخصص في مجال هندسة الاتصالات
-                          والبنية التحتية للشبكات السلكية واللاسلكية
-                          وتقنيات الألياف الضوئية.
+                          {application.description}
                         </p>
                       </div>
                     </div>
 
                     <span
                       className="
+                        flex
                         h-[25px]
-                        px-[10px]
+                        w-fit
+                        shrink-0
+                        items-center
+                        gap-[5px]
                         rounded-[12px]
                         border
                         border-[#AFC8FA]
                         bg-[#EEF4FF]
-                        text-[#09379A]
-                        flex
-                        items-center
-                        gap-[5px]
+                        px-[10px]
                         text-[9px]
                         font-bold
-                        whitespace-nowrap
+                        text-[#09379A]
                       "
                     >
                       <span
                         className="
-                          w-[6px]
                           h-[6px]
+                          w-[6px]
                           rounded-full
                           bg-[#2563EB]
                         "
                       />
+
                       مقبول ومثبت
                     </span>
                   </div>
@@ -1049,71 +1338,88 @@ export default function TrainingAccepted() {
                   {/* INFO GRID */}
                   <div
                     className="
-                      mt-[20px]
+                      mt-5
                       grid
                       grid-cols-1
-                      md:grid-cols-3
-                      gap-[12px]
+                      gap-3
+
+                      sm:grid-cols-2
+
+                      xl:grid-cols-3
                     "
                   >
                     <InfoCard
                       icon={GraduationCap}
                       label="المشرف الأكاديمي"
-                      value="د. أحمد محمود"
-                      sub="كلية الدراسات المتوسطة"
+                      value={
+                        application.academicSupervisor
+                      }
+                      sub={
+                        application.academicSupervisorSub
+                      }
                     />
 
                     <InfoCard
                       icon={Building2}
                       label="المشرف الميداني"
-                      value="م. سمير خليل"
-                      sub="رئيس قسم الشبكات والتقنية"
+                      value={
+                        application.fieldSupervisor
+                      }
+                      sub={
+                        application.fieldSupervisorSub
+                      }
                     />
 
                     <InfoCard
                       icon={MapPin}
                       label="مكان التدريب"
-                      value="غزة - الرمال"
-                      sub="برج الأمل - ط 4"
+                      value={application.location}
+                      sub={application.locationSub}
                     />
 
                     <InfoCard
                       icon={CalendarDays}
                       label="تاريخ البدء"
-                      value="2025/10/01"
-                      sub="الأربعاء 08:30 ص"
+                      value={application.startDate}
+                      sub={
+                        application.startDateSub
+                      }
                     />
 
                     <InfoCard
                       icon={CalendarDays}
                       label="تاريخ الانتهاء"
-                      value="2025/12/01"
-                      sub="التاريخ المتوقع للفصل"
+                      value={application.endDate}
+                      sub={application.endDateSub}
                     />
 
                     <InfoCard
                       icon={Clock3}
                       label="مدة التدريب الإجمالية"
-                      value="8 أسابيع"
-                      sub="120 ساعة تدريبية"
+                      value={application.duration}
+                      sub={`${application.hours} ساعة تدريبية`}
                       accent
                     />
                   </div>
 
-                  {/* LOCATION BAR */}
+                  {/* LOCATION */}
                   <div
                     className="
                       mt-[14px]
+                      flex
                       min-h-[52px]
+                      flex-col
+                      gap-3
                       rounded-[9px]
                       border
                       border-[#E2E8F0]
                       bg-[#F8FAFC]
                       px-[14px]
-                      flex
-                      items-center
-                      justify-between
-                      gap-[15px]
+                      py-3
+
+                      sm:flex-row
+                      sm:items-center
+                      sm:justify-between
                     "
                   >
                     <div
@@ -1125,7 +1431,11 @@ export default function TrainingAccepted() {
                     >
                       <MapPin
                         size={16}
-                        className="text-[#09379A] shrink-0 mt-[1px]"
+                        className="
+                          mt-[1px]
+                          shrink-0
+                          text-[#09379A]
+                        "
                       />
 
                       <div>
@@ -1136,18 +1446,21 @@ export default function TrainingAccepted() {
                             text-[#334155]
                           "
                         >
-                          مقر التدريب: شارع عمر المختار - مفترق الرمال
+                          مقر التدريب:{" "}
+                          {application.address}
                         </strong>
 
                         <span
                           className="
-                            block
                             mt-[2px]
+                            block
                             text-[8px]
+                            leading-[15px]
                             text-[#94A3B8]
                           "
                         >
-                          مطلوب إبراز كتاب التنسيب الرسمي المعتمد عند بوابة
+                          مطلوب إبراز كتاب التنسيب
+                          الرسمي المعتمد عند بوابة
                           الشركة يوم المباشرة.
                         </span>
                       </div>
@@ -1156,40 +1469,51 @@ export default function TrainingAccepted() {
                     <button
                       type="button"
                       className="
-                        border-0
-                        bg-transparent
-                        text-[#2563EB]
                         flex
+                        w-fit
                         items-center
                         gap-[5px]
+                        border-0
+                        bg-transparent
+                        p-0
                         text-[9px]
                         font-bold
-                        whitespace-nowrap
+                        text-[#2563EB]
                       "
                     >
                       <ExternalLink size={13} />
+
                       عرض الخريطة التفاعلية
                     </button>
                   </div>
                 </section>
 
-                {/* HOURS DISTRIBUTION */}
+                {/* =============================================
+                    HOURS DISTRIBUTION
+                ============================================== */}
                 <section
                   className="
                     rounded-[14px]
                     border
                     border-[#E2E8F0]
                     bg-white
-                    px-[22px]
-                    py-[21px]
+                    p-4
+
+                    sm:p-5
+
+                    xl:px-[22px]
+                    xl:py-[21px]
                   "
                 >
                   <div
                     className="
                       flex
-                      items-center
-                      justify-between
-                      gap-[15px]
+                      flex-col
+                      gap-3
+
+                      sm:flex-row
+                      sm:items-center
+                      sm:justify-between
                     "
                   >
                     <div
@@ -1202,22 +1526,46 @@ export default function TrainingAccepted() {
                       <div
                         className="
                           flex
+                          h-[18px]
                           items-end
                           gap-[3px]
-                          h-[18px]
                         "
                       >
-                        <span className="w-[3px] h-[7px] bg-[#09379A]" />
-                        <span className="w-[3px] h-[12px] bg-[#09379A]" />
-                        <span className="w-[3px] h-[17px] bg-[#09379A]" />
+                        <span
+                          className="
+                            h-[7px]
+                            w-[3px]
+                            bg-[#09379A]
+                          "
+                        />
+
+                        <span
+                          className="
+                            h-[12px]
+                            w-[3px]
+                            bg-[#09379A]
+                          "
+                        />
+
+                        <span
+                          className="
+                            h-[17px]
+                            w-[3px]
+                            bg-[#09379A]
+                          "
+                        />
                       </div>
 
                       <h2
                         className="
                           m-0
-                          text-[19px]
+                          text-[17px]
                           font-bold
                           text-[#1E293B]
+
+                          sm:text-[18px]
+
+                          xl:text-[19px]
                         "
                       >
                         توزيع الساعات التدريبية
@@ -1232,9 +1580,8 @@ export default function TrainingAccepted() {
                         text-[#64748B]
                       "
                     >
-                      المستهدف: 120 ساعة
+                      المستهدف: {application.hours} ساعة{" "}
                       <span className="text-[#94A3B8]">
-                        {" "}
                         (100%)
                       </span>
                     </p>
@@ -1245,24 +1592,27 @@ export default function TrainingAccepted() {
                     dir="ltr"
                     className="
                       mt-[22px]
-                      w-full
-                      h-[16px]
-                      rounded-full
-                      overflow-hidden
                       flex
+                      h-[16px]
+                      w-full
+                      overflow-hidden
+                      rounded-full
                       bg-[#E2E8F0]
                     "
                   >
-                    {hourDistribution.map((item) => (
-                      <div
-                        key={item.label}
-                        style={{
-                          width: item.width,
-                          backgroundColor: item.color,
-                        }}
-                        className="h-full"
-                      />
-                    ))}
+                    {hourDistribution.map(
+                      (item) => (
+                        <div
+                          key={item.label}
+                          style={{
+                            width: item.width,
+                            backgroundColor:
+                              item.color,
+                          }}
+                          className="h-full"
+                        />
+                      )
+                    )}
                   </div>
 
                   {/* LEGEND */}
@@ -1272,41 +1622,92 @@ export default function TrainingAccepted() {
                       flex
                       flex-wrap
                       items-center
-                      justify-around
-                      gap-[12px]
+                      justify-start
+                      gap-x-6
+                      gap-y-3
+
+                      sm:justify-around
                     "
                   >
-                    {hourDistribution.map((item) => (
-                      <div
-                        key={item.label}
-                        className="
-                          flex
-                          items-center
-                          gap-[7px]
-                          text-[10px]
-                          text-[#64748B]
-                        "
-                      >
-                        <span
-                          style={{
-                            backgroundColor: item.color,
-                          }}
+                    {hourDistribution.map(
+                      (item) => (
+                        <div
+                          key={item.label}
                           className="
-                            w-[8px]
-                            h-[8px]
-                            rounded-full
-                          "
-                        />
+                            flex
+                            items-center
+                            gap-[7px]
+                            text-[9px]
+                            text-[#64748B]
 
-                        <span>
-                          {item.label} ({item.hours} س)
-                        </span>
-                      </div>
-                    ))}
+                            sm:text-[10px]
+                          "
+                        >
+                          <span
+                            style={{
+                              backgroundColor:
+                                item.color,
+                            }}
+                            className="
+                              h-[8px]
+                              w-[8px]
+                              shrink-0
+                              rounded-full
+                            "
+                          />
+
+                          <span>
+                            {item.label} ({item.hours} س)
+                          </span>
+                        </div>
+                      )
+                    )}
                   </div>
                 </section>
               </div>
             </section>
+
+            {/* =================================================
+                BACK ACTION
+            ================================================== */}
+            <div
+              className="
+                mt-5
+                flex
+                justify-start
+              "
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(
+                    `/student/applications/${application.id}/status`
+                  )
+                }
+                className="
+                  flex
+                  h-[38px]
+                  items-center
+                  justify-center
+                  gap-[7px]
+                  rounded-[8px]
+                  border
+                  border-[#D7DEE9]
+                  bg-white
+                  px-[14px]
+                  text-[10px]
+                  font-bold
+                  text-[#09379A]
+                  transition
+
+                  hover:bg-[#F8FAFC]
+                "
+              >
+                <ArrowRight size={15} />
+
+                العودة إلى متابعة الطلب
+              </button>
+            </div>
           </div>
         </main>
       </div>
@@ -1314,9 +1715,9 @@ export default function TrainingAccepted() {
   );
 }
 
-/* =========================================
+/* =========================================================
    INFO CARD
-========================================== */
+========================================================= */
 
 function InfoCard({
   icon: Icon,
@@ -1328,36 +1729,46 @@ function InfoCard({
   return (
     <div
       className="
+        flex
         min-h-[86px]
+        min-w-0
+        items-center
+        gap-[10px]
         rounded-[10px]
         border
         border-[#E2E8F0]
         bg-[#F8FAFC]
         px-[13px]
         py-[12px]
-        flex
-        items-center
-        gap-[10px]
       "
     >
       <div
         className={`
-          w-[34px]
-          h-[34px]
-          shrink-0
-          rounded-[8px]
           flex
+          h-[34px]
+          w-[34px]
+          shrink-0
           items-center
           justify-center
+          rounded-[8px]
 
           ${
             accent
-              ? "bg-[#FFF2E8] text-[#FF6B35]"
-              : "bg-[#EEF3FF] text-[#09379A]"
+              ? `
+                bg-[#FFF2E8]
+                text-[#FF6B35]
+              `
+              : `
+                bg-[#EEF3FF]
+                text-[#09379A]
+              `
           }
         `}
       >
-        <Icon size={17} strokeWidth={1.8} />
+        <Icon
+          size={17}
+          strokeWidth={1.8}
+        />
       </div>
 
       <div className="min-w-0">
@@ -1373,10 +1784,11 @@ function InfoCard({
 
         <strong
           className={`
-            block
             mt-[3px]
+            block
             text-[11px]
             font-bold
+            leading-[18px]
 
             ${
               accent
@@ -1390,9 +1802,10 @@ function InfoCard({
 
         <span
           className="
-            block
             mt-[2px]
+            block
             text-[8px]
+            leading-[15px]
             text-[#64748B]
           "
         >

@@ -19,6 +19,10 @@ import Sidebar from "../../components/student/Sidebar";
 export default function TrainingApplication() {
   const navigate = useNavigate();
 
+  /* =========================================================
+     FORM DATA
+  ========================================================= */
+
   const [formData, setFormData] = useState({
     fullName: "أمل أحمد ضياء أبو زيد",
     studentId: "20231234",
@@ -33,6 +37,10 @@ export default function TrainingApplication() {
   const [errors, setErrors] = useState({});
 
   const maxMotivationLength = 500;
+
+  /* =========================================================
+     STEPS
+  ========================================================= */
 
   const steps = [
     {
@@ -54,6 +62,10 @@ export default function TrainingApplication() {
       active: false,
     },
   ];
+
+  /* =========================================================
+     HANDLE CHANGE
+  ========================================================= */
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -78,34 +90,49 @@ export default function TrainingApplication() {
     }
   };
 
+  /* =========================================================
+     VALIDATION
+  ========================================================= */
+
   const validateForm = () => {
     const newErrors = {};
 
     if (!formData.major.trim()) {
-      newErrors.major = "يرجى اختيار التخصص الدراسي";
+      newErrors.major =
+        "يرجى اختيار التخصص الدراسي";
     }
 
     if (!formData.academicYear.trim()) {
-      newErrors.academicYear = "يرجى اختيار السنة الدراسية";
+      newErrors.academicYear =
+        "يرجى اختيار السنة الدراسية";
     }
 
     if (!formData.phone.trim()) {
-      newErrors.phone = "رقم الهاتف مطلوب";
+      newErrors.phone =
+        "رقم الهاتف مطلوب";
     } else if (!/^05\d{8}$/.test(formData.phone)) {
-      newErrors.phone = "يرجى إدخال رقم هاتف صحيح";
+      newErrors.phone =
+        "يرجى إدخال رقم هاتف صحيح";
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = "البريد الإلكتروني مطلوب";
+      newErrors.email =
+        "البريد الإلكتروني مطلوب";
     } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+        formData.email
+      )
     ) {
-      newErrors.email = "يرجى إدخال بريد إلكتروني صحيح";
+      newErrors.email =
+        "يرجى إدخال بريد إلكتروني صحيح";
     }
 
     if (!formData.motivation.trim()) {
-      newErrors.motivation = "يرجى كتابة سبب التقديم";
-    } else if (formData.motivation.trim().length < 20) {
+      newErrors.motivation =
+        "يرجى كتابة سبب التقديم";
+    } else if (
+      formData.motivation.trim().length < 20
+    ) {
       newErrors.motivation =
         "يرجى كتابة سبب أوضح للتقديم";
     }
@@ -115,134 +142,217 @@ export default function TrainingApplication() {
     return Object.keys(newErrors).length === 0;
   };
 
+  /* =========================================================
+     NEXT
+  ========================================================= */
+
   const handleNext = () => {
-    if (!validateForm()) {
+    const isValid = validateForm();
+
+    if (!isValid) {
       return;
     }
 
-    navigate("/student/apply-training/documents");
+    navigate(
+      "/student/apply-training/documents"
+    );
   };
 
+  /* =========================================================
+     CANCEL
+  ========================================================= */
+
   const handleCancel = () => {
-    navigate("/student/opportunities/details");
+    navigate(
+      "/student/opportunities/details"
+    );
   };
 
   return (
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
-        bg-white
+        bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
-      {/* SIDEBAR */}
+      {/* =====================================================
+          SIDEBAR
+      ====================================================== */}
       <Sidebar />
 
-      {/* MAIN AREA */}
+      {/* =====================================================
+          MAIN AREA
+      ====================================================== */}
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
-          bg-white
+          bg-[#F8FAFC]
         "
       >
-        {/* HEADER */}
+        {/* =====================================================
+            HEADER
+        ====================================================== */}
         <div className="relative shrink-0">
           <Header />
-
-          {/* Breadcrumb */}
-          <div
-            className="
-              absolute
-              top-0
-              right-[40px]
-              h-[72px]
-              flex
-              items-center
-              gap-[8px]
-              text-[13px]
-            "
-          >
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/student/dashboard")
-              }
-              className="
-                border-0
-                bg-transparent
-                p-0
-                text-[#64748B]
-                font-medium
-                cursor-pointer
-              "
-            >
-              الرئيسية
-            </button>
-
-            <span className="text-[#94A3B8]">›</span>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/student/opportunities")
-              }
-              className="
-                border-0
-                bg-transparent
-                p-0
-                text-[#09379A]
-                font-bold
-                cursor-pointer
-              "
-            >
-              فرص التدريب
-            </button>
-          </div>
         </div>
 
-        {/* SCROLLABLE CONTENT */}
+        {/* =====================================================
+            SCROLLABLE CONTENT
+        ====================================================== */}
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+            md:pt-7
+
             xl:px-[40px]
-            pt-[28px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
-          <div className="w-full max-w-[1080px] mx-auto">
-            {/* =====================================
+          <div
+            className="
+              mx-auto
+              w-full
+              max-w-[1080px]
+            "
+          >
+            {/* =================================================
+                BREADCRUMB
+            ================================================== */}
+            <nav
+              aria-label="مسار التنقل"
+              className="
+                mb-2
+                flex
+                flex-wrap
+                items-center
+                gap-[7px]
+                text-[11px]
+                font-medium
+
+                sm:text-[12px]
+
+                xl:mb-[5px]
+                xl:text-[13px]
+              "
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(
+                    "/student/dashboard"
+                  )
+                }
+                className="
+                  cursor-pointer
+                  border-0
+                  bg-transparent
+                  p-0
+                  text-[#64748B]
+                  transition
+
+                  hover:text-[#09379A]
+                "
+              >
+                الرئيسية
+              </button>
+
+              <span className="text-[#94A3B8]">
+                ›
+              </span>
+
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(
+                    "/student/opportunities"
+                  )
+                }
+                className="
+                  cursor-pointer
+                  border-0
+                  bg-transparent
+                  p-0
+                  text-[#64748B]
+                  transition
+
+                  hover:text-[#09379A]
+                "
+              >
+                فرص التدريب
+              </button>
+
+              <span className="text-[#94A3B8]">
+                ›
+              </span>
+
+              <span
+                className="
+                  font-bold
+                  text-[#09379A]
+                "
+              >
+                استمارة التقديم على التدريب
+              </span>
+            </nav>
+
+            {/* =================================================
                 PAGE TITLE
-            ====================================== */}
+            ================================================== */}
             <section
               className="
                 flex
+                flex-col
                 items-start
                 justify-between
-                gap-[20px]
+                gap-3
+
+                sm:flex-row
+                sm:gap-5
               "
             >
-              <div className="text-right">
+              <div
+                className="
+                  min-w-0
+                  text-right
+                "
+              >
                 <h1
                   className="
                     m-0
-                    text-[28px]
-                    leading-[40px]
+                    text-[23px]
                     font-bold
+                    leading-[34px]
                     text-[#14213D]
+
+                    sm:text-[25px]
+
+                    xl:text-[28px]
+                    xl:leading-[40px]
                   "
                 >
                   استمارة التقديم على التدريب
@@ -251,63 +361,98 @@ export default function TrainingApplication() {
                 <p
                   className="
                     m-0
-                    mt-[4px]
-                    text-[14px]
-                    leading-[22px]
+                    mt-[3px]
+                    text-[12px]
                     font-normal
+                    leading-[21px]
                     text-[#64748B]
+
+                    sm:text-[13px]
+
+                    xl:mt-[4px]
+                    xl:text-[14px]
+                    xl:leading-[22px]
                   "
                 >
-                  يرجى تعبئة البيانات التالية للتقديم على
-                  فرصة التدريب الميداني
+                  يرجى تعبئة البيانات التالية
+                  للتقديم على فرصة التدريب
+                  الميداني
                 </p>
               </div>
 
+              {/* ACADEMIC TERM */}
               <div
                 className="
-                  h-[28px]
-                  px-[12px]
+                  flex
+                  min-h-[28px]
+                  max-w-full
+                  items-center
+                  gap-[6px]
                   rounded-[14px]
                   border
                   border-[#B8D0FF]
                   bg-[#EFF5FF]
-                  flex
-                  items-center
-                  gap-[7px]
-                  text-[11px]
+                  px-[10px]
+                  text-[9px]
                   font-bold
+                  leading-[16px]
                   text-[#09379A]
-                  whitespace-nowrap
+
+                  sm:shrink-0
+                  sm:px-[12px]
+                  sm:text-[10px]
+
+                  xl:text-[11px]
                 "
               >
                 <span
                   className="
-                    w-[7px]
                     h-[7px]
+                    w-[7px]
+                    shrink-0
                     rounded-full
                     bg-[#2563EB]
                   "
                 />
 
-                التقديم الأكاديمي المباشر - الفصل الدراسي
-                الثاني 2024/2025
+                <span>
+                  التقديم الأكاديمي المباشر -
+                  الفصل الدراسي الثاني
+                  2024/2025
+                </span>
               </div>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 STEPPER
-            ====================================== */}
-            <section className="mt-[38px]">
+            ================================================== */}
+            <section
+              className="
+                mt-7
+
+                sm:mt-8
+
+                xl:mt-[38px]
+              "
+            >
               <div className="relative">
+                {/* CONNECTING LINE */}
                 <div
                   className="
                     absolute
-                    top-[19px]
-                    right-[17%]
-                    left-[17%]
-                    h-[4px]
+                    left-[16%]
+                    right-[16%]
+                    top-[16px]
+                    h-[3px]
                     rounded-full
                     bg-[#E2E8F0]
+
+                    sm:left-[17%]
+                    sm:right-[17%]
+                    sm:top-[18px]
+
+                    xl:top-[19px]
+                    xl:h-[4px]
                   "
                 />
 
@@ -324,32 +469,43 @@ export default function TrainingApplication() {
                       key={step.number}
                       className="
                         flex
+                        min-w-0
                         flex-col
                         items-center
                         text-center
                       "
                     >
+                      {/* STEP CIRCLE */}
                       <div
                         className={`
-                          w-[40px]
-                          h-[40px]
-                          rounded-full
-                          border-[2px]
-                          flex
-                          items-center
-                          justify-center
-                          text-[14px]
-                          font-bold
                           relative
                           z-10
+                          flex
+                          h-[34px]
+                          w-[34px]
+                          items-center
+                          justify-center
+                          rounded-full
+                          border-[2px]
+                          text-[12px]
+                          font-bold
+                          transition-all
+
+                          sm:h-[38px]
+                          sm:w-[38px]
+                          sm:text-[13px]
+
+                          xl:h-[40px]
+                          xl:w-[40px]
+                          xl:text-[14px]
 
                           ${
                             step.active
                               ? `
-                                border-[#D5E3FF]
+                                border-[#C8D9FF]
                                 bg-[#09379A]
                                 text-white
-                                shadow-[0_0_0_4px_#EDF3FF]
+                                shadow-[0_0_0_4px_#EAF1FF]
                               `
                               : `
                                 border-[#CBD5E1]
@@ -362,13 +518,20 @@ export default function TrainingApplication() {
                         {step.number}
                       </div>
 
+                      {/* STEP TITLE */}
                       <h3
                         className={`
                           m-0
                           mt-[8px]
-                          text-[13px]
-                          leading-[20px]
+                          text-[10px]
                           font-bold
+                          leading-[16px]
+
+                          sm:text-[11px]
+                          sm:leading-[18px]
+
+                          xl:text-[13px]
+                          xl:leading-[20px]
 
                           ${
                             step.active
@@ -380,62 +543,119 @@ export default function TrainingApplication() {
                         {step.title}
                       </h3>
 
-                      <span
-                        className="
-                          mt-[1px]
-                          text-[10px]
-                          leading-[15px]
-                          text-[#94A3B8]
-                        "
-                      >
-                        {step.subtitle}
-                      </span>
+                      {/* ACTIVE BADGE */}
+                      {step.active ? (
+                        <span
+                          className="
+                            mt-[3px]
+                            inline-flex
+                            min-h-[18px]
+                            items-center
+                            justify-center
+                            rounded-[4px]
+                            bg-[#EAF1FF]
+                            px-[7px]
+                            text-[8px]
+                            font-bold
+                            leading-[14px]
+                            text-[#09379A]
+
+                            sm:text-[9px]
+
+                            xl:text-[10px]
+                            xl:leading-[15px]
+                          "
+                        >
+                          {step.subtitle}
+                        </span>
+                      ) : (
+                        <span
+                          className="
+                            mt-[2px]
+                            hidden
+                            text-[8px]
+                            font-normal
+                            leading-[13px]
+                            text-[#AAB4C3]
+
+                            sm:block
+                            sm:text-[9px]
+
+                            xl:text-[10px]
+                            xl:leading-[15px]
+                          "
+                        >
+                          {step.subtitle}
+                        </span>
+                      )}
                     </div>
                   ))}
                 </div>
               </div>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 MAIN FORM CARD
-            ====================================== */}
+            ================================================== */}
             <section
               className="
-                mt-[14px]
+                mt-4
                 w-full
                 rounded-[14px]
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[28px]
-                py-[26px]
+                p-4
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                sm:p-5
+
+                xl:mt-[14px]
+                xl:px-[28px]
+                xl:py-[26px]
               "
             >
-              {/* Card Header */}
+              {/* =================================================
+                  CARD HEADER
+              ================================================== */}
               <div
                 className="
-                  pb-[20px]
+                  flex
+                  flex-col
+                  gap-3
                   border-b
                   border-[#E2E8F0]
-                  flex
-                  items-start
-                  justify-between
-                  gap-[20px]
+                  pb-4
+
+                  sm:flex-row
+                  sm:items-start
+                  sm:justify-between
+                  sm:gap-5
+
+                  xl:pb-[20px]
                 "
               >
-                <div className="flex items-start gap-[12px]">
+                <div
+                  className="
+                    flex
+                    items-start
+                    gap-[10px]
+                  "
+                >
                   <div
                     className="
-                      w-[38px]
-                      h-[38px]
-                      shrink-0
-                      rounded-[8px]
-                      bg-[#EEF3FF]
                       flex
+                      h-[36px]
+                      w-[36px]
+                      shrink-0
                       items-center
                       justify-center
+                      rounded-[8px]
+                      bg-[#EEF3FF]
                       text-[#09379A]
+
+                      xl:h-[38px]
+                      xl:w-[38px]
                     "
                   >
                     <ClipboardList
@@ -448,10 +668,13 @@ export default function TrainingApplication() {
                     <h2
                       className="
                         m-0
-                        text-[18px]
-                        leading-[26px]
+                        text-[16px]
                         font-bold
+                        leading-[24px]
                         text-[#1E293B]
+
+                        xl:text-[18px]
+                        xl:leading-[26px]
                       "
                     >
                       البيانات الأساسية
@@ -461,31 +684,37 @@ export default function TrainingApplication() {
                       className="
                         m-0
                         mt-[2px]
-                        text-[11px]
-                        leading-[18px]
+                        text-[10px]
+                        leading-[17px]
                         text-[#64748B]
+
+                        xl:text-[11px]
+                        xl:leading-[18px]
                       "
                     >
-                      البيانات المسترجعة من عمادة القبول
-                      والتسجيل مع التحقق الميداني
+                      البيانات المسترجعة من
+                      عمادة القبول والتسجيل مع
+                      التحقق الميداني
                     </p>
                   </div>
                 </div>
 
                 <div
                   className="
-                    h-[28px]
-                    px-[10px]
+                    flex
+                    min-h-[28px]
+                    w-fit
+                    items-center
+                    gap-[6px]
                     rounded-[14px]
                     border
                     border-[#E2E8F0]
                     bg-[#F8FAFC]
-                    flex
-                    items-center
-                    gap-[6px]
-                    text-[10px]
+                    px-[10px]
+                    text-[9px]
                     text-[#64748B]
-                    whitespace-nowrap
+
+                    xl:text-[10px]
                   "
                 >
                   <LockKeyhole
@@ -493,24 +722,29 @@ export default function TrainingApplication() {
                     strokeWidth={1.7}
                   />
 
-                  الحقول الموثقة مسترجعة تلقائيا
+                  الحقول الموثقة مسترجعة
+                  تلقائيا
                 </div>
               </div>
 
-              {/* =================================
+              {/* =================================================
                   FORM GRID
-              ================================== */}
+              ================================================== */}
               <div
                 className="
-                  mt-[24px]
+                  mt-5
                   grid
                   grid-cols-1
-                  lg:grid-cols-2
-                  gap-x-[24px]
-                  gap-y-[22px]
+                  gap-x-6
+                  gap-y-5
+
+                  md:grid-cols-2
+
+                  xl:mt-[24px]
+                  xl:gap-y-[22px]
                 "
               >
-                {/* Full Name */}
+                {/* FULL NAME */}
                 <div>
                   <div
                     className="
@@ -518,13 +752,16 @@ export default function TrainingApplication() {
                       flex
                       items-center
                       justify-between
+                      gap-2
                     "
                   >
                     <label
                       className="
-                        text-[12px]
+                        text-[11px]
                         font-bold
                         text-[#334155]
+
+                        xl:text-[12px]
                       "
                     >
                       الاسم الرباعي
@@ -532,16 +769,18 @@ export default function TrainingApplication() {
 
                     <span
                       className="
-                        h-[22px]
-                        px-[8px]
-                        rounded-[6px]
-                        bg-[#E7F8EE]
-                        text-[#16844C]
                         flex
+                        h-[22px]
                         items-center
                         gap-[4px]
-                        text-[10px]
+                        rounded-[6px]
+                        bg-[#E7F8EE]
+                        px-[8px]
+                        text-[9px]
                         font-medium
+                        text-[#16844C]
+
+                        xl:text-[10px]
                       "
                     >
                       <Check size={12} />
@@ -551,14 +790,14 @@ export default function TrainingApplication() {
 
                   <div
                     className="
+                      flex
                       h-[42px]
+                      items-center
                       rounded-[7px]
                       border
                       border-[#D9E2EC]
                       bg-[#F8FAFC]
                       px-[12px]
-                      flex
-                      items-center
                     "
                   >
                     <UserRound
@@ -575,15 +814,18 @@ export default function TrainingApplication() {
                       value={formData.fullName}
                       readOnly
                       className="
-                        w-full
                         h-full
+                        min-w-0
+                        w-full
                         border-0
-                        outline-none
                         bg-transparent
                         font-['Cairo']
-                        text-[12px]
+                        text-[11px]
                         font-medium
                         text-[#475569]
+                        outline-none
+
+                        xl:text-[12px]
                       "
                     />
                   </div>
@@ -592,17 +834,20 @@ export default function TrainingApplication() {
                     className="
                       m-0
                       mt-[5px]
-                      text-[9px]
-                      leading-[15px]
+                      text-[8px]
+                      leading-[14px]
                       text-[#94A3B8]
+
+                      xl:text-[9px]
+                      xl:leading-[15px]
                     "
                   >
-                    تم التحقق من تطابق الاسم مع السجل
-                    المدني الأكاديمي
+                    تم التحقق من تطابق الاسم مع
+                    السجل المدني الأكاديمي
                   </p>
                 </div>
 
-                {/* Student ID */}
+                {/* STUDENT ID */}
                 <div>
                   <div
                     className="
@@ -610,13 +855,16 @@ export default function TrainingApplication() {
                       flex
                       items-center
                       justify-between
+                      gap-2
                     "
                   >
                     <label
                       className="
-                        text-[12px]
+                        text-[11px]
                         font-bold
                         text-[#334155]
+
+                        xl:text-[12px]
                       "
                     >
                       رقم الطالب
@@ -624,15 +872,17 @@ export default function TrainingApplication() {
 
                     <span
                       className="
-                        h-[22px]
-                        px-[8px]
-                        rounded-[6px]
-                        bg-[#F1F5F9]
-                        text-[#64748B]
                         flex
+                        h-[22px]
                         items-center
                         gap-[4px]
-                        text-[10px]
+                        rounded-[6px]
+                        bg-[#F1F5F9]
+                        px-[8px]
+                        text-[9px]
+                        text-[#64748B]
+
+                        xl:text-[10px]
                       "
                     >
                       <LockKeyhole size={11} />
@@ -642,21 +892,21 @@ export default function TrainingApplication() {
 
                   <div
                     className="
+                      flex
                       h-[42px]
+                      items-center
                       rounded-[7px]
                       border
                       border-[#D9E2EC]
                       bg-[#F8FAFC]
                       px-[12px]
-                      flex
-                      items-center
                     "
                   >
                     <span
                       className="
                         ml-[8px]
-                        text-[#94A3B8]
                         font-bold
+                        text-[#94A3B8]
                       "
                     >
                       #
@@ -668,16 +918,19 @@ export default function TrainingApplication() {
                       readOnly
                       dir="ltr"
                       className="
-                        w-full
                         h-full
+                        min-w-0
+                        w-full
                         border-0
-                        outline-none
                         bg-transparent
+                        text-right
                         font-['Cairo']
-                        text-[12px]
+                        text-[11px]
                         font-bold
                         text-[#475569]
-                        text-right
+                        outline-none
+
+                        xl:text-[12px]
                       "
                     />
                   </div>
@@ -686,25 +939,30 @@ export default function TrainingApplication() {
                     className="
                       m-0
                       mt-[5px]
-                      text-[9px]
-                      leading-[15px]
+                      text-[8px]
+                      leading-[14px]
                       text-[#94A3B8]
+
+                      xl:text-[9px]
+                      xl:leading-[15px]
                     "
                   >
-                    الرقم الجامعي المعتمد لدى كلية الدراسات
-                    المتوسطة.
+                    الرقم الجامعي المعتمد لدى
+                    كلية الدراسات المتوسطة.
                   </p>
                 </div>
 
-                {/* Major */}
+                {/* MAJOR */}
                 <div>
                   <label
                     className="
                       mb-[6px]
                       block
-                      text-[12px]
+                      text-[11px]
                       font-bold
                       text-[#334155]
+
+                      xl:text-[12px]
                     "
                   >
                     التخصص الدراسي
@@ -719,30 +977,45 @@ export default function TrainingApplication() {
                       name="major"
                       value={formData.major}
                       onChange={handleChange}
+                      aria-invalid={
+                        Boolean(errors.major)
+                      }
                       className={`
-                        w-full
                         h-[42px]
+                        w-full
                         appearance-none
                         rounded-[7px]
                         border
                         bg-white
                         px-[12px]
                         pl-[36px]
-                        outline-none
                         font-['Cairo']
-                        text-[12px]
+                        text-[11px]
                         text-[#334155]
+                        outline-none
                         transition
+
+                        xl:text-[12px]
 
                         ${
                           errors.major
-                            ? "border-[#DC2626]"
-                            : "border-[#D9E2EC] focus:border-[#09379A] focus:ring-2 focus:ring-[#09379A]/10"
+                            ? `
+                              border-[#DC2626]
+                              ring-2
+                              ring-[#DC2626]/10
+                            `
+                            : `
+                              border-[#D9E2EC]
+                              focus:border-[#09379A]
+                              focus:ring-2
+                              focus:ring-[#09379A]/10
+                            `
                         }
                       `}
                     >
                       <option value="تقنية المعلومات (Information Technology)">
-                        تقنية المعلومات (Information Technology)
+                        تقنية المعلومات
+                        (Information Technology)
                       </option>
 
                       <option value="إدارة الأعمال">
@@ -757,51 +1030,39 @@ export default function TrainingApplication() {
                     <ChevronDown
                       size={16}
                       className="
+                        pointer-events-none
                         absolute
                         left-[12px]
                         top-1/2
                         -translate-y-1/2
-                        pointer-events-none
                         text-[#64748B]
                       "
                     />
                   </div>
 
                   {errors.major ? (
-                    <p
-                      className="
-                        m-0
-                        mt-[5px]
-                        text-[9px]
-                        text-[#DC2626]
-                      "
-                    >
+                    <FieldError>
                       {errors.major}
-                    </p>
+                    </FieldError>
                   ) : (
-                    <p
-                      className="
-                        m-0
-                        mt-[5px]
-                        text-[9px]
-                        text-[#94A3B8]
-                      "
-                    >
-                      التخصص المسجل في الخطة التدريبية
-                      المعتمدة
-                    </p>
+                    <FieldHint>
+                      التخصص المسجل في الخطة
+                      التدريبية المعتمدة
+                    </FieldHint>
                   )}
                 </div>
 
-                {/* Phone */}
+                {/* PHONE */}
                 <div>
                   <label
                     className="
                       mb-[6px]
                       block
-                      text-[12px]
+                      text-[11px]
                       font-bold
                       text-[#334155]
+
+                      xl:text-[12px]
                     "
                   >
                     رقم الهاتف للتواصل
@@ -813,19 +1074,28 @@ export default function TrainingApplication() {
 
                   <div
                     className={`
+                      flex
                       h-[42px]
+                      items-center
                       rounded-[7px]
                       border
                       bg-white
                       px-[12px]
-                      flex
-                      items-center
                       transition
 
                       ${
                         errors.phone
-                          ? "border-[#DC2626]"
-                          : "border-[#D9E2EC] focus-within:border-[#09379A] focus-within:ring-2 focus-within:ring-[#09379A]/10"
+                          ? `
+                            border-[#DC2626]
+                            ring-2
+                            ring-[#DC2626]/10
+                          `
+                          : `
+                            border-[#D9E2EC]
+                            focus-within:border-[#09379A]
+                            focus-within:ring-2
+                            focus-within:ring-[#09379A]/10
+                          `
                       }
                     `}
                   >
@@ -841,58 +1111,53 @@ export default function TrainingApplication() {
                     <input
                       type="tel"
                       name="phone"
+                      inputMode="numeric"
                       value={formData.phone}
                       onChange={handleChange}
                       dir="ltr"
+                      aria-invalid={
+                        Boolean(errors.phone)
+                      }
                       className="
-                        w-full
                         h-full
+                        min-w-0
+                        w-full
                         border-0
-                        outline-none
                         bg-transparent
-                        font-['Cairo']
-                        text-[12px]
-                        text-[#334155]
                         text-right
+                        font-['Cairo']
+                        text-[11px]
+                        text-[#334155]
+                        outline-none
+
+                        xl:text-[12px]
                       "
                     />
                   </div>
 
                   {errors.phone ? (
-                    <p
-                      className="
-                        m-0
-                        mt-[5px]
-                        text-[9px]
-                        text-[#DC2626]
-                      "
-                    >
+                    <FieldError>
                       {errors.phone}
-                    </p>
+                    </FieldError>
                   ) : (
-                    <p
-                      className="
-                        m-0
-                        mt-[5px]
-                        text-[9px]
-                        text-[#94A3B8]
-                      "
-                    >
-                      سيتم إرسال إشعار الترشيح والتعليمات عبر
-                      رسائل SMS.
-                    </p>
+                    <FieldHint>
+                      سيتم إرسال إشعار الترشيح
+                      والتعليمات عبر رسائل SMS.
+                    </FieldHint>
                   )}
                 </div>
 
-                {/* Academic Year */}
+                {/* ACADEMIC YEAR */}
                 <div>
                   <label
                     className="
                       mb-[6px]
                       block
-                      text-[12px]
+                      text-[11px]
                       font-bold
                       text-[#334155]
+
+                      xl:text-[12px]
                     "
                   >
                     السنة الدراسية
@@ -907,29 +1172,47 @@ export default function TrainingApplication() {
                       name="academicYear"
                       value={formData.academicYear}
                       onChange={handleChange}
+                      aria-invalid={
+                        Boolean(
+                          errors.academicYear
+                        )
+                      }
                       className={`
-                        w-full
                         h-[42px]
+                        w-full
                         appearance-none
                         rounded-[7px]
                         border
                         bg-white
                         px-[12px]
                         pl-[36px]
-                        outline-none
                         font-['Cairo']
-                        text-[12px]
+                        text-[11px]
                         text-[#334155]
+                        outline-none
+                        transition
+
+                        xl:text-[12px]
 
                         ${
                           errors.academicYear
-                            ? "border-[#DC2626]"
-                            : "border-[#D9E2EC] focus:border-[#09379A] focus:ring-2 focus:ring-[#09379A]/10"
+                            ? `
+                              border-[#DC2626]
+                              ring-2
+                              ring-[#DC2626]/10
+                            `
+                            : `
+                              border-[#D9E2EC]
+                              focus:border-[#09379A]
+                              focus:ring-2
+                              focus:ring-[#09379A]/10
+                            `
                         }
                       `}
                     >
                       <option value="السنة الثالثة (مستوفية للشروط)">
-                        السنة الثالثة (مستوفية للشروط)
+                        السنة الثالثة
+                        (مستوفية للشروط)
                       </option>
 
                       <option value="السنة الثانية">
@@ -944,38 +1227,39 @@ export default function TrainingApplication() {
                     <ChevronDown
                       size={16}
                       className="
+                        pointer-events-none
                         absolute
                         left-[12px]
                         top-1/2
                         -translate-y-1/2
-                        pointer-events-none
                         text-[#64748B]
                       "
                     />
                   </div>
 
-                  <p
-                    className="
-                      m-0
-                      mt-[5px]
-                      text-[9px]
-                      text-[#94A3B8]
-                    "
-                  >
-                    يشترط إنهاء ما لا يقل عن 60 ساعة معتمدة
-                    للتدريب.
-                  </p>
+                  {errors.academicYear ? (
+                    <FieldError>
+                      {errors.academicYear}
+                    </FieldError>
+                  ) : (
+                    <FieldHint>
+                      يشترط إنهاء ما لا يقل عن
+                      60 ساعة معتمدة للتدريب.
+                    </FieldHint>
+                  )}
                 </div>
 
-                {/* Email */}
+                {/* EMAIL */}
                 <div>
                   <label
                     className="
                       mb-[6px]
                       block
-                      text-[12px]
+                      text-[11px]
                       font-bold
                       text-[#334155]
+
+                      xl:text-[12px]
                     "
                   >
                     البريد الإلكتروني
@@ -987,18 +1271,28 @@ export default function TrainingApplication() {
 
                   <div
                     className={`
+                      flex
                       h-[42px]
+                      items-center
                       rounded-[7px]
                       border
                       bg-white
                       px-[12px]
-                      flex
-                      items-center
+                      transition
 
                       ${
                         errors.email
-                          ? "border-[#DC2626]"
-                          : "border-[#D9E2EC] focus-within:border-[#09379A] focus-within:ring-2 focus-within:ring-[#09379A]/10"
+                          ? `
+                            border-[#DC2626]
+                            ring-2
+                            ring-[#DC2626]/10
+                          `
+                          : `
+                            border-[#D9E2EC]
+                            focus-within:border-[#09379A]
+                            focus-within:ring-2
+                            focus-within:ring-[#09379A]/10
+                          `
                       }
                     `}
                   >
@@ -1017,58 +1311,59 @@ export default function TrainingApplication() {
                       value={formData.email}
                       onChange={handleChange}
                       dir="ltr"
+                      aria-invalid={
+                        Boolean(errors.email)
+                      }
                       className="
-                        w-full
                         h-full
+                        min-w-0
+                        w-full
                         border-0
-                        outline-none
                         bg-transparent
-                        font-['Cairo']
-                        text-[12px]
-                        text-[#334155]
                         text-right
+                        font-['Cairo']
+                        text-[11px]
+                        text-[#334155]
+                        outline-none
+
+                        xl:text-[12px]
                       "
                     />
                   </div>
 
                   {errors.email ? (
-                    <p
-                      className="
-                        m-0
-                        mt-[5px]
-                        text-[9px]
-                        text-[#DC2626]
-                      "
-                    >
+                    <FieldError>
                       {errors.email}
-                    </p>
+                    </FieldError>
                   ) : (
-                    <p
-                      className="
-                        m-0
-                        mt-[5px]
-                        text-[9px]
-                        text-[#94A3B8]
-                      "
-                    >
-                      لتلقي خطابات التنسيب الأكاديمي والتحديثات
+                    <FieldHint>
+                      لتلقي خطابات التنسيب
+                      الأكاديمي والتحديثات
                       الرسمية.
-                    </p>
+                    </FieldHint>
                   )}
                 </div>
               </div>
 
-              {/* =================================
+              {/* =================================================
                   MOTIVATION
-              ================================== */}
-              <div className="mt-[24px]">
+              ================================================== */}
+              <div
+                className="
+                  mt-5
+
+                  xl:mt-[24px]
+                "
+              >
                 <label
                   className="
                     mb-[6px]
                     block
-                    text-[12px]
+                    text-[11px]
                     font-bold
                     text-[#334155]
+
+                    xl:text-[12px]
                   "
                 >
                   سبب التقديم والهدف من التدريب
@@ -1083,25 +1378,44 @@ export default function TrainingApplication() {
                   value={formData.motivation}
                   onChange={handleChange}
                   rows={4}
+                  aria-invalid={
+                    Boolean(
+                      errors.motivation
+                    )
+                  }
                   className={`
+                    min-h-[96px]
                     w-full
-                    min-h-[82px]
                     resize-none
                     rounded-[7px]
                     border
                     bg-white
                     px-[14px]
                     py-[11px]
-                    outline-none
                     font-['Cairo']
-                    text-[12px]
-                    leading-[22px]
+                    text-[11px]
+                    leading-[21px]
                     text-[#334155]
+                    outline-none
+                    transition
+
+                    xl:min-h-[82px]
+                    xl:text-[12px]
+                    xl:leading-[22px]
 
                     ${
                       errors.motivation
-                        ? "border-[#DC2626]"
-                        : "border-[#D9E2EC] focus:border-[#09379A] focus:ring-2 focus:ring-[#09379A]/10"
+                        ? `
+                          border-[#DC2626]
+                          ring-2
+                          ring-[#DC2626]/10
+                        `
+                        : `
+                          border-[#D9E2EC]
+                          focus:border-[#09379A]
+                          focus:ring-2
+                          focus:ring-[#09379A]/10
+                        `
                     }
                   `}
                 />
@@ -1112,18 +1426,13 @@ export default function TrainingApplication() {
                     flex
                     items-center
                     justify-between
+                    gap-2
                   "
                 >
                   {errors.motivation ? (
-                    <p
-                      className="
-                        m-0
-                        text-[9px]
-                        text-[#DC2626]
-                      "
-                    >
+                    <FieldError noMargin>
                       {errors.motivation}
-                    </p>
+                    </FieldError>
                   ) : (
                     <span />
                   )}
@@ -1131,55 +1440,84 @@ export default function TrainingApplication() {
                   <span
                     dir="ltr"
                     className="
-                      text-[9px]
+                      shrink-0
+                      text-[8px]
                       text-[#94A3B8]
+
+                      xl:text-[9px]
                     "
                   >
-                    {formData.motivation.length} /{" "}
-                    {maxMotivationLength} حرف
+                    {
+                      formData.motivation
+                        .length
+                    }{" "}
+                    / {maxMotivationLength} حرف
                   </span>
                 </div>
               </div>
 
-              {/* =================================
+              {/* =================================================
                   ACTIONS
-              ================================== */}
+              ================================================== */}
               <div
                 className="
-                  mt-[22px]
-                  pt-[20px]
+                  mt-5
+                  flex
+                  flex-col
+                  gap-3
                   border-t
                   border-[#E2E8F0]
-                  flex
-                  items-center
-                  justify-between
-                  gap-[16px]
+                  pt-4
+
+                  sm:flex-row
+                  sm:items-center
+                  sm:justify-between
+
+                  xl:mt-[22px]
+                  xl:gap-[16px]
+                  xl:pt-[20px]
                 "
               >
+                {/* NEXT */}
                 <button
                   type="button"
                   onClick={handleNext}
                   className="
-                    min-w-[180px]
-                    h-[44px]
-                    px-[18px]
-                    rounded-[8px]
-                    border-0
-                    bg-[#09379A]
-                    text-white
+                    order-1
                     flex
+                    h-[44px]
+                    w-full
+                    cursor-pointer
                     items-center
                     justify-center
                     gap-[8px]
-                    text-[13px]
+                    rounded-[8px]
+                    border-0
+                    bg-[#09379A]
+                    px-[18px]
+                    text-[12px]
                     font-bold
+                    text-white
                     shadow-[0_3px_7px_rgba(9,55,154,0.18)]
-                    cursor-pointer
                     transition
+
                     hover:bg-[#072E81]
+
+                    active:scale-[0.995]
+
+                    focus-visible:outline-none
+                    focus-visible:ring-4
+                    focus-visible:ring-[#09379A]/15
+
+                    sm:w-auto
+                    sm:min-w-[180px]
+
+                    xl:text-[13px]
                   "
                 >
-                  <span>التالي: رفع المستندات</span>
+                  <span>
+                    التالي: رفع المستندات
+                  </span>
 
                   <ArrowLeft
                     size={17}
@@ -1187,29 +1525,44 @@ export default function TrainingApplication() {
                   />
                 </button>
 
+                {/* CANCEL */}
                 <button
                   type="button"
                   onClick={handleCancel}
                   className="
-                    h-[38px]
-                    px-[15px]
+                    order-2
+                    flex
+                    h-[40px]
+                    w-full
+                    cursor-pointer
+                    items-center
+                    justify-center
+                    gap-[7px]
                     rounded-[7px]
                     border
                     border-[#B9D0FF]
                     bg-white
-                    text-[#2563EB]
-                    flex
-                    items-center
-                    justify-center
-                    gap-[7px]
-                    text-[12px]
+                    px-[15px]
+                    text-[11px]
                     font-bold
-                    cursor-pointer
+                    text-[#2563EB]
                     transition
+
                     hover:bg-[#F5F8FF]
+
+                    focus-visible:outline-none
+                    focus-visible:ring-4
+                    focus-visible:ring-[#2563EB]/10
+
+                    sm:w-auto
+
+                    xl:h-[38px]
+                    xl:text-[12px]
                   "
                 >
-                  <span>إلغاء والعودة للفرصة</span>
+                  <span>
+                    إلغاء والعودة للفرصة
+                  </span>
 
                   <ArrowRight
                     size={15}
@@ -1222,5 +1575,58 @@ export default function TrainingApplication() {
         </main>
       </div>
     </div>
+  );
+}
+
+/* =========================================================
+   FIELD ERROR
+========================================================= */
+
+function FieldError({
+  children,
+  noMargin = false,
+}) {
+  return (
+    <p
+      role="alert"
+      className={`
+        m-0
+        text-[8px]
+        leading-[14px]
+        text-[#DC2626]
+
+        xl:text-[9px]
+        xl:leading-[15px]
+
+        ${noMargin ? "" : "mt-[5px]"}
+      `}
+    >
+      {children}
+    </p>
+  );
+}
+
+/* =========================================================
+   FIELD HINT
+========================================================= */
+
+function FieldHint({
+  children,
+}) {
+  return (
+    <p
+      className="
+        m-0
+        mt-[5px]
+        text-[8px]
+        leading-[14px]
+        text-[#94A3B8]
+
+        xl:text-[9px]
+        xl:leading-[15px]
+      "
+    >
+      {children}
+    </p>
   );
 }

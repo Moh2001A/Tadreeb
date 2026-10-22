@@ -5,6 +5,7 @@ import TrainingOpportunities from "./pages/student/TrainingOpportunities";
 import TrainingDetails from "./pages/student/TrainingDetails";
 import TrainingApplication from "./pages/student/TrainingApplication";
 import TrainingDocuments from "./pages/student/TrainingDocuments";
+import Applications from "./pages/student/Applications";
 import ApplicationStatus from "./pages/student/ApplicationStatus";
 import TrainingAccepted from "./pages/student/TrainingAccepted";
 import TrainingProfile from "./pages/student/TrainingProfile";
@@ -81,8 +82,9 @@ function App() {
         <Route path="/student/opportunities/details" element={<TrainingDetails />} />
         <Route path="/student/apply-training" element={<TrainingApplication />} />
         <Route path="/student/apply-training/documents" element={<TrainingDocuments />} />
-        <Route path="/student/applications/status" element={<ApplicationStatus />} />
-        <Route path="/student/applications/accepted" element={<TrainingAccepted />} />
+        <Route path="/student/applications" element={<Applications />} />
+        <Route path="/student/applications/:id/status" element={<ApplicationStatus />} />
+        <Route path="/student/applications/:id/accepted" element={<TrainingAccepted />} />
         <Route path="/student/training-profile" element={<TrainingProfile />} />
         <Route path="/student/training-plan" element={<TrainingPlan />} />
         <Route path="/student/daily-training-log" element={<DailyTrainingLog />} />

@@ -40,7 +40,7 @@ export default function Sidebar() {
     {
       name: "طلباتي",
       icon: ClipboardList,
-      path: "/student/applications/status",
+      path: "/student/applications",
     },
     {
       name: "ملفي التدريبي",
