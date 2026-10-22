@@ -1,6 +1,17 @@
-import { Bell } from "lucide-react";
+import {
+  Bell,
+  Menu,
+} from "lucide-react";
 
 export default function Header() {
+  const openSidebar = () => {
+    window.dispatchEvent(
+      new Event(
+        "toggle-student-sidebar"
+      )
+    );
+  };
+
   return (
     <header
       className="
@@ -10,14 +21,19 @@ export default function Header() {
         shadow-[0_1px_4px_rgba(0,0,0,0.16)]
         flex
         items-center
-        px-[43px]
+        px-4
+        sm:px-6
+        lg:px-[43px]
         shrink-0
         relative
         z-20
       "
       dir="ltr"
     >
-      <div className="flex items-center">
+      {/* =========================================
+          LEFT SIDE - ORIGINAL HEADER CONTENT
+      ========================================== */}
+      <div className="flex items-center min-w-0">
         {/* Avatar */}
         <div
           className="
@@ -48,6 +64,7 @@ export default function Header() {
             min-w-[59px]
             text-right
             font-['Cairo']
+            shrink-0
           "
         >
           <p
@@ -85,6 +102,7 @@ export default function Header() {
             bg-[#E2E8F0]
             ml-[16px]
             mr-[15px]
+            shrink-0
           "
         />
 
@@ -104,9 +122,13 @@ export default function Header() {
             transition
             hover:bg-[#F8FAFC]
             hover:text-[#09379A]
+            shrink-0
           "
         >
-          <Bell size={20} strokeWidth={1.8} />
+          <Bell
+            size={20}
+            strokeWidth={1.8}
+          />
 
           <span
             className="
@@ -123,6 +145,40 @@ export default function Header() {
           />
         </button>
       </div>
+
+      {/* =========================================
+          MOBILE MENU BUTTON
+      ========================================== */}
+      <button
+        type="button"
+        aria-label="فتح القائمة"
+        onClick={openSidebar}
+        className="
+          ml-auto
+          w-[42px]
+          h-[42px]
+          rounded-[9px]
+          border
+          border-[#E2E8F0]
+          bg-white
+          text-[#09379A]
+          hidden
+          max-lg:flex
+          items-center
+          justify-center
+          shrink-0
+          cursor-pointer
+          transition
+          hover:bg-[#F8FAFC]
+          hover:border-[#C8D5E7]
+          active:scale-[0.97]
+        "
+      >
+        <Menu
+          size={22}
+          strokeWidth={1.8}
+        />
+      </button>
     </header>
   );
 }
