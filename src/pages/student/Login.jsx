@@ -223,6 +223,8 @@ export default function Login() {
           dir="rtl"
           className="
             min-h-dvh
+            overflow-x-hidden
+            overflow-y-auto
             bg-[#F8FAFC]
 
             lg:grid
@@ -250,7 +252,6 @@ export default function Login() {
               lg:hidden
             "
           >
-            {/* COLORED LOGO */}
             <img
               src="/logo-colored.svg"
               alt="شعار بوابة التدريب الميداني"
@@ -265,7 +266,6 @@ export default function Login() {
               "
             />
 
-            {/* PORTAL NAME */}
             <h2
               className="
                 m-0
@@ -283,7 +283,6 @@ export default function Login() {
               بوابة التدريب الميداني
             </h2>
 
-            {/* COLLEGE NAME */}
             <p
               className="
                 m-0
@@ -310,12 +309,15 @@ export default function Login() {
               min-h-0
               items-start
               justify-center
-              px-4
+
+              px-5
               pb-10
               pt-8
 
               sm:px-6
               sm:pt-10
+
+              md:px-8
 
               lg:items-center
               lg:justify-end
@@ -329,7 +331,11 @@ export default function Login() {
               onSubmit={handleSubmit}
               className="
                 w-full
-                max-w-[440px]
+                max-w-[420px]
+
+                sm:max-w-[430px]
+
+                lg:max-w-[440px]
               "
             >
               {/* WELCOME */}
@@ -388,10 +394,7 @@ export default function Login() {
                   "
                 >
                   <span>رقم الطالب</span>
-
-                  <span className="text-[#EB0909]">
-                    *
-                  </span>
+                  <span className="text-[#EB0909]">*</span>
                 </label>
 
                 <div className="relative mt-[9px]">
@@ -464,10 +467,7 @@ export default function Login() {
                   "
                 >
                   <span>كلمة المرور</span>
-
-                  <span className="text-[#EB0909]">
-                    *
-                  </span>
+                  <span className="text-[#EB0909]">*</span>
                 </label>
 
                 <div className="relative mt-[9px]">
@@ -684,11 +684,13 @@ export default function Login() {
               flex
               items-center
               justify-center
-              px-4
+              px-5
               pb-6
               text-center
 
               sm:px-6
+
+              md:px-8
 
               lg:px-10
               lg:pb-0
@@ -709,8 +711,7 @@ export default function Login() {
                 xl:text-[12px]
               "
             >
-              © 2027 كلية الدراسات المتوسطة - جامعة
-              الأزهر. جميع الحقوق محفوظة.
+              © 2027 كلية الدراسات المتوسطة - جامعة الأزهر. جميع الحقوق محفوظة.
             </p>
           </div>
         </section>

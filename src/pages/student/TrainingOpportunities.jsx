@@ -37,7 +37,7 @@ export default function TrainingOpportunities() {
       location: "غزة - الرمال",
       date: "2025/10/15",
       hours: "120 ساعة",
-      image: "/training-tech.jpg",
+      image: "/TrainingOpportunities-0.jpg",
       categoryBg: "#E6F8FB",
       categoryText: "#287E8C",
     },
@@ -49,7 +49,7 @@ export default function TrainingOpportunities() {
       location: "غزة",
       date: "2025/10/10",
       hours: "100 ساعة",
-      image: "/training-business.jpg",
+      image: "/TrainingOpportunities-1.jpg",
       categoryBg: "#FFF4D6",
       categoryText: "#A56A00",
     },
@@ -61,7 +61,7 @@ export default function TrainingOpportunities() {
       location: "غزة - الزيتون",
       date: "2025/10/20",
       hours: "150 ساعة",
-      image: "/training-medical.jpg",
+      image: "/TrainingOpportunities-2.jpg",
       categoryBg: "#E7F8EE",
       categoryText: "#26764A",
     },
@@ -92,96 +92,131 @@ export default function TrainingOpportunities() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
-        bg-white
+        bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
-      {/* =========================
+      {/* =====================================================
           SIDEBAR
-      ========================== */}
+      ====================================================== */}
       <Sidebar />
 
-      {/* =========================
+      {/* =====================================================
           MAIN AREA
-      ========================== */}
+      ====================================================== */}
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
-          bg-white
+          bg-[#F8FAFC]
         "
       >
-        {/* =========================
+        {/* =====================================================
             HEADER
-        ========================== */}
+        ====================================================== */}
         <div className="relative shrink-0">
           <Header />
-
-          {/* Breadcrumb */}
-          <div
-            className="
-              absolute
-              top-0
-              right-[40px]
-              h-[72px]
-              flex
-              items-center
-              gap-[8px]
-              text-[13px]
-              font-medium
-            "
-          >
-            <span className="text-[#64748B]">
-              الرئيسية
-            </span>
-
-            <span className="text-[#94A3B8]">
-              ›
-            </span>
-
-            <span className="font-bold text-[#09379A]">
-              فرص التدريب
-            </span>
-          </div>
         </div>
 
-        {/* =========================
+        {/* =====================================================
             SCROLLABLE CONTENT
-        ========================== */}
+        ====================================================== */}
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+            md:pt-7
+
             xl:px-[40px]
-            pt-[34px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
-          <div className="w-full max-w-[1080px] mx-auto">
+          <div className="mx-auto w-full max-w-[1080px]">
+            {/* =================================================
+                BREADCRUMB
+            ================================================== */}
+            <nav
+              aria-label="مسار التنقل"
+              className="
+                mb-2
+                flex
+                items-center
+                justify-start
+                gap-[7px]
+                text-[11px]
+                font-medium
 
-            {/* =========================
+                sm:text-[12px]
+
+                xl:mb-[5px]
+                xl:text-[13px]
+              "
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  navigate("/student/dashboard")
+                }
+                className="
+                  border-0
+                  bg-transparent
+                  p-0
+                  text-[#64748B]
+                  transition
+
+                  hover:text-[#09379A]
+                "
+              >
+                الرئيسية
+              </button>
+
+              <span className="text-[#94A3B8]">
+                ›
+              </span>
+
+              <span className="font-bold text-[#09379A]">
+                فرص التدريب
+              </span>
+            </nav>
+
+            {/* =================================================
                 PAGE TITLE
-            ========================== */}
+            ================================================== */}
             <section className="text-right">
               <h1
                 className="
                   m-0
-                  text-[28px]
-                  leading-[40px]
+                  text-[23px]
                   font-bold
+                  leading-[34px]
                   text-[#09379A]
+
+                  sm:text-[25px]
+
+                  xl:text-[28px]
+                  xl:leading-[40px]
                 "
               >
                 فرص التدريب
@@ -190,64 +225,94 @@ export default function TrainingOpportunities() {
               <p
                 className="
                   m-0
-                  mt-[4px]
-                  text-[15px]
-                  leading-[24px]
+                  mt-[2px]
+                  max-w-[680px]
+                  text-[13px]
                   font-normal
+                  leading-[22px]
                   text-[#475569]
+
+                  sm:text-[14px]
+
+                  xl:mt-[4px]
+                  xl:text-[15px]
+                  xl:leading-[24px]
                 "
               >
                 اكتشف الفرص التدريبية المناسبة لتخصصك وابدأ رحلتك المهنية
               </p>
             </section>
 
-            {/* =========================
+            {/* =================================================
                 SEARCH + FILTERS
-            ========================== */}
+            ================================================== */}
             <section
               className="
-                mt-[16px]
+                mt-4
                 w-full
-                min-h-[140px]
                 rounded-[14px]
                 border
                 border-[#E2E8F0]
                 bg-white
+                px-3
+                py-3
                 shadow-[0_1px_2px_rgba(15,23,42,0.04)]
-                px-[16px]
-                py-[15px]
+
+                sm:px-4
+                sm:py-4
+
+                xl:mt-[16px]
+                xl:min-h-[140px]
+                xl:px-[16px]
+                xl:py-[15px]
               "
             >
-              {/* Search row */}
+              {/* SEARCH ROW */}
               <div
                 dir="ltr"
                 className="
-                  w-full
                   flex
-                  items-center
-                  gap-[14px]
+                  w-full
+                  flex-col
+                  gap-3
+
+                  sm:flex-row
+                  sm:items-center
+
+                  xl:gap-[14px]
                 "
               >
-                {/* Filter Button */}
+                {/* FILTER BUTTON */}
                 <button
                   type="button"
                   className="
-                    w-[108px]
-                    h-[51px]
+                    order-2
+                    flex
+                    h-[46px]
+                    w-full
                     shrink-0
-                    rounded-[10px]
+                    items-center
+                    justify-center
+                    gap-[8px]
+                    rounded-[9px]
                     border
                     border-[#09379A]
                     bg-white
-                    text-[#09379A]
-                    flex
-                    items-center
-                    justify-center
-                    gap-[10px]
-                    text-[14px]
+                    text-[13px]
                     font-bold
+                    text-[#09379A]
                     transition
+
                     hover:bg-[#F5F7FB]
+
+                    sm:order-1
+                    sm:w-[100px]
+
+                    xl:h-[51px]
+                    xl:w-[108px]
+                    xl:gap-[10px]
+                    xl:rounded-[10px]
+                    xl:text-[14px]
                   "
                 >
                   <span>تصفية</span>
@@ -258,32 +323,41 @@ export default function TrainingOpportunities() {
                   />
                 </button>
 
-                {/* Search */}
+                {/* SEARCH */}
                 <div
                   dir="rtl"
                   className="
-                    flex-1
-                    h-[51px]
+                    order-1
+                    flex
+                    h-[46px]
                     min-w-0
+                    flex-1
+                    items-center
                     rounded-[8px]
                     border
                     border-[#D9E1EC]
                     bg-white
-                    flex
-                    items-center
-                    px-[16px]
+                    px-3
                     transition
+
                     focus-within:border-[#09379A]
                     focus-within:ring-2
                     focus-within:ring-[#09379A]/10
+
+                    sm:order-2
+
+                    xl:h-[51px]
+                    xl:px-[16px]
                   "
                 >
                   <Search
-                    size={20}
+                    size={19}
                     strokeWidth={1.8}
                     className="
                       shrink-0
                       text-[#64748B]
+
+                      xl:size-[20px]
                     "
                   />
 
@@ -295,31 +369,40 @@ export default function TrainingOpportunities() {
                     }
                     placeholder="ابحث عن فرصة تدريب..."
                     className="
-                      flex-1
-                      min-w-0
+                      mr-2
                       h-full
-                      mr-[10px]
+                      min-w-0
+                      flex-1
                       border-0
-                      outline-none
                       bg-transparent
-                      text-[14px]
+                      font-['Cairo']
+                      text-[13px]
                       font-normal
                       text-[#1E293B]
+                      outline-none
                       placeholder:text-[#94A3B8]
-                      font-['Cairo']
+
+                      xl:mr-[10px]
+                      xl:text-[14px]
                     "
                   />
                 </div>
               </div>
 
-              {/* Filters */}
+              {/* FILTERS */}
               <div
                 className="
-                  mt-[18px]
+                  mt-3
                   flex
+                  flex-wrap
                   items-center
                   justify-start
-                  gap-[7px]
+                  gap-[6px]
+
+                  sm:mt-4
+
+                  xl:mt-[18px]
+                  xl:gap-[7px]
                 "
               >
                 {filters.map((filter) => {
@@ -334,13 +417,21 @@ export default function TrainingOpportunities() {
                         setActiveFilter(filter)
                       }
                       className={`
-                        h-[38px]
-                        px-[19px]
-                        rounded-[11px]
+                        min-h-[34px]
+                        rounded-[9px]
                         border
-                        text-[13px]
+                        px-3
+                        text-[12px]
                         font-medium
                         transition-all
+
+                        sm:min-h-[36px]
+                        sm:px-4
+
+                        xl:h-[38px]
+                        xl:px-[19px]
+                        xl:rounded-[11px]
+                        xl:text-[13px]
 
                         ${
                           isActive
@@ -353,6 +444,7 @@ export default function TrainingOpportunities() {
                               border-[#E2E8F0]
                               bg-white
                               text-[#475569]
+
                               hover:border-[#09379A]/40
                               hover:bg-[#F8FAFC]
                             `
@@ -366,15 +458,18 @@ export default function TrainingOpportunities() {
               </div>
             </section>
 
-            {/* =========================
+            {/* =================================================
                 OPPORTUNITIES
-            ========================== */}
+            ================================================== */}
             <section
               className="
-                mt-[15px]
+                mt-4
                 flex
                 flex-col
-                gap-[14px]
+                gap-3
+
+                xl:mt-[15px]
+                xl:gap-[14px]
               "
             >
               {filteredOpportunities.length > 0 ? (
@@ -384,50 +479,72 @@ export default function TrainingOpportunities() {
                       key={opportunity.id}
                       className="
                         group
+                        flex
                         w-full
-                        min-h-[146px]
+                        flex-col
+                        gap-4
                         rounded-[14px]
                         border
                         border-[#DDE5EF]
                         bg-white
-                        px-[23px]
-                        py-[23px]
-                        flex
-                        items-center
-                        justify-between
+                        p-4
                         transition-all
                         duration-200
+
                         hover:border-[#09379A]/35
                         hover:shadow-[0_5px_18px_rgba(15,23,42,0.07)]
+
+                        sm:p-5
+
+                        md:flex-row
+                        md:items-center
+                        md:justify-between
+
+                        xl:min-h-[146px]
+                        xl:px-[23px]
+                        xl:py-[23px]
                       "
                     >
-                      {/* =====================
+                      {/* =====================================
                           INFORMATION SIDE
-                      ====================== */}
+                      ====================================== */}
                       <div
                         className="
                           flex
-                          items-center
                           min-w-0
+                          flex-1
+                          items-start
+
+                          sm:items-center
                         "
                       >
-                        {/* Image */}
+                        {/* IMAGE */}
                         <div
                           className="
-                            w-[120px]
-                            h-[96px]
+                            relative
+                            h-[78px]
+                            w-[92px]
                             shrink-0
-                            rounded-[10px]
                             overflow-hidden
+                            rounded-[9px]
                             bg-[#F5F7FB]
+
+                            sm:h-[88px]
+                            sm:w-[108px]
+
+                            xl:h-[96px]
+                            xl:w-[120px]
+                            xl:rounded-[10px]
                           "
                         >
                           <img
                             src={opportunity.image}
                             alt={opportunity.title}
                             className="
-                              w-full
+                              absolute
+                              inset-0
                               h-full
+                              w-full
                               object-cover
                             "
                             onError={(event) => {
@@ -438,48 +555,63 @@ export default function TrainingOpportunities() {
 
                           <div
                             className="
-                              w-full
-                              h-full
                               flex
+                              h-full
+                              w-full
                               items-center
                               justify-center
                               text-[#09379A]
                             "
                           >
                             <BriefcaseBusiness
-                              size={30}
+                              size={28}
                               strokeWidth={1.5}
                             />
                           </div>
                         </div>
 
-                        {/* Details */}
+                        {/* DETAILS */}
                         <div
                           className="
-                            mr-[17px]
+                            mr-3
                             min-w-0
+                            flex-1
                             text-right
+
+                            sm:mr-4
+
+                            xl:mr-[17px]
                           "
                         >
                           <h2
                             className="
                               m-0
-                              text-[18px]
-                              leading-[27px]
+                              text-[15px]
                               font-bold
+                              leading-[23px]
                               text-[#172033]
+
+                              sm:text-[16px]
+                              sm:leading-[25px]
+
+                              xl:text-[18px]
+                              xl:leading-[27px]
                             "
                           >
                             {opportunity.title}
                           </h2>
 
-                          {/* Chips */}
+                          {/* CHIPS */}
                           <div
                             className="
-                              mt-[6px]
+                              mt-[5px]
                               flex
+                              flex-wrap
                               items-center
-                              gap-[7px]
+                              gap-[5px]
+
+                              xl:mt-[6px]
+                              xl:gap-[7px]
                             "
                           >
                             <span
@@ -490,13 +622,22 @@ export default function TrainingOpportunities() {
                                   opportunity.categoryText,
                               }}
                               className="
-                                min-h-[30px]
-                                px-[13px]
-                                rounded-[10px]
                                 flex
+                                min-h-[25px]
                                 items-center
-                                text-[12px]
+                                rounded-[8px]
+                                px-2
+                                text-[10px]
                                 font-medium
+
+                                sm:min-h-[28px]
+                                sm:px-[10px]
+                                sm:text-[11px]
+
+                                xl:min-h-[30px]
+                                xl:px-[13px]
+                                xl:rounded-[10px]
+                                xl:text-[12px]
                               "
                             >
                               {opportunity.category}
@@ -504,44 +645,60 @@ export default function TrainingOpportunities() {
 
                             <span
                               className="
-                                min-h-[30px]
-                                px-[13px]
-                                rounded-[10px]
+                                flex
+                                min-h-[25px]
+                                items-center
+                                rounded-[8px]
                                 border
                                 border-[#E2E8F0]
                                 bg-[#F8FAFC]
-                                flex
-                                items-center
-                                text-[12px]
+                                px-2
+                                text-[10px]
                                 font-normal
                                 text-[#64748B]
+
+                                sm:min-h-[28px]
+                                sm:px-[10px]
+                                sm:text-[11px]
+
+                                xl:min-h-[30px]
+                                xl:px-[13px]
+                                xl:rounded-[10px]
+                                xl:text-[12px]
                               "
                             >
                               {opportunity.mode}
                             </span>
                           </div>
 
-                          {/* Metadata */}
+                          {/* METADATA */}
                           <div
                             className="
-                              mt-[11px]
+                              mt-2
                               flex
+                              flex-wrap
                               items-center
-                              gap-[20px]
-                              text-[11px]
+                              gap-x-3
+                              gap-y-1
+                              text-[10px]
                               font-normal
                               text-[#6B7280]
+
+                              sm:text-[11px]
+
+                              xl:mt-[11px]
+                              xl:gap-[20px]
                             "
                           >
                             <div
                               className="
                                 flex
                                 items-center
-                                gap-[5px]
+                                gap-[4px]
                               "
                             >
                               <MapPin
-                                size={15}
+                                size={14}
                                 strokeWidth={1.7}
                               />
 
@@ -554,11 +711,11 @@ export default function TrainingOpportunities() {
                               className="
                                 flex
                                 items-center
-                                gap-[5px]
+                                gap-[4px]
                               "
                             >
                               <CalendarDays
-                                size={15}
+                                size={14}
                                 strokeWidth={1.7}
                               />
 
@@ -571,11 +728,11 @@ export default function TrainingOpportunities() {
                               className="
                                 flex
                                 items-center
-                                gap-[5px]
+                                gap-[4px]
                               "
                             >
                               <Clock3
-                                size={15}
+                                size={14}
                                 strokeWidth={1.7}
                               />
 
@@ -587,9 +744,9 @@ export default function TrainingOpportunities() {
                         </div>
                       </div>
 
-                      {/* =====================
+                      {/* =====================================
                           DETAILS BUTTON
-                      ====================== */}
+                      ====================================== */}
                       <button
                         type="button"
                         onClick={() =>
@@ -598,30 +755,40 @@ export default function TrainingOpportunities() {
                           )
                         }
                         className="
-                          w-[145px]
-                          h-[46px]
+                          flex
+                          h-[42px]
+                          w-full
                           shrink-0
-                          rounded-[10px]
+                          items-center
+                          justify-center
+                          gap-[8px]
+                          rounded-[9px]
                           border
                           border-[#09379A]
                           bg-white
-                          text-[#09379A]
-                          flex
-                          items-center
-                          justify-center
-                          gap-[10px]
-                          text-[14px]
+                          text-[13px]
                           font-medium
+                          text-[#09379A]
                           transition
+
                           group-hover:bg-[#F5F7FB]
+
                           hover:!bg-[#09379A]
                           hover:!text-white
+
+                          md:w-[130px]
+
+                          xl:h-[46px]
+                          xl:w-[145px]
+                          xl:gap-[10px]
+                          xl:rounded-[10px]
+                          xl:text-[14px]
                         "
                       >
                         <span>عرض التفاصيل</span>
 
                         <ArrowLeft
-                          size={18}
+                          size={17}
                           strokeWidth={1.7}
                         />
                       </button>
@@ -629,39 +796,47 @@ export default function TrainingOpportunities() {
                   )
                 )
               ) : (
-                /* =========================
+                /* =================================================
                     EMPTY STATE
-                ========================== */
+                ================================================== */
                 <div
                   className="
+                    flex
+                    min-h-[220px]
                     w-full
-                    min-h-[250px]
+                    flex-col
+                    items-center
+                    justify-center
                     rounded-[14px]
                     border
                     border-[#E2E8F0]
                     bg-white
-                    flex
-                    flex-col
-                    items-center
-                    justify-center
+                    px-5
+                    py-8
                     text-center
-                    px-[24px]
+
+                    xl:min-h-[250px]
+                    xl:px-[24px]
                   "
                 >
                   <div
                     className="
-                      w-[52px]
-                      h-[52px]
-                      rounded-[12px]
-                      bg-[#F5F7FB]
                       flex
+                      h-[48px]
+                      w-[48px]
                       items-center
                       justify-center
+                      rounded-[11px]
+                      bg-[#F5F7FB]
                       text-[#09379A]
+
+                      xl:h-[52px]
+                      xl:w-[52px]
+                      xl:rounded-[12px]
                     "
                   >
                     <Search
-                      size={24}
+                      size={23}
                       strokeWidth={1.7}
                     />
                   </div>
@@ -669,11 +844,15 @@ export default function TrainingOpportunities() {
                   <h3
                     className="
                       m-0
-                      mt-[14px]
-                      text-[16px]
-                      leading-[24px]
+                      mt-3
+                      text-[15px]
                       font-bold
+                      leading-[23px]
                       text-[#1E293B]
+
+                      xl:mt-[14px]
+                      xl:text-[16px]
+                      xl:leading-[24px]
                     "
                   >
                     لا توجد فرص تدريب مطابقة
@@ -682,11 +861,15 @@ export default function TrainingOpportunities() {
                   <p
                     className="
                       m-0
-                      mt-[5px]
-                      text-[13px]
-                      leading-[20px]
+                      mt-1
+                      text-[12px]
                       font-normal
+                      leading-[19px]
                       text-[#64748B]
+
+                      xl:mt-[5px]
+                      xl:text-[13px]
+                      xl:leading-[20px]
                     "
                   >
                     جرّب تغيير كلمة البحث أو اختيار تصنيف آخر
@@ -699,19 +882,25 @@ export default function TrainingOpportunities() {
                       setActiveFilter("الكل");
                     }}
                     className="
-                      mt-[16px]
-                      h-[38px]
-                      px-[18px]
-                      rounded-[9px]
+                      mt-4
+                      h-[36px]
+                      rounded-[8px]
                       border
                       border-[#09379A]
                       bg-white
-                      text-[#09379A]
-                      text-[13px]
+                      px-4
+                      text-[12px]
                       font-medium
+                      text-[#09379A]
                       transition
+
                       hover:bg-[#09379A]
                       hover:text-white
+
+                      xl:h-[38px]
+                      xl:px-[18px]
+                      xl:rounded-[9px]
+                      xl:text-[13px]
                     "
                   >
                     إعادة ضبط البحث

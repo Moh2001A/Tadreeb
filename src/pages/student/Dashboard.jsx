@@ -99,84 +99,104 @@ export default function Dashboard() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
-        bg-white
+        bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
       {/* =====================================================
           SIDEBAR
-          ثابت خارج منطقة الـ Scroll
       ====================================================== */}
       <Sidebar />
 
       {/* =====================================================
-          RIGHT / MAIN SIDE
+          MAIN SIDE
       ====================================================== */}
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
-          bg-white
+          bg-[#F8FAFC]
         "
       >
-        {/* =====================================================
-            HEADER
-            ثابت كذلك
-        ====================================================== */}
+        {/* HEADER */}
         <Header />
 
         {/* =====================================================
-            SCROLLABLE CONTENT ONLY
+            SCROLLABLE CONTENT
         ====================================================== */}
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-6
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+            md:pb-7
+            md:pt-7
+
             xl:px-[40px]
-            pt-[32px]
-            pb-[30px]
+            xl:pb-[30px]
+            xl:pt-[32px]
           "
         >
-          {/* ===================================================
-              CONTENT CONTAINER
-              1080px عند عرض Figma
-          ==================================================== */}
-          <div className="w-full max-w-[1080px] mx-auto">
+          <div className="mx-auto w-full max-w-[1080px]">
             {/* =================================================
                 WELCOME BANNER
             ================================================== */}
             <section
               className="
-                w-full
-                h-[148px]
-                rounded-[16px]
-                bg-[#09379A]
-                px-[40px]
                 flex
+                w-full
+                min-h-[118px]
                 items-center
+                rounded-[14px]
+                bg-[#09379A]
+                px-5
+                py-5
                 text-white
+
+                sm:min-h-[128px]
+                sm:px-6
+
+                md:min-h-[138px]
+                md:px-8
+
+                xl:h-[148px]
+                xl:px-[40px]
+                xl:py-0
               "
             >
               <div className="w-full text-right">
                 <h1
                   className="
                     m-0
-                    text-[24px]
-                    leading-[30px]
+                    text-[20px]
                     font-bold
+                    leading-[29px]
                     text-white
+
+                    sm:text-[22px]
+                    sm:leading-[30px]
+
+                    xl:text-[24px]
                   "
                 >
                   مرحباً أمل
@@ -185,11 +205,18 @@ export default function Dashboard() {
                 <p
                   className="
                     m-0
-                    mt-[8px]
-                    text-[14px]
-                    leading-[18px]
+                    mt-[6px]
+                    max-w-[520px]
+                    text-[12px]
                     font-medium
-                    text-white
+                    leading-[20px]
+                    text-white/95
+
+                    sm:mt-[8px]
+                    sm:text-[13px]
+                    sm:leading-[21px]
+
+                    xl:text-[14px]
                   "
                 >
                   نتمنى لك رحلة تدريبية مليئة بالنجاح والتميز
@@ -202,12 +229,21 @@ export default function Dashboard() {
             ================================================== */}
             <section
               className="
-                mt-[24px]
-                w-full
+                mt-4
                 grid
-                grid-cols-2
+                w-full
+                grid-cols-1
+                gap-3
+
+                min-[420px]:grid-cols-2
+
+                sm:mt-5
+                sm:gap-4
+
                 lg:grid-cols-4
-                gap-[24px]
+
+                xl:mt-[24px]
+                xl:gap-[24px]
               "
             >
               {statistics.map((item) => {
@@ -217,53 +253,66 @@ export default function Dashboard() {
                   <article
                     key={item.title}
                     className="
-                      w-full
-                      h-[93px]
+                      flex
+                      min-h-[88px]
                       min-w-0
-                      rounded-[14px]
+                      items-center
+                      rounded-[12px]
                       border
                       border-[#E2E8F0]
                       bg-white
+                      px-4
+                      py-4
                       shadow-[0_1px_1.5px_rgba(0,0,0,0.03)]
-                      px-[21px]
-                      flex
-                      items-center
+
+                      sm:min-h-[92px]
+                      sm:px-[18px]
+
+                      xl:h-[93px]
+                      xl:px-[21px]
+                      xl:py-0
                     "
                   >
                     <div
                       className="
-                        w-[40px]
+                        flex
                         h-[40px]
+                        w-[40px]
                         shrink-0
+                        items-center
+                        justify-center
                         rounded-[10px]
                         border
                         border-[#E2E8F0]/60
                         bg-[#F8FAFC]
-                        flex
-                        items-center
-                        justify-center
                         text-[#09379A]
                       "
                     >
-                      <Icon size={24} strokeWidth={1.8} />
+                      <Icon size={22} strokeWidth={1.8} />
                     </div>
 
                     <div
                       className="
-                        mr-[16px]
-                        flex-1
+                        mr-3
                         min-w-0
+                        flex-1
                         text-right
+
+                        xl:mr-[16px]
                       "
                     >
                       <p
                         className="
                           m-0
-                          text-[14px]
-                          leading-[18px]
+                          text-[12px]
                           font-medium
+                          leading-[18px]
                           text-[#64748B]
-                          whitespace-nowrap
+
+                          sm:text-[13px]
+
+                          xl:text-[14px]
+                          xl:whitespace-nowrap
                         "
                       >
                         {item.title}
@@ -272,11 +321,17 @@ export default function Dashboard() {
                       <p
                         className="
                           m-0
-                          mt-[3px]
-                          text-[24px]
-                          leading-[32px]
+                          mt-[2px]
+                          text-[21px]
                           font-bold
+                          leading-[30px]
                           text-[#1E293B]
+
+                          sm:text-[22px]
+
+                          xl:mt-[3px]
+                          xl:text-[24px]
+                          xl:leading-[32px]
                         "
                       >
                         {item.value}
@@ -289,19 +344,23 @@ export default function Dashboard() {
 
             {/* =================================================
                 LOWER CARDS
-                Notifications = Left
-                Opportunities = Right
             ================================================== */}
             <section
               dir="ltr"
               className="
-                mt-[24px]
-                w-full
+                mt-4
                 grid
+                w-full
                 grid-cols-1
-                lg:grid-cols-[440fr_616fr]
-                gap-[24px]
                 items-start
+                gap-4
+
+                sm:mt-5
+
+                lg:grid-cols-[440fr_616fr]
+
+                xl:mt-[24px]
+                xl:gap-[24px]
               "
             >
               {/* =================================================
@@ -311,36 +370,52 @@ export default function Dashboard() {
                 dir="rtl"
                 className="
                   w-full
-                  h-[376px]
                   min-w-0
+                  overflow-hidden
                   rounded-[14px]
                   border
                   border-[#E2E8F0]
                   bg-white
+                  px-4
+                  pt-4
                   shadow-[0_1px_1.5px_rgba(0,0,0,0.03)]
-                  px-[24px]
-                  pt-[24px]
-                  overflow-hidden
+
+                  sm:px-5
+                  sm:pt-5
+
+                  lg:h-[376px]
+
+                  xl:px-[24px]
+                  xl:pt-[24px]
                 "
               >
-                {/* HEADER */}
                 <div
                   className="
-                    h-[52px]
-                    border-b
-                    border-[#E2E8F0]
                     flex
+                    min-h-[48px]
                     items-start
                     justify-between
+                    gap-3
+                    border-b
+                    border-[#E2E8F0]
+                    pb-3
+
+                    sm:min-h-[52px]
                   "
                 >
                   <h2
                     className="
                       m-0
-                      text-[18px]
-                      leading-[26px]
+                      min-w-0
+                      text-[16px]
                       font-bold
+                      leading-[25px]
                       text-[#1E293B]
+
+                      sm:text-[17px]
+
+                      xl:text-[18px]
+                      xl:leading-[26px]
                     "
                   >
                     آخر الإشعارات
@@ -352,33 +427,41 @@ export default function Dashboard() {
                       navigate("/student/notifications")
                     }
                     className="
-                      h-[36px]
-                      px-[16px]
-                      rounded-[10px]
+                      flex
+                      h-[34px]
+                      shrink-0
+                      items-center
+                      justify-center
+                      gap-[4px]
+                      rounded-[9px]
                       border
                       border-[#09379A]
                       bg-white
-                      text-[#09379A]
-                      flex
-                      items-center
-                      justify-center
-                      gap-[6px]
-                      text-[14px]
+                      px-3
+                      text-[12px]
                       font-normal
+                      text-[#09379A]
                       transition
                       hover:bg-[#F8FAFC]
+
+                      sm:h-[36px]
+                      sm:gap-[6px]
+                      sm:px-[14px]
+                      sm:text-[13px]
+
+                      xl:px-[16px]
+                      xl:text-[14px]
                     "
                   >
                     <span>عرض الكل</span>
 
                     <ChevronLeft
-                      size={16}
+                      size={15}
                       strokeWidth={1.8}
                     />
                   </button>
                 </div>
 
-                {/* CONTENT */}
                 {notifications.length > 0 ? (
                   <div>
                     {notifications.map(
@@ -392,15 +475,19 @@ export default function Dashboard() {
                             )
                           }
                           className={`
-                            w-full
-                            h-[72px]
-                            px-[8px]
-                            bg-white
                             flex
+                            min-h-[70px]
+                            w-full
                             items-center
+                            bg-white
+                            px-1
+                            py-3
                             text-right
                             transition
                             hover:bg-[#F8FAFC]
+
+                            sm:min-h-[72px]
+                            sm:px-[8px]
 
                             ${
                               index !==
@@ -412,14 +499,14 @@ export default function Dashboard() {
                         >
                           <div
                             className="
-                              w-[32px]
-                              h-[32px]
-                              shrink-0
-                              rounded-[8px]
-                              bg-[#EEF2F8]
                               flex
+                              h-[32px]
+                              w-[32px]
+                              shrink-0
                               items-center
                               justify-center
+                              rounded-[8px]
+                              bg-[#EEF2F8]
                               text-[#09379A]
                             "
                           >
@@ -431,19 +518,26 @@ export default function Dashboard() {
 
                           <div
                             className="
-                              mr-[12px]
-                              flex-1
+                              mr-[10px]
                               min-w-0
+                              flex-1
+
+                              sm:mr-[12px]
                             "
                           >
                             <p
                               className="
                                 m-0
-                                text-[13px]
-                                leading-[19px]
+                                line-clamp-2
+                                text-[12px]
                                 font-semibold
+                                leading-[18px]
                                 text-[#1E293B]
-                                truncate
+
+                                sm:text-[13px]
+                                sm:leading-[19px]
+
+                                md:truncate
                               "
                             >
                               {notification.title}
@@ -454,11 +548,11 @@ export default function Dashboard() {
                               className="
                                 m-0
                                 mt-[2px]
-                                text-[10px]
-                                leading-[14px]
-                                font-normal
-                                text-[#94A3B8]
                                 text-right
+                                text-[10px]
+                                font-normal
+                                leading-[14px]
+                                text-[#94A3B8]
                               "
                             >
                               {notification.date}
@@ -468,12 +562,12 @@ export default function Dashboard() {
                           {notification.unread && (
                             <span
                               className="
-                                w-[6px]
+                                ml-[4px]
                                 h-[6px]
+                                w-[6px]
                                 shrink-0
                                 rounded-full
                                 bg-[#FF6B35]
-                                ml-[4px]
                               "
                             />
                           )}
@@ -484,25 +578,28 @@ export default function Dashboard() {
                 ) : (
                   <div
                     className="
-                      h-[270px]
                       flex
+                      min-h-[220px]
                       flex-col
                       items-center
                       justify-center
+                      py-8
                       text-center
                       text-[#64748B]
+
+                      lg:h-[270px]
                     "
                   >
                     <div
                       className="
-                        w-[44px]
-                        h-[44px]
-                        rounded-[10px]
-                        bg-[#F8FAFC]
+                        mb-[12px]
                         flex
+                        h-[44px]
+                        w-[44px]
                         items-center
                         justify-center
-                        mb-[12px]
+                        rounded-[10px]
+                        bg-[#F8FAFC]
                       "
                     >
                       <BellOff
@@ -515,8 +612,8 @@ export default function Dashboard() {
                       className="
                         m-0
                         text-[13px]
-                        leading-[20px]
                         font-medium
+                        leading-[20px]
                       "
                     >
                       لا توجد إشعارات جديدة حالياً
@@ -532,36 +629,52 @@ export default function Dashboard() {
                 dir="rtl"
                 className="
                   w-full
-                  h-[376px]
                   min-w-0
+                  overflow-hidden
                   rounded-[14px]
                   border
                   border-[#E2E8F0]
                   bg-white
+                  px-4
+                  pt-4
                   shadow-[0_1px_1.5px_rgba(0,0,0,0.03)]
-                  px-[24px]
-                  pt-[24px]
-                  overflow-hidden
+
+                  sm:px-5
+                  sm:pt-5
+
+                  lg:h-[376px]
+
+                  xl:px-[24px]
+                  xl:pt-[24px]
                 "
               >
-                {/* HEADER */}
                 <div
                   className="
-                    h-[52px]
-                    border-b
-                    border-[#E2E8F0]
                     flex
+                    min-h-[48px]
                     items-start
                     justify-between
+                    gap-3
+                    border-b
+                    border-[#E2E8F0]
+                    pb-3
+
+                    sm:min-h-[52px]
                   "
                 >
                   <h2
                     className="
                       m-0
-                      text-[18px]
-                      leading-[26px]
+                      min-w-0
+                      text-[16px]
                       font-bold
+                      leading-[25px]
                       text-[#1E293B]
+
+                      sm:text-[17px]
+
+                      xl:text-[18px]
+                      xl:leading-[26px]
                     "
                   >
                     فرص تدريب مقترحة لك
@@ -573,33 +686,41 @@ export default function Dashboard() {
                       navigate("/student/opportunities")
                     }
                     className="
-                      h-[36px]
-                      px-[16px]
-                      rounded-[10px]
+                      flex
+                      h-[34px]
+                      shrink-0
+                      items-center
+                      justify-center
+                      gap-[4px]
+                      rounded-[9px]
                       border
                       border-[#09379A]
                       bg-white
-                      text-[#09379A]
-                      flex
-                      items-center
-                      justify-center
-                      gap-[6px]
-                      text-[14px]
+                      px-3
+                      text-[12px]
                       font-normal
+                      text-[#09379A]
                       transition
                       hover:bg-[#F8FAFC]
+
+                      sm:h-[36px]
+                      sm:gap-[6px]
+                      sm:px-[14px]
+                      sm:text-[13px]
+
+                      xl:px-[16px]
+                      xl:text-[14px]
                     "
                   >
                     <span>عرض الكل</span>
 
                     <ChevronLeft
-                      size={16}
+                      size={15}
                       strokeWidth={1.8}
                     />
                   </button>
                 </div>
 
-                {/* ROWS */}
                 <div>
                   {opportunities.map(
                     (opportunity, index) => {
@@ -615,16 +736,22 @@ export default function Dashboard() {
                             )
                           }
                           className={`
+                            flex
+                            min-h-[86px]
                             w-full
-                            h-[88px]
-                            px-[10px]
+                            items-center
                             rounded-[10px]
                             bg-white
-                            flex
-                            items-center
+                            px-1
+                            py-3
                             text-right
                             transition
                             hover:bg-[#F8FAFC]
+
+                            sm:px-[8px]
+
+                            lg:h-[88px]
+                            lg:py-0
 
                             ${
                               index !==
@@ -634,7 +761,6 @@ export default function Dashboard() {
                             }
                           `}
                         >
-                          {/* ICON */}
                           <div
                             style={{
                               backgroundColor:
@@ -643,39 +769,51 @@ export default function Dashboard() {
                                 opportunity.iconBorder,
                             }}
                             className="
-                              w-[48px]
-                              h-[48px]
-                              shrink-0
-                              rounded-[10px]
-                              border
                               flex
+                              h-[44px]
+                              w-[44px]
+                              shrink-0
                               items-center
                               justify-center
+                              rounded-[10px]
+                              border
                               text-[#09379A]
+
+                              sm:h-[48px]
+                              sm:w-[48px]
                             "
                           >
                             <Icon
-                              size={24}
+                              size={22}
                               strokeWidth={1.8}
                             />
                           </div>
 
-                          {/* TEXT */}
                           <div
                             className="
-                              mr-[14px]
-                              flex-1
+                              mr-3
                               min-w-0
+                              flex-1
+
+                              sm:mr-[14px]
                             "
                           >
                             <h3
                               className="
                                 m-0
-                                text-[16px]
-                                leading-[23px]
+                                line-clamp-2
+                                text-[14px]
                                 font-semibold
+                                leading-[21px]
                                 text-[#1E293B]
-                                truncate
+
+                                sm:text-[15px]
+                                sm:leading-[22px]
+
+                                md:truncate
+
+                                xl:text-[16px]
+                                xl:leading-[23px]
                               "
                             >
                               {opportunity.title}
@@ -685,27 +823,35 @@ export default function Dashboard() {
                               className="
                                 mt-[5px]
                                 flex
+                                flex-wrap
                                 items-center
-                                gap-[8px]
+                                gap-[6px]
+
+                                sm:gap-[8px]
                               "
                             >
-                              {/* FIELD */}
                               <span
                                 style={{
                                   backgroundColor:
                                     opportunity.chipBg,
                                 }}
                                 className="
-                                  h-[24px]
-                                  px-[10px]
-                                  rounded-[10px]
                                   flex
+                                  min-h-[23px]
                                   items-center
                                   gap-[5px]
-                                  text-[12px]
-                                  leading-[18px]
+                                  rounded-[9px]
+                                  px-2
+                                  text-[10px]
+                                  leading-[17px]
                                   text-[#1E293B]
-                                  whitespace-nowrap
+
+                                  sm:h-[24px]
+                                  sm:px-[10px]
+                                  sm:text-[11px]
+
+                                  xl:text-[12px]
+                                  xl:leading-[18px]
                                 "
                               >
                                 <span
@@ -714,31 +860,36 @@ export default function Dashboard() {
                                       opportunity.chipDot,
                                   }}
                                   className="
-                                    w-[5px]
                                     h-[5px]
-                                    rounded-full
+                                    w-[5px]
                                     shrink-0
+                                    rounded-full
                                   "
                                 />
 
                                 {opportunity.field}
                               </span>
 
-                              {/* TYPE */}
                               <span
                                 className="
-                                  h-[24px]
-                                  px-[10px]
-                                  rounded-[10px]
+                                  flex
+                                  min-h-[23px]
+                                  items-center
+                                  rounded-[9px]
                                   border
                                   border-[#E2E8F0]
                                   bg-white
-                                  flex
-                                  items-center
-                                  text-[12px]
-                                  leading-[18px]
+                                  px-2
+                                  text-[10px]
+                                  leading-[17px]
                                   text-[#64748B]
-                                  whitespace-nowrap
+
+                                  sm:h-[24px]
+                                  sm:px-[10px]
+                                  sm:text-[11px]
+
+                                  xl:text-[12px]
+                                  xl:leading-[18px]
                                 "
                               >
                                 {opportunity.type}
@@ -746,14 +897,16 @@ export default function Dashboard() {
                             </div>
                           </div>
 
-                          {/* ARROW */}
                           <ChevronLeft
-                            size={20}
+                            size={18}
                             strokeWidth={1.8}
                             className="
-                              mr-[8px]
+                              mr-1
                               shrink-0
                               text-[#94A3B8]
+
+                              sm:mr-[8px]
+                              sm:size-[20px]
                             "
                           />
                         </button>
@@ -769,34 +922,48 @@ export default function Dashboard() {
             ================================================== */}
             <footer
               className="
-                mt-[24px]
-                w-full
+                mt-5
                 flex
-                flex-wrap
+                w-full
+                flex-col
                 items-center
-                justify-between
-                gap-[12px]
-                text-[12px]
-                leading-[18px]
+                gap-3
+                text-center
+                text-[11px]
                 font-normal
+                leading-[18px]
                 text-[#64748B]
+
+                sm:flex-row
+                sm:flex-wrap
+                sm:justify-between
+                sm:text-right
+                sm:text-[12px]
+
+                xl:mt-[24px]
               "
             >
               <div
                 className="
                   flex
+                  flex-wrap
                   items-center
-                  gap-[16px]
+                  justify-center
+                  gap-x-3
+                  gap-y-2
+
+                  sm:justify-start
+                  sm:gap-x-[16px]
                 "
               >
                 <button
                   type="button"
                   className="
+                    cursor-pointer
                     border-0
                     bg-transparent
                     p-0
                     text-[#09379A]
-                    cursor-pointer
                     hover:underline
                   "
                 >
@@ -808,11 +975,11 @@ export default function Dashboard() {
                 <button
                   type="button"
                   className="
+                    cursor-pointer
                     border-0
                     bg-transparent
                     p-0
                     text-[#09379A]
-                    cursor-pointer
                     hover:underline
                   "
                 >
@@ -820,7 +987,7 @@ export default function Dashboard() {
                 </button>
               </div>
 
-              <p className="m-0 text-right">
+              <p className="m-0 text-center sm:text-right">
                 جميع الحقوق محفوظة © {currentYear} كلية
                 الدراسات المتوسطة - جامعة الأزهر - غزة
               </p>

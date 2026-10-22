@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -14,6 +15,7 @@ import {
   Users,
   Award,
   XCircle,
+  SlidersHorizontal,
 } from "lucide-react";
 
 import Header from "../../components/student/Header";
@@ -29,7 +31,9 @@ export default function TrainingDetails() {
     applied   = تم التقديم مسبقاً
     closed    = انتهى موعد التقديم
   */
-  const applicationStatus = "available";
+
+  const [applicationStatus, setApplicationStatus] =
+    useState("available");
 
   const requirements = [
     "اجتياز ما لا يقل عن 36 ساعة دراسية",
@@ -87,7 +91,8 @@ export default function TrainingDetails() {
     applicationState[applicationStatus] ||
     applicationState.available;
 
-  const ApplicationIcon = currentApplicationState.icon;
+  const ApplicationIcon =
+    currentApplicationState.icon;
 
   const handleApply = () => {
     if (applicationStatus !== "available") {
@@ -101,128 +106,157 @@ export default function TrainingDetails() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
-        bg-white
+        bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
-      {/* =========================================
+      {/* =====================================================
           SIDEBAR
-      ========================================== */}
+      ====================================================== */}
       <Sidebar />
 
-      {/* =========================================
+      {/* =====================================================
           MAIN AREA
-      ========================================== */}
+      ====================================================== */}
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
-          bg-white
+          bg-[#F8FAFC]
         "
       >
-        {/* =========================================
+        {/* =====================================================
             HEADER
-        ========================================== */}
+        ====================================================== */}
         <div className="relative shrink-0">
           <Header />
-
-          {/* Breadcrumb */}
-          <div
-            className="
-              absolute
-              top-0
-              right-[40px]
-              h-[72px]
-              flex
-              items-center
-              gap-[8px]
-              text-[13px]
-            "
-          >
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/student/dashboard")
-              }
-              className="
-                border-0
-                bg-transparent
-                p-0
-                text-[#64748B]
-                font-medium
-                cursor-pointer
-              "
-            >
-              الرئيسية
-            </button>
-
-            <span className="text-[#94A3B8]">
-              ›
-            </span>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/student/opportunities")
-              }
-              className="
-                border-0
-                bg-transparent
-                p-0
-                text-[#09379A]
-                font-bold
-                cursor-pointer
-              "
-            >
-              فرص التدريب
-            </button>
-          </div>
         </div>
 
-        {/* =========================================
+        {/* =====================================================
             SCROLLABLE CONTENT
-        ========================================== */}
+        ====================================================== */}
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+            md:pt-7
+
             xl:px-[40px]
-            pt-[34px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
-          <div className="w-full max-w-[1080px] mx-auto">
-            {/* =====================================
+          <div className="mx-auto w-full max-w-[1080px]">
+            {/* =================================================
+                BREADCRUMB
+            ================================================== */}
+            <nav
+              aria-label="مسار التنقل"
+              className="
+                mb-2
+                flex
+                items-center
+                gap-[7px]
+                text-[11px]
+                font-medium
+
+                sm:text-[12px]
+
+                xl:mb-[5px]
+                xl:text-[13px]
+              "
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  navigate("/student/dashboard")
+                }
+                className="
+                  cursor-pointer
+                  border-0
+                  bg-transparent
+                  p-0
+                  text-[#64748B]
+                  transition
+
+                  hover:text-[#09379A]
+                "
+              >
+                الرئيسية
+              </button>
+
+              <span className="text-[#94A3B8]">
+                ›
+              </span>
+
+              <button
+                type="button"
+                onClick={() =>
+                  navigate("/student/opportunities")
+                }
+                className="
+                  cursor-pointer
+                  border-0
+                  bg-transparent
+                  p-0
+                  font-bold
+                  text-[#09379A]
+                "
+              >
+                فرص التدريب
+              </button>
+            </nav>
+
+            {/* =================================================
                 PAGE HEADING
-            ====================================== */}
+            ================================================== */}
             <section
               className="
                 flex
+                flex-col
                 items-start
                 justify-between
-                gap-[24px]
+                gap-4
+
+                md:flex-row
+                md:gap-6
               "
             >
-              <div className="text-right">
+              {/* TITLE */}
+              <div className="min-w-0 text-right">
                 <h1
                   className="
                     m-0
-                    text-[28px]
-                    leading-[40px]
+                    text-[23px]
                     font-bold
+                    leading-[34px]
                     text-[#09379A]
+
+                    sm:text-[25px]
+
+                    xl:text-[28px]
+                    xl:leading-[40px]
                   "
                 >
                   تفاصيل فرصة التدريب
@@ -232,10 +266,17 @@ export default function TrainingDetails() {
                   className="
                     m-0
                     mt-[3px]
-                    text-[14px]
-                    leading-[23px]
+                    max-w-[680px]
+                    text-[12px]
                     font-normal
+                    leading-[21px]
                     text-[#64748B]
+
+                    sm:text-[13px]
+                    sm:leading-[22px]
+
+                    xl:text-[14px]
+                    xl:leading-[23px]
                   "
                 >
                   استعراض كافة متطلبات البرنامج التدريبي
@@ -243,27 +284,39 @@ export default function TrainingDetails() {
                 </p>
               </div>
 
+              {/* TOP BACK BUTTON */}
               <button
                 type="button"
                 onClick={() =>
                   navigate("/student/opportunities")
                 }
                 className="
-                  h-[42px]
-                  px-[14px]
-                  shrink-0
-                  border-0
-                  bg-transparent
-                  text-[#09379A]
                   flex
-                  items-center
-                  gap-[8px]
-                  text-[14px]
-                  font-bold
+                  h-[40px]
+                  shrink-0
                   cursor-pointer
-                  hover:bg-[#F8FAFC]
+                  items-center
+                  justify-center
+                  gap-[7px]
                   rounded-[9px]
+                  border
+                  border-[#E8EDF4]
+                  bg-white
+                  px-3
+                  text-[12px]
+                  font-bold
+                  text-[#09379A]
+                  shadow-[0_1px_2px_rgba(15,23,42,0.03)]
                   transition
+
+                  hover:border-[#C9D5E8]
+                  hover:bg-[#F8FAFC]
+
+                  sm:h-[42px]
+                  sm:px-[14px]
+                  sm:text-[13px]
+
+                  xl:text-[14px]
                 "
               >
                 <ArrowRight
@@ -277,346 +330,602 @@ export default function TrainingDetails() {
               </button>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 TWO COLUMN LAYOUT
-            ====================================== */}
+            ================================================== */}
             <section
               dir="ltr"
               className="
-                mt-[24px]
-                w-full
+                mt-5
                 grid
+                w-full
                 grid-cols-1
-                lg:grid-cols-[330px_minmax(0,1fr)]
-                gap-[24px]
                 items-start
+                gap-5
+
+                lg:grid-cols-[280px_minmax(0,1fr)]
+
+                xl:mt-[24px]
+                xl:grid-cols-[330px_minmax(0,1fr)]
+                xl:gap-[24px]
               "
             >
-              {/* ===================================
+              {/* =================================================
                   LEFT COLUMN
-              ==================================== */}
-              <aside
-                dir="rtl"
-                className="
-                  w-full
-                  rounded-[14px]
-                  border
-                  border-[#E2E8F0]
-                  bg-white
-                  px-[24px]
-                  py-[24px]
-                "
-              >
-                {/* Supervision heading */}
-                <div
-                  className="
-                    pb-[15px]
-                    border-b
-                    border-[#E2E8F0]
-                    flex
-                    items-center
-                    justify-start
-                    gap-[10px]
-                  "
-                >
-                  <Building2
-                    size={21}
-                    strokeWidth={1.8}
-                    className="
-                      text-[#09379A]
-                      shrink-0
-                    "
-                  />
-
-                  <h2
-                    className="
-                      m-0
-                      text-[18px]
-                      leading-[26px]
-                      font-bold
-                      text-[#1E293B]
-                    "
-                  >
-                    الإشراف الكلية
-                  </h2>
-                </div>
-
-                {/* Supervisor */}
-                <div
-                  className="
-                    mt-[16px]
-                    min-h-[118px]
-                    rounded-[12px]
-                    border
-                    border-[#C9D7FF]
-                    bg-[#EEF3FF]
-                    px-[16px]
-                    py-[18px]
-                    flex
-                    items-center
-                  "
-                >
-                  <div
-                    className="
-                      w-[42px]
-                      h-[42px]
-                      shrink-0
-                      rounded-full
-                      bg-[#09379A]
-                      flex
-                      items-center
-                      justify-center
-                      text-white
-                    "
-                  >
-                    <UserRound
-                      size={20}
-                      strokeWidth={1.8}
-                    />
-                  </div>
-
-                  <div className="mr-[12px] text-right">
-                    <p
-                      className="
-                        m-0
-                        text-[11px]
-                        leading-[17px]
-                        text-[#64748B]
-                      "
-                    >
-                      المشرف الأكاديمي للقسم:
-                    </p>
-
-                    <h3
-                      className="
-                        m-0
-                        mt-[3px]
-                        text-[14px]
-                        leading-[21px]
-                        font-bold
-                        text-[#09379A]
-                      "
-                    >
-                      د. سمير مصطفى خليل
-                    </h3>
-
-                    <p
-                      className="
-                        m-0
-                        mt-[2px]
-                        text-[11px]
-                        leading-[17px]
-                        text-[#64748B]
-                      "
-                    >
-                      قسم تكنولوجيا المعلومات
-                    </p>
-
-                    <p
-                      className="
-                        m-0
-                        text-[11px]
-                        leading-[17px]
-                        text-[#64748B]
-                      "
-                    >
-                      والوسائط المتعددة
-                    </p>
-                  </div>
-                </div>
-
-                {/* Requirements */}
-                <div className="mt-[20px]">
-                  <h3
-                    className="
-                      m-0
-                      text-[13px]
-                      leading-[20px]
-                      font-bold
-                      text-[#1E293B]
-                    "
-                  >
-                    متطلبات القبول بالبرنامج:
-                  </h3>
-
-                  <div
-                    className="
-                      mt-[11px]
-                      flex
-                      flex-col
-                      gap-[10px]
-                    "
-                  >
-                    {requirements.map((item) => (
-                      <div
-                        key={item}
-                        className="
-                          flex
-                          items-start
-                          gap-[8px]
-                        "
-                      >
-                        <CheckCircle2
-                          size={17}
-                          strokeWidth={1.8}
-                          className="
-                            mt-[1px]
-                            shrink-0
-                            text-[#10B981]
-                          "
-                        />
-
-                        <p
-                          className="
-                            m-0
-                            text-[11px]
-                            leading-[19px]
-                            text-[#64748B]
-                          "
-                        >
-                          {item}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Map */}
-                <div className="mt-[20px]">
-                  <p
-                    className="
-                      m-0
-                      mb-[7px]
-                      text-[11px]
-                      text-[#94A3B8]
-                    "
-                  >
-                    مقر التدريب:
-                  </p>
-
-                  <div
-                    className="
-                      relative
-                      w-full
-                      h-[108px]
-                      rounded-[10px]
-                      overflow-hidden
-                      bg-[#E8EDF3]
-                    "
-                  >
-                    <img
-                      src="/training-map.jpg"
-                      alt="موقع مقر التدريب"
-                      className="
-                        absolute
-                        inset-0
-                        w-full
-                        h-full
-                        object-cover
-                      "
-                      onError={(event) => {
-                        event.currentTarget.style.display =
-                          "none";
-                      }}
-                    />
-
-                    <div
-                      className="
-                        absolute
-                        inset-0
-                        bg-gradient-to-t
-                        from-black/60
-                        via-transparent
-                        to-transparent
-                      "
-                    />
-
-                    <div
-                      className="
-                        absolute
-                        bottom-[10px]
-                        right-[12px]
-                        left-[12px]
-                        flex
-                        items-center
-                        gap-[6px]
-                        text-white
-                      "
-                    >
-                      <MapPin
-                        size={16}
-                        strokeWidth={1.8}
-                        className="text-[#FBBF24]"
-                      />
-
-                      <span
-                        className="
-                          text-[11px]
-                          leading-[17px]
-                          font-medium
-                        "
-                      >
-                        غزة، شارع الرمال، عمارة الأمل
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </aside>
-
-              {/* ===================================
-                  RIGHT COLUMN
-              ==================================== */}
+              ================================================== */}
               <div
                 dir="rtl"
                 className="
-                  min-w-0
+                  order-2
                   flex
+                  min-w-0
                   flex-col
-                  gap-[22px]
+                  gap-5
+
+                  lg:order-1
+
+                  xl:gap-[22px]
                 "
               >
-                {/* =================================
-                    MAIN OPPORTUNITY CARD
-                ================================== */}
-                <section
+                {/* =============================================
+                    COLLEGE SUPERVISION
+                ============================================== */}
+                <aside
                   className="
                     w-full
-                    min-h-[194px]
                     rounded-[14px]
                     border
                     border-[#E2E8F0]
                     bg-white
-                    px-[24px]
-                    py-[24px]
+                    p-4
+
+                    sm:p-5
+
+                    xl:px-[24px]
+                    xl:py-[24px]
+                  "
+                >
+                  {/* HEADING */}
+                  <div
+                    className="
+                      flex
+                      items-center
+                      justify-start
+                      gap-[9px]
+                      border-b
+                      border-[#E2E8F0]
+                      pb-3
+
+                      xl:gap-[10px]
+                      xl:pb-[15px]
+                    "
+                  >
+                    <Building2
+                      size={21}
+                      strokeWidth={1.8}
+                      className="
+                        shrink-0
+                        text-[#09379A]
+                      "
+                    />
+
+                    <h2
+                      className="
+                        m-0
+                        text-[16px]
+                        font-bold
+                        leading-[25px]
+                        text-[#1E293B]
+
+                        xl:text-[18px]
+                        xl:leading-[26px]
+                      "
+                    >
+                      الإشراف الكلية
+                    </h2>
+                  </div>
+
+                  {/* SUPERVISOR */}
+                  <div
+                    className="
+                      mt-4
+                      flex
+                      min-h-[110px]
+                      items-center
+                      rounded-[12px]
+                      border
+                      border-[#C9D7FF]
+                      bg-[#EEF3FF]
+                      px-3
+                      py-4
+
+                      xl:min-h-[118px]
+                      xl:px-[16px]
+                      xl:py-[18px]
+                    "
+                  >
+                    <div
+                      className="
+                        flex
+                        h-[42px]
+                        w-[42px]
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-full
+                        bg-[#09379A]
+                        text-white
+                      "
+                    >
+                      <UserRound
+                        size={20}
+                        strokeWidth={1.8}
+                      />
+                    </div>
+
+                    <div className="mr-3 min-w-0 text-right">
+                      <p
+                        className="
+                          m-0
+                          text-[10px]
+                          leading-[17px]
+                          text-[#64748B]
+
+                          xl:text-[11px]
+                        "
+                      >
+                        المشرف الأكاديمي للقسم:
+                      </p>
+
+                      <h3
+                        className="
+                          m-0
+                          mt-[3px]
+                          text-[13px]
+                          font-bold
+                          leading-[20px]
+                          text-[#09379A]
+
+                          xl:text-[14px]
+                          xl:leading-[21px]
+                        "
+                      >
+                        د. سمير مصطفى خليل
+                      </h3>
+
+                      <p
+                        className="
+                          m-0
+                          mt-[2px]
+                          text-[10px]
+                          leading-[17px]
+                          text-[#64748B]
+
+                          xl:text-[11px]
+                        "
+                      >
+                        قسم تكنولوجيا المعلومات
+                      </p>
+
+                      <p
+                        className="
+                          m-0
+                          text-[10px]
+                          leading-[17px]
+                          text-[#64748B]
+
+                          xl:text-[11px]
+                        "
+                      >
+                        والوسائط المتعددة
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* REQUIREMENTS */}
+                  <div className="mt-5">
+                    <h3
+                      className="
+                        m-0
+                        text-[12px]
+                        font-bold
+                        leading-[20px]
+                        text-[#1E293B]
+
+                        xl:text-[13px]
+                      "
+                    >
+                      متطلبات القبول بالبرنامج:
+                    </h3>
+
+                    <div
+                      className="
+                        mt-[10px]
+                        flex
+                        flex-col
+                        gap-[9px]
+
+                        xl:mt-[11px]
+                        xl:gap-[10px]
+                      "
+                    >
+                      {requirements.map((item) => (
+                        <div
+                          key={item}
+                          className="
+                            flex
+                            items-start
+                            gap-[7px]
+
+                            xl:gap-[8px]
+                          "
+                        >
+                          <CheckCircle2
+                            size={16}
+                            strokeWidth={1.8}
+                            className="
+                              mt-[1px]
+                              shrink-0
+                              text-[#10B981]
+
+                              xl:size-[17px]
+                            "
+                          />
+
+                          <p
+                            className="
+                              m-0
+                              text-[10px]
+                              leading-[18px]
+                              text-[#64748B]
+
+                              xl:text-[11px]
+                              xl:leading-[19px]
+                            "
+                          >
+                            {item}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* MAP */}
+                  <div className="mt-5">
+                    <p
+                      className="
+                        m-0
+                        mb-[7px]
+                        text-[10px]
+                        text-[#94A3B8]
+
+                        xl:text-[11px]
+                      "
+                    >
+                      مقر التدريب:
+                    </p>
+
+                    <div
+                      className="
+                        relative
+                        h-[110px]
+                        w-full
+                        overflow-hidden
+                        rounded-[10px]
+                        bg-[#E8EDF3]
+
+                        xl:h-[108px]
+                      "
+                    >
+                      <img
+                        src="/training-map.png"
+                        alt="موقع مقر التدريب"
+                        className="
+                          absolute
+                          inset-0
+                          h-full
+                          w-full
+                          object-cover
+                        "
+                        onError={(event) => {
+                          event.currentTarget.style.display =
+                            "none";
+                        }}
+                      />
+
+                      <div
+                        className="
+                          absolute
+                          inset-0
+                          bg-gradient-to-t
+                          from-black/60
+                          via-transparent
+                          to-transparent
+                        "
+                      />
+
+                      <div
+                        className="
+                          absolute
+                          bottom-[10px]
+                          left-[12px]
+                          right-[12px]
+                          flex
+                          items-center
+                          gap-[6px]
+                          text-white
+                        "
+                      >
+                        <MapPin
+                          size={16}
+                          strokeWidth={1.8}
+                          className="shrink-0 text-[#FBBF24]"
+                        />
+
+                        <span
+                          className="
+                            text-[10px]
+                            font-medium
+                            leading-[17px]
+
+                            xl:text-[11px]
+                          "
+                        >
+                          غزة، شارع الرمال، عمارة الأمل
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </aside>
+
+                {/* =============================================
+                    APPLICATION STATES TEST
+                ============================================== */}
+                <section
+                  className="
+                    w-full
+                    rounded-[14px]
+                    border
+                    border-[#E2E8F0]
+                    bg-white
+                    p-4
+
+                    sm:p-5
+
+                    xl:px-[20px]
+                    xl:py-[20px]
                   "
                 >
                   <div
                     className="
                       flex
                       items-start
-                      gap-[22px]
+                      justify-between
+                      gap-3
                     "
                   >
-                    {/* Image */}
+                    <div
+                      className="
+                        flex
+                        items-center
+                        gap-[7px]
+                      "
+                    >
+                      <SlidersHorizontal
+                        size={18}
+                        strokeWidth={1.8}
+                        className="shrink-0 text-[#64748B]"
+                      />
+
+                      <h3
+                        className="
+                          m-0
+                          text-[12px]
+                          font-bold
+                          leading-[20px]
+                          text-[#1E293B]
+
+                          xl:text-[13px]
+                        "
+                      >
+                        اختبار حالات التقديم:
+                      </h3>
+                    </div>
+
+                    <span
+                      className="
+                        shrink-0
+                        rounded-[4px]
+                        bg-[#EEF2FF]
+                        px-2
+                        py-1
+                        text-[8px]
+                        text-[#94A3B8]
+
+                        xl:text-[9px]
+                      "
+                    >
+                      معاينة تفاعلية
+                    </span>
+                  </div>
+
+                  <p
+                    className="
+                      m-0
+                      mt-3
+                      text-[10px]
+                      leading-[18px]
+                      text-[#64748B]
+
+                      xl:text-[11px]
+                      xl:leading-[20px]
+                    "
+                  >
+                    اضغط لمعاينة الحالات التفاعلية للزر
+                    الأساسي وحالة انتهاء التقديم:
+                  </p>
+
+                  <div
+                    className="
+                      mt-4
+                      grid
+                      grid-cols-1
+                      gap-2
+
+                      sm:grid-cols-2
+
+                      lg:grid-cols-1
+
+                      xl:grid-cols-2
+                    "
+                  >
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setApplicationStatus("available")
+                      }
+                      className={`
+                        h-[36px]
+                        rounded-[7px]
+                        border
+                        px-3
+                        text-[11px]
+                        font-bold
+                        transition
+
+                        ${
+                          applicationStatus === "available"
+                            ? `
+                              border-[#09379A]
+                              bg-[#09379A]
+                              text-white
+                            `
+                            : `
+                              border-[#DCE5F2]
+                              bg-white
+                              text-[#64748B]
+
+                              hover:border-[#09379A]/40
+                              hover:text-[#09379A]
+                            `
+                        }
+                      `}
+                    >
+                      حالة متاح للتقديم
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setApplicationStatus("closed")
+                      }
+                      className={`
+                        h-[36px]
+                        rounded-[7px]
+                        border
+                        px-3
+                        text-[11px]
+                        font-medium
+                        transition
+
+                        ${
+                          applicationStatus === "closed"
+                            ? `
+                              border-[#94A3B8]
+                              bg-[#F1F5F9]
+                              text-[#475569]
+                            `
+                            : `
+                              border-[#DCE5F2]
+                              bg-white
+                              text-[#64748B]
+
+                              hover:bg-[#F8FAFC]
+                            `
+                        }
+                      `}
+                    >
+                      حالة انتهاء الموعد
+                    </button>
+                  </div>
+                </section>
+              </div>
+
+              {/* =================================================
+                  RIGHT COLUMN
+              ================================================== */}
+              <div
+                dir="rtl"
+                className="
+                  order-1
+                  flex
+                  min-w-0
+                  flex-col
+                  gap-5
+
+                  lg:order-2
+
+                  xl:gap-[22px]
+                "
+              >
+                {/* =============================================
+                    MAIN OPPORTUNITY CARD
+                ============================================== */}
+                <section
+                  className="
+                    w-full
+                    rounded-[14px]
+                    border
+                    border-[#E2E8F0]
+                    bg-white
+                    p-4
+
+                    sm:p-5
+
+                    xl:min-h-[194px]
+                    xl:px-[24px]
+                    xl:py-[24px]
+                  "
+                >
+                  <div
+                    className="
+                      flex
+                      flex-col
+                      gap-4
+
+                      md:flex-row
+                      md:items-start
+
+                      xl:gap-[22px]
+                    "
+                  >
+                    {/* IMAGE */}
                     <div
                       className="
                         relative
-                        w-[214px]
-                        h-[136px]
+                        h-[190px]
+                        w-full
                         shrink-0
-                        rounded-[10px]
                         overflow-hidden
+                        rounded-[10px]
                         bg-[#F1F5F9]
+
+                        sm:h-[220px]
+
+                        md:h-[136px]
+                        md:w-[190px]
+
+                        xl:w-[214px]
                       "
                     >
                       <img
-                        src="/training-company.jpg"
+                        src="/training-company.png"
                         alt="مقر شركة التقنية الحديثة"
                         className="
                           absolute
                           inset-0
-                          w-full
                           h-full
+                          w-full
                           object-cover
                         "
                         onError={(event) => {
@@ -630,85 +939,88 @@ export default function TrainingDetails() {
                           absolute
                           bottom-[8px]
                           right-[8px]
+                          flex
                           h-[22px]
-                          px-[9px]
+                          items-center
                           rounded-[5px]
                           bg-black/60
-                          text-white
-                          flex
-                          items-center
+                          px-[9px]
                           text-[10px]
+                          text-white
                         "
                       >
                         مقر الشركة
                       </div>
                     </div>
 
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      {/* Badges */}
+                    {/* INFO */}
+                    <div className="min-w-0 flex-1">
+                      {/* BADGES */}
                       <div
                         className="
                           flex
                           flex-wrap
                           items-center
                           justify-start
-                          gap-[7px]
+                          gap-[6px]
+
+                          xl:gap-[7px]
                         "
                       >
-                        {/* Approved */}
                         <span
                           className="
+                            flex
                             h-[25px]
-                            px-[10px]
+                            items-center
+                            gap-[5px]
                             rounded-[10px]
                             border
                             border-[#AFE8C7]
                             bg-[#DCFCE7]
+                            px-[10px]
+                            text-[10px]
                             text-[#16844C]
-                            flex
-                            items-center
-                            gap-[5px]
-                            text-[11px]
+
+                            xl:text-[11px]
                           "
                         >
                           <CheckCircle2 size={13} />
-
                           معتمدة
                         </span>
 
-                        {/* Attendance */}
                         <span
                           className="
+                            flex
                             h-[25px]
-                            px-[10px]
+                            items-center
+                            gap-[4px]
                             rounded-[10px]
                             border
                             border-[#A5E3F4]
                             bg-[#E4F7FC]
+                            px-[10px]
+                            text-[10px]
                             text-[#287E8C]
-                            flex
-                            items-center
-                            gap-[4px]
-                            text-[11px]
+
+                            xl:text-[11px]
                           "
                         >
                           <Building2 size={13} />
-
                           حضوري
                         </span>
 
-                        {/* Partnership Code */}
                         <span
                           className="
+                            flex
                             h-[25px]
-                            px-[9px]
+                            items-center
                             rounded-[8px]
                             bg-[#E6ECFA]
+                            px-[9px]
+                            text-[9px]
                             text-[#64748B]
-                            flex
-                            items-center
-                            text-[10px]
+
+                            xl:text-[10px]
                           "
                         >
                           رمز الشراكة: ACT-2025-04
@@ -718,34 +1030,47 @@ export default function TrainingDetails() {
                       <h2
                         className="
                           m-0
-                          mt-[12px]
-                          text-[21px]
-                          leading-[30px]
+                          mt-[10px]
+                          text-[18px]
                           font-bold
+                          leading-[28px]
                           text-[#172033]
+
+                          sm:text-[19px]
+
+                          xl:mt-[12px]
+                          xl:text-[21px]
+                          xl:leading-[30px]
                         "
                       >
                         تدريب في شركة التقنية الحديثة
                       </h2>
 
+                      {/* METADATA */}
                       <div
                         className="
-                          mt-[13px]
-                          pt-[11px]
-                          border-t
-                          border-[#E2E8F0]
+                          mt-[11px]
                           flex
                           flex-wrap
                           items-center
-                          gap-x-[28px]
-                          gap-y-[8px]
-                          text-[11px]
+                          gap-x-4
+                          gap-y-2
+                          border-t
+                          border-[#E2E8F0]
+                          pt-[10px]
+                          text-[10px]
                           text-[#475569]
+
+                          sm:text-[11px]
+
+                          xl:mt-[13px]
+                          xl:gap-x-[28px]
+                          xl:pt-[11px]
                         "
                       >
                         <div className="flex items-center gap-[5px]">
                           <Clock3
-                            size={16}
+                            size={15}
                             strokeWidth={1.8}
                             className="text-[#09379A]"
                           />
@@ -758,7 +1083,7 @@ export default function TrainingDetails() {
 
                         <div className="flex items-center gap-[5px]">
                           <CalendarDays
-                            size={16}
+                            size={15}
                             strokeWidth={1.8}
                             className="text-[#09379A]"
                           />
@@ -773,7 +1098,7 @@ export default function TrainingDetails() {
 
                         <div className="flex items-center gap-[5px]">
                           <MapPin
-                            size={16}
+                            size={15}
                             strokeWidth={1.8}
                             className="text-[#09379A]"
                           />
@@ -787,9 +1112,9 @@ export default function TrainingDetails() {
                   </div>
                 </section>
 
-                {/* =================================
+                {/* =============================================
                     ABOUT
-                ================================== */}
+                ============================================== */}
                 <section
                   className="
                     w-full
@@ -797,26 +1122,35 @@ export default function TrainingDetails() {
                     border
                     border-[#E2E8F0]
                     bg-white
-                    px-[24px]
-                    py-[25px]
+                    p-4
+
+                    sm:p-5
+
+                    xl:px-[24px]
+                    xl:py-[25px]
                   "
                 >
-                  <div className="flex items-center gap-[10px]">
+                  <div className="flex items-center gap-[9px]">
                     <span
                       className="
+                        h-[22px]
                         w-[4px]
-                        h-[24px]
+                        shrink-0
                         rounded-full
                         bg-[#09379A]
+
+                        xl:h-[24px]
                       "
                     />
 
                     <h2
                       className="
                         m-0
-                        text-[18px]
+                        text-[16px]
                         font-bold
                         text-[#1E293B]
+
+                        xl:text-[18px]
                       "
                     >
                       نبذة عن الجهة
@@ -826,10 +1160,15 @@ export default function TrainingDetails() {
                   <p
                     className="
                       m-0
-                      mt-[17px]
-                      text-[13px]
-                      leading-[26px]
+                      mt-3
+                      text-[12px]
+                      leading-[24px]
                       text-[#64748B]
+
+                      sm:text-[13px]
+
+                      xl:mt-[17px]
+                      xl:leading-[26px]
                     "
                   >
                     شركة التقنية الحديثة شركة رائدة في
@@ -842,195 +1181,43 @@ export default function TrainingDetails() {
                     العمل الفلسطيني والإقليمي.
                   </p>
 
-                  {/* Stats */}
+                  {/* STATS */}
                   <div
                     className="
-                      mt-[21px]
+                      mt-4
                       grid
                       grid-cols-1
-                      md:grid-cols-3
-                      gap-[15px]
+                      gap-3
+
+                      sm:grid-cols-3
+
+                      xl:mt-[21px]
+                      xl:gap-[15px]
                     "
                   >
-                    {/* Seats */}
-                    <div
-                      className="
-                        min-h-[122px]
-                        rounded-[12px]
-                        border
-                        border-[#DCE5F5]
-                        bg-[#EEF3FF]
-                        flex
-                        flex-col
-                        items-center
-                        justify-center
-                        text-center
-                        px-[12px]
-                      "
-                    >
-                      <div
-                        className="
-                          w-[40px]
-                          h-[40px]
-                          rounded-full
-                          bg-[#DDE7FB]
-                          flex
-                          items-center
-                          justify-center
-                          text-[#09379A]
-                        "
-                      >
-                        <Users
-                          size={20}
-                          strokeWidth={1.8}
-                        />
-                      </div>
+                    <InfoStat
+                      icon={Users}
+                      label="عدد المقاعد"
+                      value="5 مقاعد متاحة"
+                    />
 
-                      <p
-                        className="
-                          m-0
-                          mt-[8px]
-                          text-[11px]
-                          text-[#64748B]
-                        "
-                      >
-                        عدد المقاعد
-                      </p>
+                    <InfoStat
+                      icon={Award}
+                      label="المؤهل المطلوب"
+                      value="طالب في الكلية"
+                    />
 
-                      <h3
-                        className="
-                          m-0
-                          mt-[4px]
-                          text-[17px]
-                          font-bold
-                          text-[#1E293B]
-                        "
-                      >
-                        5 مقاعد متاحة
-                      </h3>
-                    </div>
-
-                    {/* Qualification */}
-                    <div
-                      className="
-                        min-h-[122px]
-                        rounded-[12px]
-                        border
-                        border-[#DCE5F5]
-                        bg-[#EEF3FF]
-                        flex
-                        flex-col
-                        items-center
-                        justify-center
-                        text-center
-                        px-[12px]
-                      "
-                    >
-                      <div
-                        className="
-                          w-[40px]
-                          h-[40px]
-                          rounded-full
-                          bg-[#DDE7FB]
-                          flex
-                          items-center
-                          justify-center
-                          text-[#09379A]
-                        "
-                      >
-                        <Award
-                          size={20}
-                          strokeWidth={1.8}
-                        />
-                      </div>
-
-                      <p
-                        className="
-                          m-0
-                          mt-[8px]
-                          text-[11px]
-                          text-[#64748B]
-                        "
-                      >
-                        المؤهل المطلوب
-                      </p>
-
-                      <h3
-                        className="
-                          m-0
-                          mt-[4px]
-                          text-[17px]
-                          font-bold
-                          text-[#1E293B]
-                        "
-                      >
-                        طالب في الكلية
-                      </h3>
-                    </div>
-
-                    {/* Majors */}
-                    <div
-                      className="
-                        min-h-[122px]
-                        rounded-[12px]
-                        border
-                        border-[#DCE5F5]
-                        bg-[#EEF3FF]
-                        flex
-                        flex-col
-                        items-center
-                        justify-center
-                        text-center
-                        px-[12px]
-                      "
-                    >
-                      <div
-                        className="
-                          w-[40px]
-                          h-[40px]
-                          rounded-full
-                          bg-[#DDE7FB]
-                          flex
-                          items-center
-                          justify-center
-                          text-[#09379A]
-                        "
-                      >
-                        <GraduationCap
-                          size={20}
-                          strokeWidth={1.8}
-                        />
-                      </div>
-
-                      <p
-                        className="
-                          m-0
-                          mt-[8px]
-                          text-[11px]
-                          text-[#64748B]
-                        "
-                      >
-                        التخصصات المطلوبة
-                      </p>
-
-                      <h3
-                        className="
-                          m-0
-                          mt-[4px]
-                          text-[17px]
-                          font-bold
-                          text-[#1E293B]
-                        "
-                      >
-                        تقنية المعلومات
-                      </h3>
-                    </div>
+                    <InfoStat
+                      icon={GraduationCap}
+                      label="التخصصات المطلوبة"
+                      value="تقنية المعلومات"
+                    />
                   </div>
                 </section>
 
-                {/* =================================
+                {/* =============================================
                     REQUIRED SKILLS
-                ================================== */}
+                ============================================== */}
                 <section
                   className="
                     w-full
@@ -1038,26 +1225,35 @@ export default function TrainingDetails() {
                     border
                     border-[#E2E8F0]
                     bg-white
-                    px-[24px]
-                    py-[25px]
+                    p-4
+
+                    sm:p-5
+
+                    xl:px-[24px]
+                    xl:py-[25px]
                   "
                 >
-                  <div className="flex items-center gap-[10px]">
+                  <div className="flex items-center gap-[9px]">
                     <span
                       className="
+                        h-[22px]
                         w-[4px]
-                        h-[24px]
+                        shrink-0
                         rounded-full
                         bg-[#09379A]
+
+                        xl:h-[24px]
                       "
                     />
 
                     <h2
                       className="
                         m-0
-                        text-[18px]
+                        text-[16px]
                         font-bold
                         text-[#1E293B]
+
+                        xl:text-[18px]
                       "
                     >
                       المهارات المطلوبة
@@ -1067,10 +1263,15 @@ export default function TrainingDetails() {
                   <p
                     className="
                       m-0
-                      mt-[14px]
-                      text-[12px]
-                      leading-[21px]
+                      mt-3
+                      text-[11px]
+                      leading-[20px]
                       text-[#64748B]
+
+                      sm:text-[12px]
+
+                      xl:mt-[14px]
+                      xl:leading-[21px]
                     "
                   >
                     المهارات الأساسية اللازمة لاجتياز
@@ -1080,28 +1281,38 @@ export default function TrainingDetails() {
 
                   <div
                     className="
-                      mt-[17px]
+                      mt-4
                       flex
                       flex-wrap
-                      gap-[12px]
+                      gap-[8px]
+
+                      xl:mt-[17px]
+                      xl:gap-[12px]
                     "
                   >
                     {skills.map((skill) => (
                       <div
                         key={skill}
                         className="
-                          h-[45px]
-                          px-[17px]
+                          flex
+                          min-h-[42px]
+                          w-full
+                          items-center
+                          gap-[7px]
                           rounded-[9px]
                           border
                           border-[#AFC7FF]
                           bg-[#EDF3FF]
-                          flex
-                          items-center
-                          gap-[8px]
-                          text-[13px]
+                          px-3
+                          text-[12px]
                           font-medium
                           text-[#09379A]
+
+                          min-[480px]:w-auto
+
+                          xl:h-[45px]
+                          xl:px-[17px]
+                          xl:text-[13px]
                         "
                       >
                         <CheckCircle2
@@ -1115,26 +1326,34 @@ export default function TrainingDetails() {
                   </div>
                 </section>
 
-                {/* =================================
+                {/* =============================================
                     APPLICATION ACTION
-                ================================== */}
+                ============================================== */}
                 <section
                   className="
+                    flex
                     w-full
-                    min-h-[98px]
+                    flex-col
+                    gap-3
                     rounded-[14px]
                     border
                     border-[#E2E8F0]
                     bg-white
-                    px-[24px]
-                    py-[20px]
-                    flex
-                    items-center
-                    justify-between
-                    gap-[20px]
+                    p-4
+
+                    sm:p-5
+
+                    md:flex-row
+                    md:items-center
+                    md:justify-between
+                    md:gap-5
+
+                    xl:min-h-[98px]
+                    xl:px-[24px]
+                    xl:py-[20px]
                   "
                 >
-                  {/* Application Button */}
+                  {/* APPLICATION BUTTON */}
                   <button
                     type="button"
                     disabled={
@@ -1142,24 +1361,27 @@ export default function TrainingDetails() {
                     }
                     onClick={handleApply}
                     className={`
-                      min-w-[235px]
-                      h-[52px]
-                      px-[24px]
-
-                      rounded-[9px]
-
-                      border
-
                       flex
+                      h-[48px]
+                      w-full
                       items-center
                       justify-center
-                      gap-[10px]
-
-                      text-[16px]
+                      gap-[9px]
+                      rounded-[9px]
+                      border
+                      px-5
+                      text-[14px]
                       font-bold
-
                       transition-all
                       duration-200
+
+                      md:w-auto
+                      md:min-w-[210px]
+
+                      xl:h-[52px]
+                      xl:min-w-[235px]
+                      xl:px-[24px]
+                      xl:text-[16px]
 
                       ${currentApplicationState.className}
                     `}
@@ -1174,7 +1396,7 @@ export default function TrainingDetails() {
                     </span>
                   </button>
 
-                  {/* Back */}
+                  {/* BACK */}
                   <button
                     type="button"
                     onClick={() =>
@@ -1183,19 +1405,28 @@ export default function TrainingDetails() {
                       )
                     }
                     className="
-                      h-[44px]
-                      px-[12px]
+                      flex
+                      h-[42px]
+                      w-full
+                      cursor-pointer
+                      items-center
+                      justify-center
+                      gap-[8px]
+                      rounded-[9px]
                       border-0
                       bg-transparent
-                      text-[#09379A]
-                      flex
-                      items-center
-                      gap-[8px]
-                      text-[14px]
+                      px-[12px]
+                      text-[13px]
                       font-bold
-                      cursor-pointer
-                      rounded-[9px]
+                      text-[#09379A]
+                      transition
+
                       hover:bg-[#F8FAFC]
+
+                      md:w-auto
+
+                      xl:h-[44px]
+                      xl:text-[14px]
                     "
                   >
                     <span>
@@ -1213,6 +1444,90 @@ export default function TrainingDetails() {
           </div>
         </main>
       </div>
+    </div>
+  );
+}
+
+/* =========================================================
+   INFO STAT
+========================================================= */
+
+function InfoStat({
+  icon: Icon,
+  label,
+  value,
+}) {
+  return (
+    <div
+      className="
+        flex
+        min-h-[108px]
+        flex-col
+        items-center
+        justify-center
+        rounded-[12px]
+        border
+        border-[#DCE5F5]
+        bg-[#EEF3FF]
+        px-3
+        text-center
+
+        sm:min-h-[116px]
+
+        xl:min-h-[122px]
+        xl:px-[12px]
+      "
+    >
+      <div
+        className="
+          flex
+          h-[38px]
+          w-[38px]
+          items-center
+          justify-center
+          rounded-full
+          bg-[#DDE7FB]
+          text-[#09379A]
+
+          xl:h-[40px]
+          xl:w-[40px]
+        "
+      >
+        <Icon
+          size={20}
+          strokeWidth={1.8}
+        />
+      </div>
+
+      <p
+        className="
+          m-0
+          mt-[7px]
+          text-[10px]
+          text-[#64748B]
+
+          xl:mt-[8px]
+          xl:text-[11px]
+        "
+      >
+        {label}
+      </p>
+
+      <h3
+        className="
+          m-0
+          mt-[3px]
+          text-[15px]
+          font-bold
+          leading-[22px]
+          text-[#1E293B]
+
+          xl:mt-[4px]
+          xl:text-[17px]
+        "
+      >
+        {value}
+      </h3>
     </div>
   );
 }
