@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import {
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 
 import {
   ArrowRight,
@@ -17,7 +20,6 @@ import {
   ListChecks,
   Printer,
   Save,
-  UserRound,
 } from "lucide-react";
 
 import Header from "../../components/student/Header";
@@ -27,33 +29,320 @@ export default function DailyTrainingLogDetails() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const logId = searchParams.get("id") || "1042";
+  const logId = searchParams.get("id") || "1";
 
-  const [isEditMode, setIsEditMode] = useState(false);
+  const [isEditMode, setIsEditMode] =
+    useState(false);
 
-  const [tasks, setTasks] = useState([
-    {
+  /* =========================================================
+     DAILY LOGS DATA
+     كل id له بياناته الخاصة
+  ========================================================= */
+
+  const logsData = {
+    1: {
       id: 1,
-      title: "متابعة تركيب الشبكات",
-      description: "تم التنفيذ الميداني مع الطاقم الفني",
-      category: "المهمة الأساسية",
-      completed: true,
+
+      day: "الأحد",
+
+      date: "2025/10/05",
+
+      hours: 6,
+
+      organization:
+        "شركة القدس للاتصالات",
+
+      department:
+        "قسم الصيانة والشبكات الميدانية • مقر غزة",
+
+      supervisor:
+        "م. عماد رضوان",
+
+      academicSupervisor:
+        "د. رامي شعبان",
+
+      track:
+        "مسار هندسة شبكات وأنظمة اتصالات",
+
+      description:
+        "تم العمل على متابعة تركيب الشبكات وتعلم آلية فحص الأجهزة الحديثة واختبار كفاءة خطوط التوصيل النحاسية والألياف الضوئية تحت إشراف مهندس القسم الميداني، بالإضافة إلى مراجعة تذاكر الدعم العالقة عبر البوابة الداخلية.",
+
+      tasks: [
+        {
+          id: 1,
+          title:
+            "متابعة تركيب الشبكات",
+          description:
+            "تم التنفيذ الميداني مع الطاقم الفني",
+          category:
+            "المهمة الأساسية",
+          completed: true,
+        },
+
+        {
+          id: 2,
+          title:
+            "تجربة استخدام جهاز الفحص",
+          description:
+            "جهاز قياس إشارات OTDR والتأكد من نقاط المسار",
+          category:
+            "كفاءة تطبيقية",
+          completed: true,
+        },
+
+        {
+          id: 3,
+          title:
+            "الاطلاع على نظام الدعم الفني",
+          description:
+            "مجدولة للمتابعة الفنية في الأسبوع",
+          category:
+            "قيد المراجعة",
+          completed: false,
+        },
+      ],
+
+      photo:
+        "/training-activity.jpg",
+
+      photoCaption:
+        "فحص الكابلات - غرفة الخوادم الرئيسية",
+
+      attachment:
+        "تقرير_الفحص_OTDR.pdf",
     },
-    {
+
+    2: {
       id: 2,
-      title: "تجربة استخدام جهاز الفحص",
-      description: "جهاز قياس إشارات OTDR والتأكد من نقاط المسار",
-      category: "كفاءة تطبيقية",
-      completed: true,
+
+      day: "الإثنين",
+
+      date: "2025/10/06",
+
+      hours: 5,
+
+      organization:
+        "شركة القدس للاتصالات",
+
+      department:
+        "قسم الدعم الفني وخدمة العملاء • مقر غزة",
+
+      supervisor:
+        "م. عماد رضوان",
+
+      academicSupervisor:
+        "د. رامي شعبان",
+
+      track:
+        "مسار هندسة شبكات وأنظمة اتصالات",
+
+      description:
+        "تمت المشاركة في متابعة عدد من طلبات الدعم الفني الواردة من العملاء، وفحص المشكلات المتعلقة بالاتصال بالشبكة، بالإضافة إلى التعرف على آلية تسجيل الأعطال وتحويلها إلى القسم الفني المختص.",
+
+      tasks: [
+        {
+          id: 1,
+          title:
+            "متابعة طلبات الدعم الفني",
+          description:
+            "مراجعة البلاغات المسجلة من العملاء",
+          category:
+            "المهمة الأساسية",
+          completed: true,
+        },
+
+        {
+          id: 2,
+          title:
+            "تحليل أعطال الاتصال",
+          description:
+            "فحص أسباب انقطاع الخدمة ومشكلات الشبكة",
+          category:
+            "كفاءة تطبيقية",
+          completed: true,
+        },
+
+        {
+          id: 3,
+          title:
+            "إعداد ملخص الحالات",
+          description:
+            "توثيق أبرز الحالات التي تمت متابعتها",
+          category:
+            "قيد المراجعة",
+          completed: false,
+        },
+      ],
+
+      photo:
+        "/training-activity.jpg",
+
+      photoCaption:
+        "متابعة الدعم الفني وخدمة العملاء",
+
+      attachment:
+        "تقرير_الدعم_الفني.pdf",
     },
-    {
+
+    3: {
       id: 3,
-      title: "الاطلاع على نظام الدعم الفني",
-      description: "مجدولة للمتابعة الفنية في الأسبوع",
-      category: "قيد المراجعة",
-      completed: false,
+
+      day: "الثلاثاء",
+
+      date: "2025/10/07",
+
+      hours: 4,
+
+      organization:
+        "شركة القدس للاتصالات",
+
+      department:
+        "قسم التقارير والمتابعة الفنية • مقر غزة",
+
+      supervisor:
+        "م. عماد رضوان",
+
+      academicSupervisor:
+        "د. رامي شعبان",
+
+      track:
+        "مسار هندسة شبكات وأنظمة اتصالات",
+
+      description:
+        "تم تجهيز التقارير الفنية الخاصة بالأعمال المنجزة خلال الأسبوع، وتنظيم البيانات المتعلقة بساعات التدريب والملاحظات الفنية، بالإضافة إلى مراجعة نماذج التقارير المعتمدة داخل المؤسسة.",
+
+      tasks: [
+        {
+          id: 1,
+          title:
+            "تجهيز التقرير الأسبوعي",
+          description:
+            "جمع البيانات الخاصة بالأنشطة المنجزة",
+          category:
+            "المهمة الأساسية",
+          completed: true,
+        },
+
+        {
+          id: 2,
+          title:
+            "تنظيم بيانات التدريب",
+          description:
+            "ترتيب الساعات والملاحظات الفنية",
+          category:
+            "كفاءة تطبيقية",
+          completed: true,
+        },
+
+        {
+          id: 3,
+          title:
+            "مراجعة نموذج التقرير",
+          description:
+            "التأكد من مطابقة التقرير للنموذج المعتمد",
+          category:
+            "مكتمل",
+          completed: true,
+        },
+      ],
+
+      photo:
+        "/training-activity.jpg",
+
+      photoCaption:
+        "إعداد التقارير الفنية الأسبوعية",
+
+      attachment:
+        "التقرير_الأسبوعي_الثلاثاء.pdf",
     },
-  ]);
+
+    4: {
+      id: 4,
+
+      day: "الأربعاء",
+
+      date: "2025/10/08",
+
+      hours: 5,
+
+      organization:
+        "شركة القدس للاتصالات",
+
+      department:
+        "قسم الصيانة والأجهزة • مقر غزة",
+
+      supervisor:
+        "م. عماد رضوان",
+
+      academicSupervisor:
+        "د. رامي شعبان",
+
+      track:
+        "مسار هندسة شبكات وأنظمة اتصالات",
+
+      description:
+        "تمت المشاركة في أعمال صيانة عدد من أجهزة الشبكات وفحص التوصيلات الداخلية والتأكد من سلامة المعدات، بالإضافة إلى التعرف على خطوات الصيانة الوقائية المتبعة داخل القسم.",
+
+      tasks: [
+        {
+          id: 1,
+          title:
+            "فحص أجهزة الشبكات",
+          description:
+            "التأكد من سلامة الأجهزة والتوصيلات",
+          category:
+            "المهمة الأساسية",
+          completed: true,
+        },
+
+        {
+          id: 2,
+          title:
+            "الصيانة الوقائية",
+          description:
+            "تنفيذ خطوات الصيانة الدورية للأجهزة",
+          category:
+            "كفاءة تطبيقية",
+          completed: true,
+        },
+
+        {
+          id: 3,
+          title:
+            "توثيق أعمال الصيانة",
+          description:
+            "إعداد ملاحظات حول الأجهزة التي تم فحصها",
+          category:
+            "قيد المراجعة",
+          completed: false,
+        },
+      ],
+
+      photo:
+        "/training-activity.jpg",
+
+      photoCaption:
+        "صيانة أجهزة الشبكات والمعدات",
+
+      attachment:
+        "تقرير_صيانة_الأجهزة.pdf",
+    },
+  };
+
+  /* =========================================================
+     CURRENT LOG
+  ========================================================= */
+
+  const currentLog =
+    logsData[logId] || logsData[1];
+
+  /* =========================================================
+     TASKS STATE
+  ========================================================= */
+
+  const [tasks, setTasks] = useState(
+    currentLog.tasks
+  );
 
   const toggleTask = (taskId) => {
     if (!isEditMode) return;
@@ -63,98 +352,113 @@ export default function DailyTrainingLogDetails() {
         task.id === taskId
           ? {
               ...task,
-              completed: !task.completed,
+              completed:
+                !task.completed,
             }
           : task
       )
     );
   };
 
-  const completedTasks = tasks.filter(
-    (task) => task.completed
-  ).length;
+  const completedTasks =
+    tasks.filter(
+      (task) => task.completed
+    ).length;
 
   return (
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
         bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
-      {/* =========================================
-          SIDEBAR
-      ========================================== */}
       <Sidebar />
 
-      {/* =========================================
-          MAIN AREA
-      ========================================== */}
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
+          bg-[#F8FAFC]
         "
       >
-        {/* =========================================
-            HEADER
-        ========================================== */}
-        <Header />
+        <div className="relative shrink-0">
+          <Header />
+        </div>
 
-        {/* =========================================
-            SCROLLABLE CONTENT
-        ========================================== */}
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+            md:pt-7
+
             xl:px-[40px]
-            pt-[18px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
           <div
             className="
+              mx-auto
               w-full
               max-w-[1080px]
-              mx-auto
             "
           >
-            {/* =====================================
+            {/* =================================================
                 BREADCRUMB
-            ====================================== */}
-            <div
+            ================================================== */}
+
+            <nav
+              aria-label="مسار التنقل"
               className="
                 flex
+                flex-wrap
                 items-center
                 gap-[7px]
-                text-[13px]
+                text-[11px]
+                font-medium
                 leading-[20px]
+
+                sm:text-[12px]
+
+                xl:text-[13px]
               "
             >
               <button
                 type="button"
                 onClick={() =>
-                  navigate("/student/dashboard")
+                  navigate(
+                    "/student/dashboard"
+                  )
                 }
                 className="
                   border-0
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
+                  transition
+
                   hover:text-[#09379A]
                 "
               >
@@ -168,18 +472,45 @@ export default function DailyTrainingLogDetails() {
               <button
                 type="button"
                 onClick={() =>
-                  navigate("/student/daily-training-log")
+                  navigate(
+                    "/student/training-profile"
+                  )
                 }
                 className="
                   border-0
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
+                  transition
+
                   hover:text-[#09379A]
                 "
               >
-                طلباتي
+                ملفي التدريبي
+              </button>
+
+              <span className="text-[#94A3B8]">
+                ›
+              </span>
+
+              <button
+                type="button"
+                onClick={() =>
+                  navigate(
+                    "/student/daily-training-log"
+                  )
+                }
+                className="
+                  border-0
+                  bg-transparent
+                  p-0
+                  text-[#64748B]
+                  transition
+
+                  hover:text-[#09379A]
+                "
+              >
+                السجل التدريبي اليومي
               </button>
 
               <span className="text-[#94A3B8]">
@@ -192,60 +523,67 @@ export default function DailyTrainingLogDetails() {
                   text-[#09379A]
                 "
               >
-                متابعة حالة الطلب
+                تفاصيل السجل
               </span>
-            </div>
+            </nav>
 
-            {/* =====================================
+            {/* =================================================
                 PAGE HEADER
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
                 mt-[7px]
                 flex
-                items-start
-                justify-between
-                gap-[20px]
+                flex-col
+                gap-4
+
+                md:flex-row
+                md:items-start
+                md:justify-between
               "
             >
               <div>
                 <div
                   className="
                     flex
-                    items-center
-                    gap-[9px]
                     flex-wrap
+                    items-center
+                    gap-[8px]
                   "
                 >
                   <span
                     className="
-                      h-[24px]
-                      px-[9px]
-                      rounded-[12px]
-                      bg-[#09379A]
-                      text-white
-                      flex
+                      inline-flex
+                      min-h-[25px]
                       items-center
-                      text-[9px]
+                      rounded-full
+                      bg-[#09379A]
+                      px-[10px]
+                      text-[10px]
                       font-bold
+                      text-white
                     "
                   >
-                    سجل رقم #{logId}
+                    سجل رقم #{currentLog.id}
                   </span>
 
                   <span
                     className="
                       text-[10px]
+                      font-medium
                       text-[#64748B]
+
+                      sm:text-[11px]
                     "
                   >
-                    مسار هندسة شبكات وأنظمة اتصالات
+                    {currentLog.track}
                   </span>
                 </div>
 
                 <div
                   className="
-                    mt-[7px]
+                    mt-[8px]
                     flex
                     items-center
                     gap-[9px]
@@ -254,16 +592,24 @@ export default function DailyTrainingLogDetails() {
                   <CheckCircle2
                     size={20}
                     strokeWidth={1.8}
-                    className="text-[#2563EB]"
+                    className="
+                      shrink-0
+                      text-[#2563EB]
+                    "
                   />
 
                   <h1
                     className="
                       m-0
-                      text-[28px]
-                      leading-[40px]
+                      text-[24px]
                       font-bold
+                      leading-[36px]
                       text-[#14213D]
+
+                      sm:text-[26px]
+
+                      xl:text-[28px]
+                      xl:leading-[40px]
                     "
                   >
                     تفاصيل السجل التدريبي اليومي
@@ -274,27 +620,35 @@ export default function DailyTrainingLogDetails() {
               <div
                 className="
                   flex
-                  items-center
-                  gap-[10px]
+                  flex-col
+                  gap-[9px]
+
+                  sm:flex-row
+                  sm:flex-wrap
                 "
               >
                 <button
                   type="button"
                   onClick={() =>
-                    setIsEditMode((previous) => !previous)
+                    setIsEditMode(
+                      (previous) =>
+                        !previous
+                    )
                   }
                   className={`
-                    h-[36px]
-                    px-[13px]
+                    flex
+                    min-h-[38px]
+                    items-center
+                    justify-center
+                    gap-[7px]
                     rounded-[8px]
                     border
-                    flex
-                    items-center
-                    gap-[7px]
+                    px-[13px]
                     text-[10px]
                     font-bold
-                    cursor-pointer
                     transition
+
+                    sm:text-[11px]
 
                     ${
                       isEditMode
@@ -316,26 +670,30 @@ export default function DailyTrainingLogDetails() {
 
                   {isEditMode
                     ? "وضع التعديل مفعل"
-                    : "معاينة وضع التعديل (Edit Mode)"}
+                    : "تعديل السجل"}
                 </button>
 
                 <button
                   type="button"
                   className="
-                    h-[36px]
-                    px-[13px]
+                    flex
+                    min-h-[38px]
+                    items-center
+                    justify-center
+                    gap-[7px]
                     rounded-[8px]
                     border
                     border-[#BFD5FF]
                     bg-white
-                    text-[#09379A]
-                    flex
-                    items-center
-                    gap-[7px]
+                    px-[13px]
                     text-[10px]
                     font-bold
-                    cursor-pointer
+                    text-[#09379A]
+                    transition
+
                     hover:bg-[#F5F8FF]
+
+                    sm:text-[11px]
                   "
                 >
                   <Eye size={14} />
@@ -345,49 +703,61 @@ export default function DailyTrainingLogDetails() {
               </div>
             </section>
 
-            {/* =====================================
-                TWO COLUMN LAYOUT
-            ====================================== */}
+            {/* =================================================
+                CONTENT GRID
+            ================================================== */}
+
             <section
               dir="ltr"
               className="
-                mt-[24px]
+                mt-5
                 grid
                 grid-cols-1
-                lg:grid-cols-[minmax(0,1fr)_330px]
-                gap-[22px]
                 items-start
+                gap-5
+
+                lg:grid-cols-[minmax(0,1fr)_320px]
+
+                xl:mt-[24px]
+                xl:grid-cols-[minmax(0,1fr)_330px]
+                xl:gap-[22px]
               "
             >
-              {/* =================================
-                  MAIN DETAILS COLUMN
-              ================================== */}
+              {/* =================================================
+                  MAIN COLUMN
+              ================================================== */}
+
               <div
                 dir="rtl"
                 className="
-                  min-w-0
                   flex
+                  min-w-0
                   flex-col
-                  gap-[20px]
+                  gap-5
                 "
               >
                 {/* COMPANY CARD */}
+
                 <section
                   className="
                     rounded-[14px]
                     border
                     border-[#DDE5EF]
                     bg-white
-                    px-[22px]
-                    py-[20px]
+                    p-4
+
+                    sm:p-5
                   "
                 >
                   <div
                     className="
                       flex
-                      items-start
-                      justify-between
-                      gap-[18px]
+                      flex-col
+                      gap-4
+
+                      sm:flex-row
+                      sm:items-start
+                      sm:justify-between
                     "
                   >
                     <div
@@ -399,14 +769,15 @@ export default function DailyTrainingLogDetails() {
                     >
                       <div
                         className="
-                          w-[42px]
+                          flex
                           h-[42px]
+                          w-[42px]
+                          shrink-0
+                          items-center
+                          justify-center
                           rounded-[9px]
                           bg-[#EEF3FF]
                           text-[#09379A]
-                          flex
-                          items-center
-                          justify-center
                         "
                       >
                         <Building2
@@ -419,23 +790,28 @@ export default function DailyTrainingLogDetails() {
                         <h2
                           className="
                             m-0
-                            text-[18px]
+                            text-[17px]
                             font-bold
                             text-[#1E293B]
+
+                            sm:text-[18px]
                           "
                         >
-                          شركة القدس للاتصالات
+                          {currentLog.organization}
                         </h2>
 
                         <p
                           className="
                             m-0
-                            mt-[2px]
-                            text-[9px]
-                            text-[#94A3B8]
+                            mt-[3px]
+                            text-[10px]
+                            leading-[18px]
+                            text-[#64748B]
+
+                            sm:text-[11px]
                           "
                         >
-                          قسم الصيانة والشبكات الميدانية • مقر غزة
+                          {currentLog.department}
                         </p>
                       </div>
                     </div>
@@ -443,103 +819,114 @@ export default function DailyTrainingLogDetails() {
                     <div
                       className="
                         flex
+                        flex-wrap
                         items-center
                         gap-[8px]
-                        flex-wrap
                       "
                     >
                       <span
                         className="
-                          h-[25px]
-                          px-[9px]
-                          rounded-[12px]
+                          inline-flex
+                          min-h-[27px]
+                          items-center
+                          rounded-full
                           border
                           border-[#AFC8FA]
                           bg-[#EFF5FF]
-                          text-[#09379A]
-                          flex
-                          items-center
-                          gap-[5px]
-                          text-[9px]
+                          px-[10px]
+                          text-[10px]
                           font-bold
+                          text-[#09379A]
                         "
                       >
-                        توقيع م. عماد رضوان
+                        توقيع {currentLog.supervisor}
                       </span>
 
                       <span
                         className="
-                          h-[25px]
-                          px-[9px]
-                          rounded-[12px]
+                          inline-flex
+                          min-h-[27px]
+                          items-center
+                          gap-[5px]
+                          rounded-full
                           border
                           border-[#AEE9CA]
                           bg-[#E9FFF2]
-                          text-[#16A34A]
-                          flex
-                          items-center
-                          gap-[5px]
-                          text-[9px]
+                          px-[10px]
+                          text-[10px]
                           font-bold
+                          text-[#16A34A]
                         "
                       >
-                        <CheckCircle2 size={12} />
+                        <CheckCircle2
+                          size={12}
+                        />
+
                         معتمد وموثق
                       </span>
                     </div>
                   </div>
 
+                  {/* INFO */}
+
                   <div
                     className="
-                      mt-[18px]
+                      mt-4
+                      grid
+                      grid-cols-1
+                      gap-3
                       rounded-[10px]
                       border
                       border-[#E2E8F0]
                       bg-[#F8FAFC]
-                      px-[18px]
-                      py-[16px]
-                      grid
-                      grid-cols-3
-                      gap-[16px]
+                      p-3
+
+                      sm:grid-cols-3
+                      sm:p-4
                     "
                   >
                     <MiniInfo
                       icon={Clock3}
                       label="المدة التدريبية"
-                      value="6 ساعات معتمدة"
+                      value={`${currentLog.hours} ساعات معتمدة`}
                     />
 
                     <MiniInfo
                       icon={CalendarDays}
                       label="اليوم"
-                      value="الأحد"
+                      value={currentLog.day}
                     />
 
                     <MiniInfo
                       icon={CalendarDays}
                       label="التاريخ"
-                      value="2025/10/05"
+                      value={currentLog.date}
                     />
                   </div>
                 </section>
 
                 {/* DAY DETAILS */}
+
                 <section
                   className="
                     rounded-[14px]
                     border
                     border-[#DDE5EF]
                     bg-white
-                    px-[22px]
-                    py-[20px]
+                    p-4
+
+                    sm:p-5
                   "
                 >
                   <div
                     className="
                       flex
-                      items-center
-                      justify-between
-                      gap-[16px]
+                      flex-col
+                      gap-3
+
+                      sm:flex-row
+                      sm:items-center
+                      sm:justify-between
                     "
                   >
                     <div
@@ -551,16 +938,17 @@ export default function DailyTrainingLogDetails() {
                     >
                       <ListChecks
                         size={19}
-                        strokeWidth={1.8}
                         className="text-[#2563EB]"
                       />
 
                       <h2
                         className="
                           m-0
-                          text-[18px]
+                          text-[17px]
                           font-bold
                           text-[#1E293B]
+
+                          sm:text-[18px]
                         "
                       >
                         تفاصيل اليوم
@@ -569,29 +957,29 @@ export default function DailyTrainingLogDetails() {
 
                     <span
                       className="
-                        h-[25px]
-                        px-[9px]
-                        rounded-[6px]
+                        w-fit
+                        rounded-[7px]
                         bg-[#F1F5F9]
+                        px-[9px]
+                        py-[5px]
+                        text-[10px]
                         text-[#64748B]
-                        flex
-                        items-center
-                        text-[9px]
                       "
                     >
-                      وصف الأنشطة الميدانية والمهام المنفذة خلال اليوم
+                      وصف الأنشطة الميدانية والمهام
+                      المنفذة خلال اليوم
                     </span>
                   </div>
 
                   <div
                     className="
-                      mt-[16px]
+                      mt-4
                       rounded-[10px]
                       border
                       border-[#E2E8F0]
                       bg-[#F8FAFC]
-                      px-[18px]
-                      py-[17px]
+                      px-4
+                      py-4
                     "
                   >
                     <p
@@ -600,34 +988,38 @@ export default function DailyTrainingLogDetails() {
                         text-[12px]
                         leading-[23px]
                         text-[#475569]
+
+                        sm:text-[13px]
+                        sm:leading-[24px]
                       "
                     >
-                      تم العمل على متابعة تركيب الشبكات وتعلم آلية فحص
-                      الأجهزة الحديثة واختبار كفاءة خطوط التوصيل النحاسية
-                      والألياف الضوئية تحت إشراف مهندس القسم الميداني،
-                      بالإضافة إلى مراجعة تذاكر الدعم العالقة عبر البوابة
-                      الداخلية.
+                      {currentLog.description}
                     </p>
                   </div>
                 </section>
 
                 {/* TASKS */}
+
                 <section
                   className="
                     rounded-[14px]
                     border
                     border-[#DDE5EF]
                     bg-white
-                    px-[22px]
-                    py-[20px]
+                    p-4
+
+                    sm:p-5
                   "
                 >
                   <div
                     className="
                       flex
-                      items-center
-                      justify-between
-                      gap-[15px]
+                      flex-col
+                      gap-3
+
+                      sm:flex-row
+                      sm:items-center
+                      sm:justify-between
                     "
                   >
                     <div
@@ -639,16 +1031,17 @@ export default function DailyTrainingLogDetails() {
                     >
                       <ListChecks
                         size={19}
-                        strokeWidth={1.8}
                         className="text-[#2563EB]"
                       />
 
                       <h2
                         className="
                           m-0
-                          text-[18px]
+                          text-[17px]
                           font-bold
                           text-[#1E293B]
+
+                          sm:text-[18px]
                         "
                       >
                         المهام المنجزة
@@ -657,24 +1050,26 @@ export default function DailyTrainingLogDetails() {
 
                     <span
                       className="
-                        h-[25px]
-                        px-[9px]
-                        rounded-[12px]
-                        bg-[#EEF4FF]
-                        text-[#09379A]
-                        flex
+                        inline-flex
+                        min-h-[27px]
+                        w-fit
                         items-center
-                        text-[9px]
+                        rounded-full
+                        bg-[#EEF4FF]
+                        px-[10px]
+                        text-[10px]
                         font-bold
+                        text-[#09379A]
                       "
                     >
-                      {completedTasks} من {tasks.length} مكتملة
+                      {completedTasks} من{" "}
+                      {tasks.length} مكتملة
                     </span>
                   </div>
 
                   <div
                     className="
-                      mt-[15px]
+                      mt-4
                       flex
                       flex-col
                       gap-[10px]
@@ -684,42 +1079,50 @@ export default function DailyTrainingLogDetails() {
                       <article
                         key={task.id}
                         className="
-                          min-h-[66px]
-                          rounded-[9px]
+                          flex
+                          flex-col
+                          gap-3
+                          rounded-[10px]
                           border
                           border-[#DDE5EF]
                           bg-white
                           px-[14px]
-                          py-[12px]
-                          flex
-                          items-center
-                          justify-between
-                          gap-[14px]
+                          py-[13px]
+
+                          sm:flex-row
+                          sm:items-center
+                          sm:justify-between
                         "
                       >
                         <div
                           className="
                             flex
-                            items-center
-                            gap-[12px]
                             min-w-0
+                            items-start
+                            gap-[12px]
+
+                            sm:items-center
                           "
                         >
                           <button
                             type="button"
                             onClick={() =>
-                              toggleTask(task.id)
+                              toggleTask(
+                                task.id
+                              )
                             }
-                            disabled={!isEditMode}
+                            disabled={
+                              !isEditMode
+                            }
                             className={`
-                              w-[20px]
-                              h-[20px]
-                              rounded-[4px]
-                              border
                               flex
+                              h-[21px]
+                              w-[21px]
+                              shrink-0
                               items-center
                               justify-center
-                              shrink-0
+                              rounded-[4px]
+                              border
 
                               ${
                                 task.completed
@@ -744,7 +1147,6 @@ export default function DailyTrainingLogDetails() {
                           >
                             <Check
                               size={13}
-                              strokeWidth={2}
                             />
                           </button>
 
@@ -752,9 +1154,11 @@ export default function DailyTrainingLogDetails() {
                             <h3
                               className="
                                 m-0
-                                text-[11px]
+                                text-[12px]
                                 font-bold
                                 text-[#1E293B]
+
+                                sm:text-[13px]
                               "
                             >
                               {task.title}
@@ -763,9 +1167,12 @@ export default function DailyTrainingLogDetails() {
                             <p
                               className="
                                 m-0
-                                mt-[2px]
-                                text-[8px]
-                                text-[#94A3B8]
+                                mt-[3px]
+                                text-[10px]
+                                leading-[18px]
+                                text-[#64748B]
+
+                                sm:text-[11px]
                               "
                             >
                               {task.description}
@@ -775,15 +1182,15 @@ export default function DailyTrainingLogDetails() {
 
                         <span
                           className="
-                            h-[24px]
-                            px-[9px]
-                            rounded-[6px]
-                            bg-[#F1F5F9]
-                            text-[#64748B]
-                            flex
+                            inline-flex
+                            min-h-[26px]
+                            w-fit
                             items-center
-                            text-[8px]
-                            whitespace-nowrap
+                            rounded-[7px]
+                            bg-[#F1F5F9]
+                            px-[9px]
+                            text-[10px]
+                            text-[#64748B]
                           "
                         >
                           {task.category}
@@ -794,26 +1201,27 @@ export default function DailyTrainingLogDetails() {
                 </section>
               </div>
 
-              {/* =================================
+              {/* =================================================
                   SIDE COLUMN
-              ================================== */}
+              ================================================== */}
+
               <aside
                 dir="rtl"
                 className="
                   flex
                   flex-col
-                  gap-[18px]
+                  gap-4
                 "
               >
-                {/* ACADEMIC APPROVAL */}
+                {/* APPROVAL */}
+
                 <section
                   className="
                     rounded-[14px]
                     border
                     border-[#DDE5EF]
                     bg-white
-                    px-[16px]
-                    py-[17px]
+                    p-4
                   "
                 >
                   <div
@@ -824,7 +1232,7 @@ export default function DailyTrainingLogDetails() {
                     "
                   >
                     <CheckCircle2
-                      size={16}
+                      size={17}
                       className="text-[#2563EB]"
                     />
 
@@ -834,6 +1242,8 @@ export default function DailyTrainingLogDetails() {
                         text-[14px]
                         font-bold
                         text-[#1E293B]
+
+                        sm:text-[15px]
                       "
                     >
                       الاعتماد الأكاديمي
@@ -842,25 +1252,25 @@ export default function DailyTrainingLogDetails() {
 
                   <div
                     className="
-                      mt-[13px]
-                      rounded-[8px]
-                      bg-[#F8FAFC]
+                      mt-3
+                      rounded-[9px]
                       border
                       border-[#EEF2F7]
-                      px-[12px]
-                      py-[12px]
+                      bg-[#F8FAFC]
+                      p-3
                     "
                   >
                     <div
                       className="
                         flex
+                        flex-wrap
                         items-center
                         gap-[8px]
                       "
                     >
                       <strong
                         className="
-                          text-[10px]
+                          text-[11px]
                           text-[#334155]
                         "
                       >
@@ -869,17 +1279,17 @@ export default function DailyTrainingLogDetails() {
 
                       <span
                         className="
-                          h-[22px]
-                          px-[8px]
                           rounded-[5px]
                           bg-[#1E293B]
+                          px-[8px]
+                          py-[4px]
+                          text-[9px]
                           text-white
-                          flex
-                          items-center
-                          text-[8px]
                         "
                       >
-                        د. رامي شعبان
+                        {
+                          currentLog.academicSupervisor
+                        }
                       </span>
                     </div>
 
@@ -887,46 +1297,35 @@ export default function DailyTrainingLogDetails() {
                       className="
                         m-0
                         mt-[10px]
-                        rounded-[6px]
+                        rounded-[7px]
                         border
                         border-[#E2E8F0]
                         bg-white
                         px-[10px]
-                        py-[9px]
-                        text-[9px]
-                        leading-[17px]
+                        py-[10px]
+                        text-[10px]
+                        leading-[19px]
                         text-[#64748B]
-                      "
-                    >
-                      تمت مراجعة المهام المسجلة وهي مطابقة للخطة التدريبية
-                      المعتمدة لقسم الشبكات لشهر أكتوبر.
-                    </p>
 
-                    <p
-                      dir="ltr"
-                      className="
-                        m-0
-                        mt-[7px]
-                        text-[7px]
-                        text-[#94A3B8]
-                        text-right
+                        sm:text-[11px]
                       "
                     >
-                      تاريخ المراجعة: 2025/10/06 - 09:30 ص
+                      تمت مراجعة المهام المسجلة
+                      وهي مطابقة للخطة التدريبية
+                      المعتمدة.
                     </p>
                   </div>
 
-                  <div
-                    className="
-                      mt-[14px]
-                    "
-                  >
+                  <div className="mt-4">
                     <div
                       className="
                         flex
                         items-center
                         justify-between
-                        text-[9px]
+                        gap-3
+                        text-[10px]
+
+                        sm:text-[11px]
                       "
                     >
                       <span className="text-[#64748B]">
@@ -942,9 +1341,9 @@ export default function DailyTrainingLogDetails() {
                       className="
                         mt-[8px]
                         h-[7px]
+                        overflow-hidden
                         rounded-full
                         bg-[#E7ECF3]
-                        overflow-hidden
                       "
                     >
                       <div
@@ -960,25 +1359,26 @@ export default function DailyTrainingLogDetails() {
                     <p
                       className="
                         m-0
-                        mt-[5px]
-                        text-[7px]
+                        mt-[6px]
+                        text-[9px]
                         text-[#94A3B8]
                       "
                     >
-                      المتبقي لإتمام نصاب الأسبوع الحالي: 6 ساعات
+                      المتبقي لإتمام نصاب الأسبوع
+                      الحالي: 6 ساعات
                     </p>
                   </div>
                 </section>
 
-                {/* ACTIVITY DOCUMENTATION */}
+                {/* DOCUMENTATION */}
+
                 <section
                   className="
                     rounded-[14px]
                     border
                     border-[#DDE5EF]
                     bg-white
-                    px-[16px]
-                    py-[17px]
+                    p-4
                   "
                 >
                   <div
@@ -986,6 +1386,7 @@ export default function DailyTrainingLogDetails() {
                       flex
                       items-center
                       justify-between
+                      gap-3
                     "
                   >
                     <div
@@ -1014,14 +1415,12 @@ export default function DailyTrainingLogDetails() {
 
                     <span
                       className="
-                        h-[21px]
-                        px-[7px]
                         rounded-[6px]
                         bg-[#F1F5F9]
+                        px-[8px]
+                        py-[4px]
+                        text-[9px]
                         text-[#64748B]
-                        flex
-                        items-center
-                        text-[8px]
                       "
                     >
                       مرفق 1
@@ -1030,23 +1429,22 @@ export default function DailyTrainingLogDetails() {
 
                   <div
                     className="
-                      mt-[13px]
                       relative
-                      w-full
-                      h-[150px]
-                      rounded-[8px]
+                      mt-3
+                      h-[170px]
                       overflow-hidden
+                      rounded-[9px]
                       bg-[#E2E8F0]
+
+                      lg:h-[150px]
                     "
                   >
                     <img
-                      src="/training-activity.jpg"
+                      src={currentLog.photo}
                       alt="توثيق النشاط الميداني"
                       className="
-                        absolute
-                        inset-0
-                        w-full
                         h-full
+                        w-full
                         object-cover
                       "
                       onError={(event) => {
@@ -1058,25 +1456,25 @@ export default function DailyTrainingLogDetails() {
                     <div
                       className="
                         absolute
-                        bottom-[8px]
-                        right-[8px]
-                        left-[8px]
+                        inset-x-0
+                        bottom-0
                         flex
                         items-center
                         justify-between
+                        gap-2
+                        bg-gradient-to-t
+                        from-black/70
+                        to-transparent
+                        px-3
+                        pb-2
+                        pt-8
                         text-white
                       "
                     >
-                      <span
-                        className="
-                          text-[8px]
-                          bg-black/45
-                          px-[7px]
-                          py-[4px]
-                          rounded-[5px]
-                        "
-                      >
-                        فحص الكابلات - غرفة الخوادم الرئيسية
+                      <span className="text-[9px]">
+                        {
+                          currentLog.photoCaption
+                        }
                       </span>
 
                       <Eye size={14} />
@@ -1086,24 +1484,24 @@ export default function DailyTrainingLogDetails() {
                   <div
                     className="
                       mt-[10px]
-                      h-[34px]
-                      rounded-[7px]
+                      flex
+                      min-h-[38px]
+                      items-center
+                      justify-between
+                      gap-[10px]
+                      rounded-[8px]
                       border
                       border-[#E2E8F0]
                       bg-[#F8FAFC]
                       px-[10px]
-                      flex
-                      items-center
-                      justify-between
-                      gap-[10px]
                     "
                   >
                     <div
                       className="
                         flex
+                        min-w-0
                         items-center
                         gap-[6px]
-                        min-w-0
                       "
                     >
                       <FileText
@@ -1112,53 +1510,57 @@ export default function DailyTrainingLogDetails() {
                       />
 
                       <span
-                        dir="ltr"
                         className="
-                          text-[8px]
-                          text-[#475569]
                           truncate
+                          text-[9px]
+                          text-[#475569]
                         "
                       >
-                        تقرير_الفحص_OTDR.pdf
+                        {currentLog.attachment}
                       </span>
                     </div>
 
                     <button
                       type="button"
                       className="
+                        flex
+                        items-center
+                        gap-[4px]
                         border-0
                         bg-transparent
                         p-0
-                        text-[#2563EB]
-                        text-[8px]
+                        text-[9px]
                         font-bold
-                        cursor-pointer
+                        text-[#2563EB]
                       "
                     >
+                      <Download size={12} />
+
                       تحميل
                     </button>
                   </div>
                 </section>
 
                 {/* NOTICE */}
+
                 <section
                   className="
-                    rounded-[12px]
-                    bg-[#12395E]
-                    px-[16px]
-                    py-[15px]
-                    text-white
                     flex
                     items-start
                     gap-[10px]
+                    rounded-[12px]
+                    bg-[#12395E]
+                    px-4
+                    py-4
+                    text-white
                   "
                 >
                   <Info
                     size={17}
                     className="
-                      text-[#22D3EE]
-                      shrink-0
                       mt-[1px]
+                      shrink-0
+                      text-[#22D3EE]
                     "
                   />
 
@@ -1178,40 +1580,47 @@ export default function DailyTrainingLogDetails() {
                       className="
                         m-0
                         mt-[4px]
-                        text-[8px]
-                        leading-[15px]
+                        text-[10px]
+                        leading-[18px]
                         text-white/80
                       "
                     >
-                      يحق للطالب تعديل السجل التدريبي خلال 48 ساعة فقط من
-                      وقت الإدخال وقبل إغلاق الاعتماد النهائي من إدارة
-                      الكلية.
+                      يحق للطالب تعديل السجل
+                      التدريبي خلال 48 ساعة فقط من
+                      وقت الإدخال وقبل إغلاق
+                      الاعتماد النهائي.
                     </p>
                   </div>
                 </section>
               </aside>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 BOTTOM ACTIONS
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
-                mt-[24px]
-                pt-[18px]
+                mt-6
+                flex
+                flex-col
+                gap-3
                 border-t
                 border-[#DDE5EF]
-                flex
-                items-center
-                justify-between
-                gap-[16px]
+                pt-5
+
+                sm:flex-row
+                sm:items-center
+                sm:justify-between
               "
             >
               <div
                 className="
                   flex
-                  items-center
-                  gap-[10px]
+                  flex-col
+                  gap-[9px]
+
+                  sm:flex-row
                 "
               >
                 <button
@@ -1220,22 +1629,24 @@ export default function DailyTrainingLogDetails() {
                     setIsEditMode(true)
                   }
                   className="
-                    h-[42px]
-                    px-[18px]
+                    flex
+                    min-h-[42px]
+                    items-center
+                    justify-center
+                    gap-[8px]
                     rounded-[8px]
                     border-0
                     bg-[#09379A]
-                    text-white
-                    flex
-                    items-center
-                    gap-[8px]
+                    px-[18px]
                     text-[11px]
                     font-bold
-                    cursor-pointer
+                    text-white
+
                     hover:bg-[#072E81]
                   "
                 >
                   <Edit3 size={15} />
+
                   تعديل السجل
                 </button>
 
@@ -1245,23 +1656,23 @@ export default function DailyTrainingLogDetails() {
                     window.print()
                   }
                   className="
-                    h-[42px]
-                    px-[16px]
+                    flex
+                    min-h-[42px]
+                    items-center
+                    justify-center
+                    gap-[7px]
                     rounded-[8px]
                     border
                     border-[#D9E2EC]
                     bg-white
-                    text-[#475569]
-                    flex
-                    items-center
-                    gap-[7px]
-                    text-[10px]
+                    px-[16px]
+                    text-[11px]
                     font-bold
-                    cursor-pointer
-                    hover:bg-[#F8FAFC]
+                    text-[#475569]
                   "
                 >
                   <Printer size={14} />
+
                   طباعة السجل
                 </button>
 
@@ -1272,22 +1683,23 @@ export default function DailyTrainingLogDetails() {
                       setIsEditMode(false)
                     }
                     className="
-                      h-[42px]
-                      px-[16px]
+                      flex
+                      min-h-[42px]
+                      items-center
+                      justify-center
+                      gap-[7px]
                       rounded-[8px]
                       border
                       border-[#B7E3C8]
                       bg-[#F0FDF4]
-                      text-[#16A34A]
-                      flex
-                      items-center
-                      gap-[7px]
-                      text-[10px]
+                      px-[16px]
+                      text-[11px]
                       font-bold
-                      cursor-pointer
+                      text-[#16A34A]
                     "
                   >
                     <Save size={14} />
+
                     حفظ التعديلات
                   </button>
                 )}
@@ -1296,26 +1708,30 @@ export default function DailyTrainingLogDetails() {
               <button
                 type="button"
                 onClick={() =>
-                  navigate("/student/daily-training-log")
+                  navigate(
+                    "/student/daily-training-log"
+                  )
                 }
                 className="
-                  h-[38px]
-                  px-[14px]
+                  flex
+                  min-h-[40px]
+                  items-center
+                  justify-center
+                  gap-[7px]
                   rounded-[8px]
                   border
                   border-[#D9E2EC]
                   bg-white
-                  text-[#475569]
-                  flex
-                  items-center
-                  gap-[7px]
-                  text-[10px]
+                  px-[14px]
+                  text-[11px]
                   font-bold
-                  cursor-pointer
+                  text-[#475569]
+
                   hover:bg-[#F8FAFC]
                 "
               >
                 <ArrowRight size={14} />
+
                 رجوع
               </button>
             </section>
@@ -1339,23 +1755,32 @@ function MiniInfo({
     <div
       className="
         flex
+        min-w-0
         items-center
         gap-[10px]
+        rounded-[8px]
+        bg-white
+        px-3
+        py-3
+
+        sm:bg-transparent
+        sm:px-0
+        sm:py-0
       "
     >
       <div
         className="
-          w-[34px]
+          flex
           h-[34px]
+          w-[34px]
+          shrink-0
+          items-center
+          justify-center
           rounded-[8px]
           border
           border-[#E2E8F0]
           bg-white
           text-[#64748B]
-          flex
-          items-center
-          justify-center
-          shrink-0
         "
       >
         <Icon
@@ -1364,12 +1789,15 @@ function MiniInfo({
         />
       </div>
 
-      <div>
+      <div className="min-w-0">
         <p
           className="
             m-0
-            text-[8px]
+            text-[9px]
+            font-medium
             text-[#94A3B8]
+
+            sm:text-[10px]
           "
         >
           {label}
@@ -1377,10 +1805,13 @@ function MiniInfo({
 
         <strong
           className="
-            block
             mt-[3px]
+            block
             text-[11px]
+            font-bold
             text-[#1E293B]
+
+            sm:text-[12px]
           "
         >
           {value}

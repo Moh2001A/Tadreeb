@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
 import {
+  ArrowLeft,
   Building2,
   CalendarDays,
   Clock3,
@@ -15,6 +16,10 @@ import Sidebar from "../../components/student/Sidebar";
 export default function DailyTrainingLog() {
   const navigate = useNavigate();
 
+  /* =========================================================
+     LOGS DATA
+  ========================================================= */
+
   const logs = [
     {
       id: 1,
@@ -25,6 +30,7 @@ export default function DailyTrainingLog() {
       note: "جيد",
       noteType: "good",
     },
+
     {
       id: 2,
       day: "الإثنين",
@@ -34,6 +40,7 @@ export default function DailyTrainingLog() {
       note: "",
       noteType: "none",
     },
+
     {
       id: 3,
       day: "الثلاثاء",
@@ -43,6 +50,7 @@ export default function DailyTrainingLog() {
       note: "ممتاز",
       noteType: "excellent",
     },
+
     {
       id: 4,
       day: "الأربعاء",
@@ -63,70 +71,96 @@ export default function DailyTrainingLog() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
         bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
-      {/* =========================================
+      {/* =====================================================
           SIDEBAR
-      ========================================== */}
+      ====================================================== */}
+
       <Sidebar />
 
-      {/* =========================================
-          MAIN AREA
-      ========================================== */}
+      {/* =====================================================
+          MAIN
+      ====================================================== */}
+
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
+          bg-[#F8FAFC]
         "
       >
-        {/* =========================================
-            FIXED HEADER
-        ========================================== */}
-        <Header />
+        {/* =====================================================
+            HEADER
+        ====================================================== */}
 
-        {/* =========================================
+        <div className="relative shrink-0">
+          <Header />
+        </div>
+
+        {/* =====================================================
             SCROLLABLE CONTENT
-        ========================================== */}
+        ====================================================== */}
+
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+            md:pt-7
+
             xl:px-[40px]
-            pt-[18px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
           <div
             className="
+              mx-auto
               w-full
               max-w-[1080px]
-              mx-auto
             "
           >
-            {/* =====================================
+            {/* =================================================
                 BREADCRUMB
-            ====================================== */}
-            <div
+            ================================================== */}
+
+            <nav
+              aria-label="مسار التنقل"
               className="
                 flex
+                flex-wrap
                 items-center
                 gap-[7px]
-                text-[13px]
+                text-[11px]
+                font-medium
                 leading-[20px]
+
+                sm:text-[12px]
+
+                xl:text-[13px]
               "
             >
               <button
@@ -139,8 +173,8 @@ export default function DailyTrainingLog() {
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
                   transition
+
                   hover:text-[#09379A]
                 "
               >
@@ -154,15 +188,17 @@ export default function DailyTrainingLog() {
               <button
                 type="button"
                 onClick={() =>
-                  navigate("/student/training-profile")
+                  navigate(
+                    "/student/training-profile"
+                  )
                 }
                 className="
                   border-0
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
                   transition
+
                   hover:text-[#09379A]
                 "
               >
@@ -181,38 +217,47 @@ export default function DailyTrainingLog() {
               >
                 السجل التدريبي اليومي
               </span>
-            </div>
+            </nav>
 
-            {/* =====================================
+            {/* =================================================
                 PAGE HEADER
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
-                mt-[6px]
+                mt-[7px]
                 flex
-                items-start
-                justify-between
-                gap-[20px]
+                flex-col
+                gap-4
+
+                md:flex-row
+                md:items-start
+                md:justify-between
               "
             >
+              {/* TITLE */}
+
               <div
                 className="
                   flex
+                  min-w-0
                   items-start
                   gap-[11px]
                 "
               >
                 <div
                   className="
-                    w-[38px]
+                    hidden
                     h-[38px]
-                    rounded-[8px]
-                    bg-[#EEF3FF]
-                    text-[#09379A]
-                    flex
+                    w-[38px]
+                    shrink-0
                     items-center
                     justify-center
-                    shrink-0
+                    rounded-[9px]
+                    bg-[#EEF3FF]
+                    text-[#09379A]
+
+                    sm:flex
                   "
                 >
                   <FileText
@@ -221,14 +266,19 @@ export default function DailyTrainingLog() {
                   />
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   <h1
                     className="
                       m-0
-                      text-[28px]
-                      leading-[40px]
+                      text-[24px]
                       font-bold
+                      leading-[36px]
                       text-[#14213D]
+
+                      sm:text-[26px]
+
+                      xl:text-[28px]
+                      xl:leading-[40px]
                     "
                   >
                     السجل التدريبي اليومي
@@ -237,17 +287,25 @@ export default function DailyTrainingLog() {
                   <p
                     className="
                       m-0
-                      mt-[2px]
-                      text-[13px]
+                      mt-[3px]
+                      max-w-[700px]
+                      text-[11px]
                       leading-[21px]
                       text-[#64748B]
+
+                      sm:text-[12px]
+
+                      xl:text-[13px]
                     "
                   >
-                    توثيق الأنشطة وساعات التدريب الميداني
-                    المعتمدة وفق خطة الفصل الأكاديمي الحالي
+                    توثيق الأنشطة وساعات التدريب
+                    الميداني المعتمدة وفق خطة الفصل
+                    الأكاديمي الحالي
                   </p>
                 </div>
               </div>
+
+              {/* ADD BUTTON */}
 
               <button
                 type="button"
@@ -257,76 +315,98 @@ export default function DailyTrainingLog() {
                   )
                 }
                 className="
-                  h-[42px]
-                  px-[18px]
-                  rounded-[8px]
-                  border-0
-                  bg-[#FF6B35]
-                  text-white
                   flex
+                  min-h-[42px]
+                  w-full
+                  shrink-0
                   items-center
                   justify-center
                   gap-[8px]
-                  text-[12px]
+                  rounded-[9px]
+                  border-0
+                  bg-[#09379A]
+                  px-[18px]
+                  text-[11px]
                   font-bold
-                  cursor-pointer
+                  text-white
+                  shadow-[0_4px_12px_rgba(9,55,154,0.16)]
                   transition
-                  hover:bg-[#EA5A28]
+
+                  hover:bg-[#072E81]
+                  hover:shadow-[0_6px_16px_rgba(9,55,154,0.20)]
+
+                  active:translate-y-[1px]
+
+                  sm:w-fit
+                  sm:text-[12px]
                 "
               >
                 <Plus
                   size={17}
-                  strokeWidth={2}
+                  strokeWidth={2.2}
                 />
 
                 إضافة سجل جديد
               </button>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 TRAINING SUMMARY
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
-                mt-[22px]
-                min-h-[105px]
+                mt-5
+                flex
+                flex-col
+                gap-5
                 rounded-[14px]
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[24px]
-                py-[18px]
-                flex
-                items-center
-                justify-between
-                gap-[20px]
+                p-4
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                sm:p-5
+
+                lg:flex-row
+                lg:items-center
+                lg:justify-between
+
+                xl:mt-[22px]
+                xl:min-h-[105px]
+                xl:px-[24px]
+                xl:py-[18px]
               "
             >
-              {/* Organization */}
+              {/* ORGANIZATION */}
+
               <div
                 className="
                   flex
+                  min-w-0
                   items-center
                   gap-[14px]
-                  min-w-0
                 "
               >
                 <div
                   className="
-                    w-[52px]
-                    h-[52px]
-                    rounded-[9px]
-                    bg-[#09379A]
-                    text-white
                     flex
+                    h-[50px]
+                    w-[50px]
+                    shrink-0
                     items-center
                     justify-center
-                    shrink-0
+                    rounded-[10px]
+                    bg-[#09379A]
+                    text-white
+
+                    sm:h-[52px]
+                    sm:w-[52px]
                   "
                 >
                   <Building2
-                    size={25}
+                    size={24}
                     strokeWidth={1.8}
                   />
                 </div>
@@ -335,15 +415,18 @@ export default function DailyTrainingLog() {
                   <div
                     className="
                       flex
+                      flex-wrap
                       items-center
                       gap-[8px]
-                      flex-wrap
                     "
                   >
                     <span
                       className="
                         text-[10px]
+                        font-medium
                         text-[#94A3B8]
+
+                        sm:text-[11px]
                       "
                     >
                       جهة التدريب المعتمدة
@@ -351,22 +434,24 @@ export default function DailyTrainingLog() {
 
                     <span
                       className="
-                        h-[22px]
-                        px-[8px]
-                        rounded-[10px]
-                        bg-[#E7F8EE]
-                        text-[#10B981]
-                        flex
+                        inline-flex
+                        min-h-[23px]
                         items-center
                         gap-[5px]
+                        rounded-full
+                        bg-[#E7F8EE]
+                        px-[8px]
                         text-[9px]
                         font-bold
+                        text-[#10B981]
+
+                        sm:text-[10px]
                       "
                     >
                       <span
                         className="
-                          w-[5px]
                           h-[5px]
+                          w-[5px]
                           rounded-full
                           bg-[#10B981]
                         "
@@ -380,9 +465,12 @@ export default function DailyTrainingLog() {
                     className="
                       m-0
                       mt-[4px]
-                      text-[18px]
+                      text-[17px]
                       font-bold
+                      leading-[27px]
                       text-[#1E293B]
+
+                      sm:text-[18px]
                     "
                   >
                     شركة القدس للاتصالات
@@ -390,14 +478,22 @@ export default function DailyTrainingLog() {
                 </div>
               </div>
 
-              {/* Summary Numbers */}
+              {/* SUMMARY NUMBERS */}
+
               <div
                 className="
-                  flex
-                  items-center
-                  divide-x
-                  divide-x-reverse
-                  divide-[#E2E8F0]
+                  grid
+                  grid-cols-1
+                  gap-3
+
+                  min-[430px]:grid-cols-3
+
+                  lg:flex
+                  lg:items-center
+                  lg:divide-x
+                  lg:divide-x-reverse
+                  lg:divide-[#E2E8F0]
+                  lg:gap-0
                 "
               >
                 <SummaryInfo
@@ -420,21 +516,26 @@ export default function DailyTrainingLog() {
               </div>
             </section>
 
-            {/* =====================================
-                CURRENT WEEK HEADER
-            ====================================== */}
+            {/* =================================================
+                CURRENT WEEK
+            ================================================== */}
+
             <section
               className="
-                mt-[24px]
+                mt-6
                 flex
-                items-center
-                justify-between
-                gap-[16px]
+                flex-col
+                gap-3
+
+                sm:flex-row
+                sm:items-center
+                sm:justify-between
               "
             >
               <div
                 className="
                   flex
+                  flex-wrap
                   items-center
                   gap-[8px]
                 "
@@ -442,9 +543,13 @@ export default function DailyTrainingLog() {
                 <h2
                   className="
                     m-0
-                    text-[19px]
+                    text-[17px]
                     font-bold
                     text-[#1E293B]
+
+                    sm:text-[18px]
+
+                    xl:text-[19px]
                   "
                 >
                   سجلات الأسبوع الحالي
@@ -452,155 +557,365 @@ export default function DailyTrainingLog() {
 
                 <span
                   className="
-                    h-[25px]
-                    px-[9px]
-                    rounded-[12px]
-                    bg-[#EEF4FF]
-                    text-[#09379A]
-                    flex
+                    inline-flex
+                    min-h-[25px]
                     items-center
+                    rounded-full
+                    bg-[#EEF4FF]
+                    px-[9px]
                     text-[9px]
                     font-bold
+                    text-[#09379A]
+
+                    sm:text-[10px]
                   "
                 >
                   {logs.length} أيام موثقة
                 </span>
               </div>
+
+              <span
+                className="
+                  hidden
+                  items-center
+                  gap-[6px]
+                  text-[10px]
+                  text-[#94A3B8]
+
+                  sm:flex
+                "
+              >
+                <Info size={13} />
+
+                يتم اعتماد السجلات أسبوعيًا
+              </span>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 LOGS
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
-                mt-[12px]
+                mt-3
+                overflow-hidden
                 rounded-[14px]
                 border
                 border-[#DDE5EF]
                 bg-white
-                overflow-hidden
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
               "
             >
               {logs.length > 0 ? (
                 <>
-                  {/* Header */}
+                  {/* ===========================================
+                      DESKTOP TABLE
+                  ============================================ */}
+
                   <div
                     className="
-                      grid
-                      grid-cols-[170px_minmax(0,1fr)_150px_130px_100px]
-                      bg-[#F8FAFC]
-                      border-b
-                      border-[#E2E8F0]
-                      px-[20px]
-                      py-[13px]
-                      text-[10px]
-                      font-medium
-                      text-[#64748B]
+                      hidden
+
+                      md:block
                     "
                   >
-                    <div>اليوم</div>
-                    <div>المهام المنجزة</div>
-                    <div>المدة</div>
-                    <div>الملاحظات</div>
-                    <div>الإجراء</div>
+                    {/* HEADER */}
+
+                    <div
+                      className="
+                        grid
+                        grid-cols-[150px_minmax(0,1fr)_120px_110px_80px]
+                        gap-[10px]
+                        border-b
+                        border-[#E2E8F0]
+                        bg-[#F8FAFC]
+                        px-[18px]
+                        py-[13px]
+                        text-[10px]
+                        font-semibold
+                        text-[#64748B]
+
+                        lg:grid-cols-[170px_minmax(0,1fr)_150px_130px_100px]
+                        lg:px-[20px]
+                      "
+                    >
+                      <div>اليوم</div>
+
+                      <div>
+                        المهام المنجزة
+                      </div>
+
+                      <div>المدة</div>
+
+                      <div>
+                        الملاحظات
+                      </div>
+
+                      <div>الإجراء</div>
+                    </div>
+
+                    {/* ROWS */}
+
+                    <div>
+                      {logs.map(
+                        (log, index) => (
+                          <div
+                            key={log.id}
+                            className={`
+                              grid
+                              grid-cols-[150px_minmax(0,1fr)_120px_110px_80px]
+                              items-center
+                              gap-[10px]
+                              px-[18px]
+                              py-[17px]
+
+                              lg:grid-cols-[170px_minmax(0,1fr)_150px_130px_100px]
+                              lg:px-[20px]
+
+                              ${
+                                index !==
+                                logs.length - 1
+                                  ? `
+                                    border-b
+                                    border-[#EEF2F7]
+                                  `
+                                  : ""
+                              }
+                            `}
+                          >
+                            {/* DAY */}
+
+                            <div
+                              className="
+                                flex
+                                items-center
+                                gap-[8px]
+                              "
+                            >
+                              <span
+                                className="
+                                  h-[7px]
+                                  w-[7px]
+                                  shrink-0
+                                  rounded-full
+                                  bg-[#09379A]
+                                "
+                              />
+
+                              <div>
+                                <strong
+                                  className="
+                                    block
+                                    text-[11px]
+                                    font-bold
+                                    text-[#1E293B]
+
+                                    lg:text-[12px]
+                                  "
+                                >
+                                  {log.day}
+                                </strong>
+
+                                <span
+                                  dir="ltr"
+                                  className="
+                                    mt-[2px]
+                                    block
+                                    text-[9px]
+                                    text-[#94A3B8]
+
+                                    lg:text-[10px]
+                                  "
+                                >
+                                  {log.date}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* TASK */}
+
+                            <div
+                              className="
+                                min-w-0
+                                text-[11px]
+                                font-medium
+                                leading-[19px]
+                                text-[#334155]
+
+                                lg:text-[12px]
+                              "
+                            >
+                              {log.task}
+                            </div>
+
+                            {/* HOURS */}
+
+                            <div
+                              className="
+                                flex
+                                items-center
+                                gap-[6px]
+                                text-[10px]
+                                text-[#64748B]
+
+                                lg:text-[11px]
+                              "
+                            >
+                              <Clock3
+                                size={14}
+                                strokeWidth={1.7}
+                                className="shrink-0"
+                              />
+
+                              {log.hours} ساعات
+                            </div>
+
+                            {/* NOTES */}
+
+                            <div>
+                              {log.noteType ===
+                                "good" && (
+                                <StatusBadge
+                                  text="جيد"
+                                  type="good"
+                                />
+                              )}
+
+                              {log.noteType ===
+                                "excellent" && (
+                                <StatusBadge
+                                  text="ممتاز"
+                                  type="excellent"
+                                />
+                              )}
+
+                              {log.noteType ===
+                                "none" && (
+                                <span
+                                  className="
+                                    text-[11px]
+                                    text-[#94A3B8]
+                                  "
+                                >
+                                  —
+                                </span>
+                              )}
+                            </div>
+
+                            {/* ACTION */}
+
+                            <div>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  navigate(
+                                    `/student/daily-training-log/details?id=${log.id}`
+                                  )
+                                }
+                                className="
+                                  border-0
+                                  bg-transparent
+                                  p-0
+                                  text-[10px]
+                                  font-bold
+                                  text-[#09379A]
+                                  transition
+
+                                  hover:text-[#072E81]
+                                  hover:underline
+
+                                  lg:text-[11px]
+                                "
+                              >
+                                عرض
+                              </button>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
                   </div>
 
-                  {/* Rows */}
-                  <div>
-                    {logs.map((log, index) => (
-                      <div
+                  {/* ===========================================
+                      MOBILE CARDS
+                  ============================================ */}
+
+                  <div
+                    className="
+                      flex
+                      flex-col
+                      gap-3
+                      bg-[#FAFBFD]
+                      p-3
+
+                      md:hidden
+                    "
+                  >
+                    {logs.map((log) => (
+                      <article
                         key={log.id}
-                        className={`
-                          grid
-                          grid-cols-[170px_minmax(0,1fr)_150px_130px_100px]
-                          items-center
-                          gap-[10px]
-                          px-[20px]
-                          py-[18px]
-
-                          ${
-                            index !==
-                            logs.length - 1
-                              ? "border-b border-[#EEF2F7]"
-                              : ""
-                          }
-                        `}
+                        className="
+                          rounded-[12px]
+                          border
+                          border-[#E2E8F0]
+                          bg-white
+                          p-4
+                        "
                       >
-                        {/* Day */}
+                        {/* TOP */}
+
                         <div
                           className="
                             flex
-                            items-center
-                            gap-[8px]
+                            items-start
+                            justify-between
+                            gap-3
                           "
                         >
-                          <span
+                          <div
                             className="
-                              w-[7px]
-                              h-[7px]
-                              rounded-full
-                              bg-[#09379A]
-                              shrink-0
+                              flex
+                              items-start
+                              gap-[8px]
                             "
-                          />
-
-                          <div>
-                            <strong
-                              className="
-                                block
-                                text-[11px]
-                                text-[#1E293B]
-                              "
-                            >
-                              {log.day}
-                            </strong>
-
+                          >
                             <span
-                              dir="ltr"
                               className="
-                                block
-                                mt-[2px]
-                                text-[9px]
-                                text-[#94A3B8]
+                                mt-[6px]
+                                h-[7px]
+                                w-[7px]
+                                shrink-0
+                                rounded-full
+                                bg-[#09379A]
                               "
-                            >
-                              {log.date}
-                            </span>
+                            />
+
+                            <div>
+                              <h3
+                                className="
+                                  m-0
+                                  text-[14px]
+                                  font-bold
+                                  text-[#1E293B]
+                                "
+                              >
+                                {log.day}
+                              </h3>
+
+                              <span
+                                dir="ltr"
+                                className="
+                                  mt-[2px]
+                                  block
+                                  text-[10px]
+                                  text-[#94A3B8]
+                                "
+                              >
+                                {log.date}
+                              </span>
+                            </div>
                           </div>
-                        </div>
 
-                        {/* Task */}
-                        <div
-                          className="
-                            text-[11px]
-                            font-medium
-                            text-[#334155]
-                          "
-                        >
-                          {log.task}
-                        </div>
-
-                        {/* Hours */}
-                        <div
-                          className="
-                            flex
-                            items-center
-                            gap-[6px]
-                            text-[10px]
-                            text-[#64748B]
-                          "
-                        >
-                          <Clock3
-                            size={14}
-                            strokeWidth={1.7}
-                          />
-
-                          {log.hours} ساعات
-                        </div>
-
-                        {/* Notes */}
-                        <div>
                           {log.noteType ===
                             "good" && (
                             <StatusBadge
@@ -616,22 +931,71 @@ export default function DailyTrainingLog() {
                               type="excellent"
                             />
                           )}
-
-                          {log.noteType ===
-                            "none" && (
-                            <span
-                              className="
-                                text-[10px]
-                                text-[#94A3B8]
-                              "
-                            >
-                              —
-                            </span>
-                          )}
                         </div>
 
-                        {/* Action */}
-                        <div>
+                        {/* TASK */}
+
+                        <div
+                          className="
+                            mt-4
+                            rounded-[9px]
+                            bg-[#F8FAFC]
+                            p-3
+                          "
+                        >
+                          <span
+                            className="
+                              block
+                              text-[10px]
+                              font-medium
+                              text-[#94A3B8]
+                            "
+                          >
+                            المهمة المنجزة
+                          </span>
+
+                          <p
+                            className="
+                              m-0
+                              mt-[4px]
+                              text-[13px]
+                              font-bold
+                              leading-[21px]
+                              text-[#334155]
+                            "
+                          >
+                            {log.task}
+                          </p>
+                        </div>
+
+                        {/* BOTTOM */}
+
+                        <div
+                          className="
+                            mt-3
+                            flex
+                            items-center
+                            justify-between
+                            gap-3
+                          "
+                        >
+                          <div
+                            className="
+                              flex
+                              items-center
+                              gap-[6px]
+                              text-[11px]
+                              text-[#64748B]
+                            "
+                          >
+                            <Clock3
+                              size={14}
+                              strokeWidth={1.7}
+                            />
+
+                            {log.hours} ساعات
+                          </div>
+
                           <button
                             type="button"
                             onClick={() =>
@@ -640,47 +1004,71 @@ export default function DailyTrainingLog() {
                               )
                             }
                             className="
-                              border-0
-                              bg-transparent
-                              p-0
-                              text-[#09379A]
+                              flex
+                              h-[34px]
+                              items-center
+                              gap-[5px]
+                              rounded-[7px]
+                              border
+                              border-[#D7E3F7]
+                              bg-[#F5F8FF]
+                              px-[10px]
                               text-[10px]
                               font-bold
-                              cursor-pointer
-                              hover:underline
+                              text-[#09379A]
                             "
                           >
-                            عرض
+                            عرض التفاصيل
+
+                            <ArrowLeft
+                              size={12}
+                            />
                           </button>
                         </div>
-                      </div>
+                      </article>
                     ))}
                   </div>
 
-                  {/* Footer */}
+                  {/* ===========================================
+                      FOOTER
+                  ============================================ */}
+
                   <div
                     className="
-                      min-h-[46px]
-                      bg-[#F8FAFC]
+                      flex
+                      min-h-[52px]
+                      flex-col
+                      gap-3
                       border-t
                       border-[#E2E8F0]
-                      px-[20px]
-                      flex
-                      items-center
-                      justify-between
-                      gap-[20px]
+                      bg-[#F8FAFC]
+                      px-4
+                      py-3
+
+                      sm:flex-row
+                      sm:items-center
+                      sm:justify-between
+
+                      lg:px-[20px]
                     "
                   >
                     <div
                       className="
                         flex
-                        items-center
-                        gap-[18px]
-                        text-[9px]
+                        flex-col
+                        gap-[5px]
+                        text-[10px]
+
+                        sm:flex-row
+                        sm:items-center
+                        sm:gap-[18px]
+
+                        lg:text-[11px]
                       "
                     >
                       <span className="text-[#64748B]">
                         مجموع ساعات الأسبوع:
+
                         <strong
                           className="
                             mr-[5px]
@@ -691,8 +1079,20 @@ export default function DailyTrainingLog() {
                         </strong>
                       </span>
 
+                      <span
+                        className="
+                          hidden
+                          h-[16px]
+                          w-px
+                          bg-[#DCE3ED]
+
+                          sm:block
+                        "
+                      />
+
                       <span className="text-[#64748B]">
                         حالة التوقيع الميداني:
+
                         <strong
                           className="
                             mr-[5px]
@@ -706,49 +1106,54 @@ export default function DailyTrainingLog() {
 
                     <span
                       className="
-                        text-[8px]
+                        text-[9px]
                         text-[#94A3B8]
+
+                        sm:text-[10px]
                       "
                     >
-                      تم التحديث تلقائيا: اليوم 02:40 م
+                      تم التحديث تلقائيا: اليوم
+                      02:40 م
                     </span>
                   </div>
                 </>
               ) : (
-                /* =================================
-                    EMPTY STATE
-                ================================== */
+                /* =============================================
+                   EMPTY STATE
+                ============================================== */
+
                 <div
                   className="
-                    min-h-[250px]
                     flex
+                    min-h-[280px]
                     flex-col
                     items-center
                     justify-center
+                    px-5
+                    py-8
                     text-center
-                    px-[24px]
                   "
                 >
                   <div
                     className="
-                      w-[48px]
-                      h-[48px]
+                      flex
+                      h-[52px]
+                      w-[52px]
+                      items-center
+                      justify-center
                       rounded-[12px]
                       bg-[#EEF3FF]
                       text-[#09379A]
-                      flex
-                      items-center
-                      justify-center
                     "
                   >
-                    <FileText size={22} />
+                    <FileText size={23} />
                   </div>
 
                   <h3
                     className="
                       m-0
-                      mt-[12px]
-                      text-[15px]
+                      mt-4
+                      text-[16px]
                       font-bold
                       text-[#1E293B]
                     "
@@ -759,13 +1164,17 @@ export default function DailyTrainingLog() {
                   <p
                     className="
                       m-0
-                      mt-[4px]
+                      mt-[5px]
+                      max-w-[400px]
                       text-[11px]
+                      leading-[20px]
                       text-[#64748B]
+
+                      sm:text-[12px]
                     "
                   >
-                    أضف أول سجل تدريبي لبدء توثيق
-                    أنشطتك وساعاتك الميدانية.
+                    أضف أول سجل تدريبي لبدء
+                    توثيق أنشطتك وساعاتك الميدانية.
                   </p>
 
                   <button
@@ -776,70 +1185,78 @@ export default function DailyTrainingLog() {
                       )
                     }
                     className="
-                      mt-[14px]
-                      h-[38px]
-                      px-[15px]
+                      mt-4
+                      flex
+                      min-h-[38px]
+                      items-center
+                      gap-[7px]
                       rounded-[8px]
                       border-0
                       bg-[#09379A]
-                      text-white
-                      flex
-                      items-center
-                      gap-[7px]
+                      px-[15px]
                       text-[10px]
                       font-bold
-                      cursor-pointer
+                      text-white
+
                       hover:bg-[#072E81]
                     "
                   >
                     <Plus size={14} />
+
                     إضافة سجل جديد
                   </button>
                 </div>
               )}
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 ACADEMIC GUIDANCE
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
-                mt-[24px]
-                min-h-[74px]
+                mt-5
+                flex
+                items-start
+                gap-[11px]
                 rounded-[12px]
                 border
                 border-[#BFD6FF]
                 bg-[#EEF4FF]
-                px-[18px]
-                py-[15px]
-                flex
-                items-start
-                gap-[11px]
+                px-4
+                py-4
+
+                sm:px-[18px]
+                sm:py-[15px]
+
+                xl:mt-[24px]
               "
             >
               <div
                 className="
-                  w-[32px]
+                  flex
                   h-[32px]
+                  w-[32px]
                   shrink-0
+                  items-center
+                  justify-center
                   rounded-[8px]
                   bg-[#DCE7FA]
                   text-[#09379A]
-                  flex
-                  items-center
-                  justify-center
                 "
               >
                 <Info size={16} />
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <h3
                   className="
                     m-0
                     text-[12px]
                     font-bold
                     text-[#09379A]
+
+                    sm:text-[13px]
                   "
                 >
                   توجيه أكاديمي هام للطلبة
@@ -848,17 +1265,21 @@ export default function DailyTrainingLog() {
                 <p
                   className="
                     m-0
-                    mt-[3px]
-                    text-[9px]
-                    leading-[17px]
+                    mt-[4px]
+                    text-[10px]
+                    leading-[19px]
                     text-[#64748B]
+
+                    sm:text-[11px]
+                    sm:leading-[20px]
                   "
                 >
-                  يرجى توثيق المهام المنجزة يوميا قبل
-                  الساعة الخامسة مساءً. يتم إغلاق اعتماد
-                  السجلات الأسبوعية بواسطة مشرف المؤسسة
-                  ومشرف الكلية كل يوم خميس، وتعتمد
-                  الدرجات النهائية بناءً على انتظام توثيق
+                  يرجى توثيق المهام المنجزة يوميا
+                  قبل الساعة الخامسة مساءً. يتم
+                  إغلاق اعتماد السجلات الأسبوعية
+                  بواسطة مشرف المؤسسة ومشرف الكلية
+                  كل يوم خميس، وتعتمد الدرجات
+                  النهائية بناءً على انتظام توثيق
                   هذه التقارير.
                 </p>
               </div>
@@ -883,9 +1304,28 @@ function SummaryInfo({
   return (
     <div
       className="
-        min-w-[150px]
-        px-[22px]
-        text-center
+        flex
+        min-w-0
+        items-center
+        justify-between
+        gap-3
+        rounded-[10px]
+        bg-[#F8FAFC]
+        px-3
+        py-3
+
+        min-[430px]:flex-col
+        min-[430px]:justify-center
+        min-[430px]:text-center
+
+        lg:min-w-[145px]
+        lg:rounded-none
+        lg:bg-transparent
+        lg:px-[20px]
+        lg:py-0
+
+        xl:min-w-[150px]
+        xl:px-[22px]
       "
     >
       <p
@@ -893,15 +1333,15 @@ function SummaryInfo({
           m-0
           flex
           items-center
-          justify-center
           gap-[5px]
-          text-[9px]
+          text-[10px]
+          font-medium
           text-[#94A3B8]
         "
       >
         {Icon && (
           <Icon
-            size={12}
+            size={13}
             strokeWidth={1.7}
           />
         )}
@@ -911,17 +1351,23 @@ function SummaryInfo({
 
       <div
         className="
-          mt-[5px]
           flex
           items-baseline
-          justify-center
           gap-[4px]
+
+          min-[430px]:mt-[5px]
+          min-[430px]:justify-center
         "
       >
         <strong
           className="
-            text-[16px]
+            text-[14px]
+            font-bold
             text-[#1E293B]
+
+            sm:text-[15px]
+
+            xl:text-[16px]
           "
         >
           {value}
@@ -932,6 +1378,8 @@ function SummaryInfo({
             className="
               text-[9px]
               text-[#94A3B8]
+
+              sm:text-[10px]
             "
           >
             {sub}
@@ -946,44 +1394,51 @@ function SummaryInfo({
    STATUS BADGE
 ========================================================= */
 
-function StatusBadge({ text, type }) {
+function StatusBadge({
+  text,
+  type,
+}) {
   const styles = {
-    good: `
-      bg-[#DFF8FE]
-      text-[#0E7490]
-    `,
+    good: {
+      wrapper:
+        "bg-[#DFF8FE] text-[#0E7490]",
+      dot:
+        "bg-[#06B6D4]",
+    },
 
-    excellent: `
-      bg-[#EEF4FF]
-      text-[#09379A]
-    `,
+    excellent: {
+      wrapper:
+        "bg-[#EEF4FF] text-[#09379A]",
+      dot:
+        "bg-[#09379A]",
+    },
   };
+
+  const current =
+    styles[type] || styles.good;
 
   return (
     <span
       className={`
         inline-flex
-        h-[24px]
-        px-[9px]
-        rounded-[12px]
+        min-h-[25px]
         items-center
         gap-[6px]
-        text-[9px]
+        rounded-full
+        px-[9px]
+        text-[10px]
         font-bold
-        ${styles[type]}
+
+        ${current.wrapper}
       `}
     >
       <span
         className={`
-          w-[5px]
           h-[5px]
+          w-[5px]
           rounded-full
 
-          ${
-            type === "good"
-              ? "bg-[#06B6D4]"
-              : "bg-[#09379A]"
-          }
+          ${current.dot}
         `}
       />
 

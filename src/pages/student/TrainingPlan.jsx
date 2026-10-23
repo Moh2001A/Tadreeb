@@ -19,48 +19,100 @@ import Sidebar from "../../components/student/Sidebar";
 export default function TrainingPlan() {
   const navigate = useNavigate();
 
+  /* =========================================================
+     TRAINING GOALS
+  ========================================================= */
+
   const goals = [
     "التعرف على بيئة العمل الواقعية في قطاع الاتصالات والشبكات.",
+
     "اكتساب مهارات عملية ومعايير قياسية في تركيب وصيانة الشبكات.",
+
     "تطوير مهارات العمل الجماعي، حل المشكلات التقنية والتواصل المهني.",
   ];
+
+  /* =========================================================
+     TRAINING TASKS
+  ========================================================= */
 
   const tasks = [
     {
       week: "1",
-      title: "التدريب على الأنظمة وصيانة الشبكات",
+
+      title:
+        "التدريب على الأنظمة وصيانة الشبكات",
+
       description:
         "التعرف على بروتوكولات الأمان الداخلي وإجراءات الفحص الأساسية لأجهزة التوجيه والتحكم.",
-      output: "تقرير أسبوعي (1)",
-      status: "مكتمل",
-      statusType: "completed",
+
+      output:
+        "تقرير أسبوعي (1)",
+
+      status:
+        "مكتمل",
+
+      statusType:
+        "completed",
     },
+
     {
-      week: "2 - 3",
-      title: "المشاركة في تركيب وصيانة الشبكات",
+      week:
+        "2 - 3",
+
+      title:
+        "المشاركة في تركيب وصيانة الشبكات",
+
       description:
         "المشاركة الميدانية في تمديد الكابلات وتهيئة أجهزة التبديل وإعداد نقاط التوزيع المحلية.",
-      output: "تقرير أسبوعي (2)",
-      status: "قيد التنفيذ",
-      statusType: "progress",
+
+      output:
+        "تقرير أسبوعي (2)",
+
+      status:
+        "قيد التنفيذ",
+
+      statusType:
+        "progress",
     },
+
     {
-      week: "4 - 5",
-      title: "العمل على مشاريع عملية واختبارات الأداء",
+      week:
+        "4 - 5",
+
+      title:
+        "العمل على مشاريع عملية واختبارات الأداء",
+
       description:
         "تطبيق حلول عملية لمعالجة الاختناقات الشبكية وإعداد سيناريوهات استعادة الاتصال.",
-      output: "تقرير أسبوعي (3)",
-      status: "قادم",
-      statusType: "upcoming",
+
+      output:
+        "تقرير أسبوعي (3)",
+
+      status:
+        "قادم",
+
+      statusType:
+        "upcoming",
     },
+
     {
-      week: "6 - 7",
-      title: "تجهيز التقرير النهائي وعرض الإنجاز",
+      week:
+        "6 - 7",
+
+      title:
+        "تجهيز التقرير النهائي وعرض الإنجاز",
+
       description:
         "حصر ساعات التدريب العملي وتوثيق المهارات المكتسبة واعتماد النموذج من المشرف الميداني.",
-      output: "تقرير نهائي شامل",
-      status: "قادم",
-      statusType: "upcoming",
+
+      output:
+        "تقرير نهائي شامل",
+
+      status:
+        "قادم",
+
+      statusType:
+        "upcoming",
     },
   ];
 
@@ -68,113 +120,197 @@ export default function TrainingPlan() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
         bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
+      {/* =====================================================
+          SIDEBAR
+      ====================================================== */}
+
       <Sidebar />
+
+      {/* =====================================================
+          MAIN
+      ====================================================== */}
 
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
+          bg-[#F8FAFC]
         "
       >
-        <Header />
+        {/* HEADER */}
+
+        <div className="relative shrink-0">
+          <Header />
+        </div>
+
+        {/* =====================================================
+            SCROLL CONTENT
+        ====================================================== */}
 
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+            md:pt-7
+
             xl:px-[40px]
-            pt-[18px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
-          <div className="w-full max-w-[1080px] mx-auto">
-            {/* =====================================
+          <div
+            className="
+              mx-auto
+              w-full
+              max-w-[1080px]
+            "
+          >
+            {/* =================================================
                 BREADCRUMB
-            ====================================== */}
-            <div
+            ================================================== */}
+
+            <nav
+              aria-label="مسار التنقل"
               className="
                 flex
+                flex-wrap
                 items-center
                 gap-[7px]
-                text-[13px]
+                text-[11px]
+                font-medium
                 leading-[20px]
+
+                sm:text-[12px]
+
+                xl:text-[13px]
               "
             >
               <button
                 type="button"
-                onClick={() => navigate("/student/dashboard")}
+                onClick={() =>
+                  navigate(
+                    "/student/dashboard"
+                  )
+                }
                 className="
                   border-0
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
+                  transition
+
                   hover:text-[#09379A]
                 "
               >
                 الرئيسية
               </button>
 
-              <span className="text-[#94A3B8]">›</span>
+              <span
+                className="
+                  text-[#94A3B8]
+                "
+              >
+                ›
+              </span>
 
               <button
                 type="button"
-                onClick={() => navigate("/student/training-profile")}
+                onClick={() =>
+                  navigate(
+                    "/student/training-profile"
+                  )
+                }
                 className="
                   border-0
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
+                  transition
+
                   hover:text-[#09379A]
                 "
               >
                 ملفي التدريبي
               </button>
 
-              <span className="text-[#94A3B8]">›</span>
+              <span
+                className="
+                  text-[#94A3B8]
+                "
+              >
+                ›
+              </span>
 
-              <span className="font-bold text-[#09379A]">
+              <span
+                className="
+                  font-bold
+                  text-[#09379A]
+                "
+              >
                 خطة التدريب
               </span>
-            </div>
+            </nav>
 
-            {/* =====================================
+            {/* =================================================
                 PAGE HEADER
-            ====================================== */}
-            <section className="mt-[5px]">
+            ================================================== */}
+
+            <section
+              className="
+                mt-[7px]
+              "
+            >
               <div
                 className="
                   flex
-                  items-start
-                  justify-between
-                  gap-[20px]
+                  flex-col
+                  gap-4
+
+                  md:flex-row
+                  md:items-start
+                  md:justify-between
                 "
               >
+                {/* TITLE */}
+
                 <div>
                   <h1
                     className="
                       m-0
-                      text-[28px]
-                      leading-[40px]
+                      text-[24px]
                       font-bold
+                      leading-[36px]
                       text-[#14213D]
+
+                      sm:text-[26px]
+
+                      xl:text-[28px]
+                      xl:leading-[40px]
                     "
                   >
                     خطة التدريب
@@ -183,77 +319,101 @@ export default function TrainingPlan() {
                   <p
                     className="
                       m-0
-                      mt-[3px]
-                      text-[13px]
-                      leading-[22px]
+                      mt-[4px]
+                      max-w-[700px]
+                      text-[11px]
+                      leading-[21px]
                       text-[#64748B]
+
+                      sm:text-[12px]
+
+                      xl:text-[13px]
+                      xl:leading-[22px]
                     "
                   >
-                    الخطة المعتمدة وتفاصيل المهام والأنشطة الأسبوعية
-                    الموزعة على فترة التدريب الميداني
+                    الخطة المعتمدة وتفاصيل المهام
+                    والأنشطة الأسبوعية الموزعة على
+                    فترة التدريب الميداني
                   </p>
                 </div>
+
+                {/* ACTIONS */}
 
                 <div
                   className="
                     flex
                     flex-wrap
                     items-center
-                    justify-end
                     gap-[10px]
                   "
                 >
                   <span
                     className="
-                      h-[30px]
-                      px-[12px]
-                      rounded-[15px]
-                      bg-[#EEF3FF]
-                      text-[#09379A]
                       flex
+                      min-h-[32px]
                       items-center
                       gap-[7px]
+                      rounded-full
+                      border
+                      border-[#D7E3FA]
+                      bg-[#EEF3FF]
+                      px-[12px]
                       text-[10px]
                       font-medium
-                      whitespace-nowrap
+                      text-[#09379A]
+
+                      sm:text-[11px]
                     "
                   >
                     <span
                       className="
-                        w-[6px]
-                        h-[6px]
+                        h-[7px]
+                        w-[7px]
+                        shrink-0
                         rounded-full
                         bg-[#FF6B35]
                       "
                     />
 
-                    مسار: شبكات واتصالات
+                    مسار شبكات واتصالات
                   </span>
 
                   <button
                     type="button"
-                    onClick={() => window.print()}
+                    onClick={() =>
+                      window.print()
+                    }
                     className="
-                      h-[30px]
-                      px-[12px]
+                      flex
+                      min-h-[34px]
+                      items-center
+                      gap-[7px]
                       rounded-[8px]
                       border
                       border-[#E2E8F0]
                       bg-white
-                      text-[#334155]
-                      flex
-                      items-center
-                      gap-[7px]
+                      px-[12px]
                       text-[10px]
                       font-bold
+                      text-[#334155]
+                      transition
+
                       hover:bg-[#F8FAFC]
+
+                      sm:text-[11px]
                     "
                   >
-                    <Printer size={14} className="text-[#09379A]" />
+                    <Printer
+                      size={14}
+                      className="text-[#09379A]"
+                    />
+
                     طباعة الخطة
                   </button>
                 </div>
               </div>
+
+              {/* APPROVAL */}
 
               <div
                 className="
@@ -264,31 +424,44 @@ export default function TrainingPlan() {
                   text-[10px]
                   font-medium
                   text-[#09379A]
+
+                  sm:text-[11px]
                 "
               >
-                <ShieldCheck size={15} />
+                <ShieldCheck
+                  size={15}
+                  className="shrink-0"
+                />
 
-                الاعتماد الأكاديمي للعام الدراسي 2025/2026
+                الاعتماد الأكاديمي للعام الدراسي
+                2025/2026
               </div>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 SUMMARY CARDS
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
-                mt-[24px]
+                mt-5
                 grid
                 grid-cols-1
-                md:grid-cols-3
-                gap-[18px]
+                gap-3
+
+                sm:grid-cols-2
+
+                lg:grid-cols-3
+
+                xl:mt-[24px]
+                xl:gap-[18px]
               "
             >
               <SummaryCard
-                icon={Clock3}
-                label="مدة التدريب"
-                value="8 أسابيع"
-                description="بواقع 120 ساعة ميدانية"
+                icon={CalendarDays}
+                label="تاريخ الانتهاء"
+                value="2025/12/01"
+                description="تسليم التقييم النهائي"
               />
 
               <SummaryCard
@@ -299,58 +472,75 @@ export default function TrainingPlan() {
               />
 
               <SummaryCard
-                icon={CalendarDays}
-                label="تاريخ الانتهاء"
-                value="2025/12/01"
-                description="تسليم التقييم النهائي"
+                icon={Clock3}
+                label="مدة التدريب"
+                value="8 أسابيع"
+                description="بواقع 120 ساعة ميدانية"
+                className="sm:col-span-2 lg:col-span-1"
               />
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 TRAINING GOALS
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
-                mt-[22px]
+                mt-5
                 rounded-[14px]
                 border
                 border-[#E2E8F0]
                 bg-white
-                px-[24px]
-                py-[24px]
+                p-4
+
+                sm:p-5
+
+                xl:mt-[22px]
+                xl:px-[24px]
+                xl:py-[24px]
               "
             >
+              {/* HEADER */}
+
               <div
                 className="
                   flex
                   items-center
-                  gap-[12px]
+                  gap-[11px]
                 "
               >
                 <div
                   className="
-                    w-[36px]
-                    h-[36px]
-                    rounded-[9px]
-                    bg-[#0F172A]
-                    text-[#2563EB]
                     flex
+                    h-[36px]
+                    w-[36px]
+                    shrink-0
                     items-center
                     justify-center
-                    shrink-0
+                    rounded-[9px]
+                    bg-[#EEF3FF]
+                    text-[#09379A]
                   "
                 >
-                  <CheckCircle2 size={18} />
+                  <Info
+                    size={18}
+                    strokeWidth={2}
+                  />
                 </div>
 
                 <div>
                   <h2
                     className="
                       m-0
-                      text-[19px]
-                      leading-[28px]
+                      text-[17px]
                       font-bold
+                      leading-[27px]
                       text-[#1E293B]
+
+                      sm:text-[18px]
+
+                      xl:text-[19px]
+                      xl:leading-[28px]
                     "
                   >
                     أهداف التدريب
@@ -361,60 +551,77 @@ export default function TrainingPlan() {
                       m-0
                       mt-[2px]
                       text-[10px]
+                      leading-[18px]
                       text-[#94A3B8]
+
+                      sm:text-[11px]
                     "
                   >
-                    المخرجات التعليمية والمهارات التطبيقية المستهدفة
+                    المخرجات التعليمية والمهارات
+                    التطبيقية المستهدفة
                   </p>
                 </div>
               </div>
 
+              {/* GOALS */}
+
               <div
                 className="
-                  mt-[18px]
+                  mt-4
                   grid
                   grid-cols-1
+                  gap-3
+
                   md:grid-cols-3
-                  gap-[14px]
+
+                  xl:mt-[18px]
+                  xl:gap-[14px]
                 "
               >
                 {goals.map((goal) => (
                   <div
                     key={goal}
                     className="
-                      min-h-[72px]
-                      rounded-[10px]
-                      bg-[#F4F6FF]
-                      px-[14px]
-                      py-[13px]
                       flex
+                      min-h-[72px]
                       items-start
                       gap-[9px]
+                      rounded-[10px]
+                      border
+                      border-[#EEF2F7]
+                      bg-[#F8FAFC]
+                      px-[14px]
+                      py-[13px]
                     "
                   >
                     <div
                       className="
-                        w-[23px]
+                        flex
                         h-[23px]
+                        w-[23px]
+                        shrink-0
+                        items-center
+                        justify-center
                         rounded-full
                         bg-[#E2E9FF]
                         text-[#2563EB]
-                        flex
-                        items-center
-                        justify-center
-                        shrink-0
                       "
                     >
-                      <Check size={13} strokeWidth={2} />
+                      <Check
+                        size={13}
+                        strokeWidth={2}
+                      />
                     </div>
 
                     <p
                       className="
                         m-0
                         text-[11px]
-                        leading-[20px]
                         font-medium
+                        leading-[20px]
                         text-[#334155]
+
+                        sm:text-[12px]
                       "
                     >
                       {goal}
@@ -424,54 +631,77 @@ export default function TrainingPlan() {
               </div>
             </section>
 
-            {/* =====================================
-                TASKS TABLE
-            ====================================== */}
+            {/* =================================================
+                TASKS
+            ================================================== */}
+
             <section
               className="
-                mt-[22px]
+                mt-5
+                overflow-hidden
                 rounded-[14px]
                 border
                 border-[#E2E8F0]
                 bg-white
-                overflow-hidden
+
+                xl:mt-[22px]
               "
             >
-              {/* Table Header */}
+              {/* ===============================================
+                  TASKS HEADER
+              ================================================ */}
+
               <div
                 className="
-                  px-[24px]
-                  py-[20px]
                   flex
-                  items-start
-                  justify-between
-                  gap-[20px]
+                  flex-col
+                  gap-5
+                  p-4
+
+                  sm:p-5
+
+                  lg:flex-row
+                  lg:items-center
+                  lg:justify-between
+
+                  xl:px-[24px]
+                  xl:py-[20px]
                 "
               >
-                <div className="flex items-start gap-[10px]">
+                <div
+                  className="
+                    flex
+                    items-start
+                    gap-[10px]
+                  "
+                >
                   <div
                     className="
-                      w-[35px]
+                      flex
                       h-[35px]
+                      w-[35px]
+                      shrink-0
+                      items-center
+                      justify-center
                       rounded-[8px]
                       bg-[#EEF3FF]
                       text-[#09379A]
-                      flex
-                      items-center
-                      justify-center
-                      shrink-0
                     "
                   >
-                    <FileText size={18} />
+                    <FileText
+                      size={18}
+                    />
                   </div>
 
                   <div>
                     <h2
                       className="
                         m-0
-                        text-[18px]
+                        text-[17px]
                         font-bold
                         text-[#1E293B]
+
+                        xl:text-[18px]
                       "
                     >
                       المهام والأنشطة
@@ -480,45 +710,63 @@ export default function TrainingPlan() {
                     <p
                       className="
                         m-0
-                        mt-[2px]
-                        text-[9px]
+                        mt-[3px]
+                        text-[10px]
+                        leading-[17px]
                         text-[#94A3B8]
+
+                        sm:text-[11px]
                       "
                     >
-                      4 مراحل رئيسية معتمدة وفق الجدول الزمني
+                      4 مراحل رئيسية معتمدة وفق
+                      الجدول الزمني
                     </p>
                   </div>
                 </div>
 
+                {/* PROGRESS */}
+
                 <div
                   className="
-                    min-w-[200px]
-                    max-w-[390px]
-                    flex-1
+                    w-full
+
+                    lg:max-w-[390px]
                   "
                 >
                   <div
                     className="
+                      mb-[6px]
                       flex
                       items-center
                       justify-between
-                      text-[9px]
+                      gap-3
+                      text-[10px]
+                      font-medium
                       text-[#64748B]
-                      mb-[5px]
+
+                      sm:text-[11px]
                     "
                   >
-                    <span>مكتمل: 1 أسبوع / 8 أسابيع</span>
+                    <span>
+                      مكتمل 1 أسبوع / 8 أسابيع
+                    </span>
 
-                    <Flag size={13} className="text-[#09379A]" />
+                    <Flag
+                      size={14}
+                      className="
+                        shrink-0
+                        text-[#09379A]
+                      "
+                    />
                   </div>
 
                   <div
                     className="
-                      w-full
                       h-[10px]
+                      w-full
+                      overflow-hidden
                       rounded-full
                       bg-[#E7ECFF]
-                      overflow-hidden
                     "
                   >
                     <div
@@ -533,74 +781,222 @@ export default function TrainingPlan() {
                 </div>
               </div>
 
-              {/* Column Labels */}
+              {/* ===============================================
+                  DESKTOP TABLE
+              ================================================ */}
+
               <div
                 className="
-                  grid
-                  grid-cols-[100px_minmax(0,1fr)_170px_110px]
-                  bg-[#EFF3FF]
-                  px-[20px]
-                  py-[12px]
-                  text-[10px]
-                  font-medium
-                  text-[#64748B]
+                  hidden
+
+                  md:block
                 "
               >
-                <div>الأسبوع</div>
-                <div>المهام والأنشطة العملية</div>
-                <div>المخرجات المتوقعة</div>
-                <div>الحالة</div>
+                {/* COLUMN HEAD */}
+
+                <div
+                  className="
+                    grid
+                    grid-cols-[90px_minmax(0,1fr)_160px_115px]
+                    gap-[10px]
+                    bg-[#F3F6FB]
+                    px-[20px]
+                    py-[12px]
+                    text-[10px]
+                    font-semibold
+                    text-[#64748B]
+
+                    lg:grid-cols-[100px_minmax(0,1fr)_170px_110px]
+                  "
+                >
+                  <div>
+                    الأسبوع
+                  </div>
+
+                  <div>
+                    المهام والأنشطة العملية
+                  </div>
+
+                  <div>
+                    المخرجات المتوقعة
+                  </div>
+
+                  <div>
+                    الحالة
+                  </div>
+                </div>
+
+                {/* ROWS */}
+
+                <div>
+                  {tasks.map(
+                    (task, index) => (
+                      <div
+                        key={task.week}
+                        className={`
+                          grid
+                          grid-cols-[90px_minmax(0,1fr)_160px_115px]
+                          items-center
+                          gap-[10px]
+                          px-[20px]
+                          py-[18px]
+
+                          lg:grid-cols-[100px_minmax(0,1fr)_170px_110px]
+
+                          ${
+                            index !==
+                            tasks.length -
+                              1
+                              ? `
+                                border-b
+                                border-[#EEF2F7]
+                              `
+                              : ""
+                          }
+                        `}
+                      >
+                        {/* WEEK */}
+
+                        <div>
+                          <WeekBadge
+                            week={
+                              task.week
+                            }
+                          />
+                        </div>
+
+                        {/* TASK */}
+
+                        <div className="min-w-0">
+                          <h3
+                            className="
+                              m-0
+                              text-[12px]
+                              font-bold
+                              leading-[20px]
+                              text-[#1E293B]
+
+                              lg:text-[13px]
+                            "
+                          >
+                            {task.title}
+                          </h3>
+
+                          <p
+                            className="
+                              m-0
+                              mt-[4px]
+                              text-[10px]
+                              leading-[17px]
+                              text-[#64748B]
+
+                              lg:text-[11px]
+                              lg:leading-[19px]
+                            "
+                          >
+                            {
+                              task.description
+                            }
+                          </p>
+                        </div>
+
+                        {/* OUTPUT */}
+
+                        <div>
+                          <OutputBadge
+                            text={
+                              task.output
+                            }
+                            final={
+                              index ===
+                              tasks.length -
+                                1
+                            }
+                          />
+                        </div>
+
+                        {/* STATUS */}
+
+                        <div>
+                          <StatusBadge
+                            status={
+                              task.status
+                            }
+                            type={
+                              task.statusType
+                            }
+                          />
+                        </div>
+                      </div>
+                    )
+                  )}
+                </div>
               </div>
 
-              {/* Rows */}
-              <div>
-                {tasks.map((task, index) => (
-                  <div
-                    key={task.week}
-                    className={`
-                      grid
-                      grid-cols-[100px_minmax(0,1fr)_170px_110px]
-                      items-center
-                      gap-[10px]
-                      px-[20px]
-                      py-[22px]
+              {/* ===============================================
+                  MOBILE CARDS
+              ================================================ */}
 
-                      ${
-                        index !== tasks.length - 1
-                          ? "border-b border-[#EEF2F7]"
-                          : ""
-                      }
-                    `}
-                  >
-                    {/* Week */}
-                    <div>
-                      <span
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-3
+                  border-t
+                  border-[#EEF2F7]
+                  bg-[#FAFBFD]
+                  p-3
+
+                  md:hidden
+                "
+              >
+                {tasks.map(
+                  (task, index) => (
+                    <article
+                      key={task.week}
+                      className="
+                        rounded-[12px]
+                        border
+                        border-[#E2E8F0]
+                        bg-white
+                        p-4
+                      "
+                    >
+                      {/* TOP */}
+
+                      <div
                         className="
-                          inline-flex
-                          min-w-[46px]
-                          h-[36px]
-                          px-[9px]
-                          rounded-[9px]
-                          bg-[#E9EEFF]
-                          text-[#09379A]
+                          flex
                           items-center
-                          justify-center
-                          text-[14px]
-                          font-bold
+                          justify-between
+                          gap-3
                         "
                       >
-                        {task.week}
-                      </span>
-                    </div>
+                        <WeekBadge
+                          week={
+                            task.week
+                          }
+                        />
 
-                    {/* Task */}
-                    <div>
+                        <StatusBadge
+                          status={
+                            task.status
+                          }
+                          type={
+                            task.statusType
+                          }
+                        />
+                      </div>
+
+                      {/* CONTENT */}
+
                       <h3
                         className="
                           m-0
-                          text-[12px]
-                          leading-[20px]
+                          mt-4
+                          text-[14px]
                           font-bold
+                          leading-[23px]
                           text-[#1E293B]
                         "
                       >
@@ -610,77 +1006,80 @@ export default function TrainingPlan() {
                       <p
                         className="
                           m-0
-                          mt-[4px]
-                          text-[9px]
-                          leading-[16px]
+                          mt-[5px]
+                          text-[11px]
+                          leading-[20px]
                           text-[#64748B]
                         "
                       >
                         {task.description}
                       </p>
-                    </div>
 
-                    {/* Output */}
-                    <div>
-                      <span
-                        className={`
-                          inline-flex
-                          min-h-[28px]
-                          px-[10px]
-                          rounded-[7px]
+                      {/* OUTPUT */}
+
+                      <div
+                        className="
+                          mt-4
+                          flex
                           items-center
-                          gap-[6px]
-                          text-[9px]
-                          font-medium
-
-                          ${
-                            index === tasks.length - 1
-                              ? `
-                                bg-[#09379A]
-                                text-white
-                              `
-                              : `
-                                bg-[#EEF3FF]
-                                text-[#475569]
-                              `
-                          }
-                        `}
+                          justify-between
+                          gap-3
+                          border-t
+                          border-[#EEF2F7]
+                          pt-3
+                        "
                       >
-                        <FileText size={12} />
+                        <span
+                          className="
+                            text-[10px]
+                            font-medium
+                            text-[#94A3B8]
+                          "
+                        >
+                          المخرج المتوقع
+                        </span>
 
-                        {task.output}
-                      </span>
-                    </div>
-
-                    {/* Status */}
-                    <div>
-                      <StatusBadge
-                        status={task.status}
-                        type={task.statusType}
-                      />
-                    </div>
-                  </div>
-                ))}
+                        <OutputBadge
+                          text={
+                            task.output
+                          }
+                          final={
+                            index ===
+                            tasks.length -
+                              1
+                          }
+                        />
+                      </div>
+                    </article>
+                  )
+                )}
               </div>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 SUPERVISOR NOTES
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
-                mt-[22px]
-                min-h-[78px]
+                mt-5
+                flex
+                flex-col
+                gap-4
                 rounded-[12px]
                 border
-                border-[#DFE6F4]
-                bg-[#EEF3FF]
-                px-[20px]
-                py-[16px]
-                flex
-                items-center
-                justify-between
-                gap-[20px]
+                border-[#CFE0FB]
+                bg-[#EEF5FF]
+                p-4
+
+                sm:flex-row
+                sm:items-center
+                sm:justify-between
+
+                xl:mt-[22px]
+                xl:min-h-[78px]
+                xl:px-[20px]
+                xl:py-[16px]
               "
             >
               <div
@@ -692,18 +1091,20 @@ export default function TrainingPlan() {
               >
                 <div
                   className="
-                    w-[34px]
+                    flex
                     h-[34px]
+                    w-[34px]
+                    shrink-0
+                    items-center
+                    justify-center
                     rounded-[8px]
                     bg-white
                     text-[#09379A]
-                    flex
-                    items-center
-                    justify-center
-                    shrink-0
                   "
                 >
-                  <Info size={17} />
+                  <Info
+                    size={17}
+                  />
                 </div>
 
                 <div>
@@ -721,36 +1122,49 @@ export default function TrainingPlan() {
                   <p
                     className="
                       m-0
-                      mt-[3px]
-                      text-[9px]
-                      leading-[16px]
+                      mt-[4px]
+                      text-[11px]
+                      leading-[20px]
                       text-[#64748B]
+
+                      sm:text-[12px]
                     "
                   >
-                    يجب رفع التقارير الدورية كل يوم خميس من نهاية
-                    الأسبوع لضمان توثيق الساعات.
+                    يجب رفع التقارير الدورية كل يوم
+                    خميس من نهاية الأسبوع لضمان
+                    توثيق الساعات.
                   </p>
                 </div>
               </div>
 
               <button
                 type="button"
-                onClick={() => navigate("/student/reports")}
+                onClick={() =>
+                  navigate(
+                    "/student/reports"
+                  )
+                }
                 className="
-                  border-0
-                  bg-transparent
-                  text-[#09379A]
                   flex
+                  w-fit
+                  shrink-0
                   items-center
                   gap-[7px]
+                  border-0
+                  bg-transparent
+                  p-0
                   text-[10px]
                   font-bold
-                  cursor-pointer
-                  whitespace-nowrap
+                  text-[#09379A]
+
+                  sm:text-[11px]
                 "
               >
                 دليل إعداد التقارير
-                <ArrowLeft size={14} />
+
+                <ArrowLeft
+                  size={14}
+                />
               </button>
             </section>
           </div>
@@ -769,29 +1183,36 @@ function SummaryCard({
   label,
   value,
   description,
+  className = "",
 }) {
   return (
-    <div
-      className="
-        min-h-[105px]
-        rounded-[14px]
-        bg-white
-        border
-        border-[#EEF2F6]
-        px-[20px]
-        py-[18px]
+    <article
+      className={`
         flex
+        min-h-[105px]
         items-center
         justify-between
         gap-[15px]
-      "
+        rounded-[14px]
+        border
+        border-[#E2E8F0]
+        bg-white
+        px-[18px]
+        py-[17px]
+        shadow-[0_1px_2px_rgba(15,23,42,0.02)]
+
+        ${className}
+      `}
     >
-      <div>
+      <div className="min-w-0">
         <p
           className="
             m-0
             text-[10px]
+            font-medium
             text-[#94A3B8]
+
+            sm:text-[11px]
           "
         >
           {label}
@@ -800,11 +1221,13 @@ function SummaryCard({
         <h3
           className="
             m-0
-            mt-[6px]
-            text-[19px]
-            leading-[28px]
+            mt-[5px]
+            text-[18px]
             font-bold
+            leading-[28px]
             text-[#1E293B]
+
+            sm:text-[19px]
           "
         >
           {value}
@@ -813,9 +1236,12 @@ function SummaryCard({
         <p
           className="
             m-0
-            mt-[4px]
-            text-[9px]
+            mt-[3px]
+            text-[10px]
+            leading-[17px]
             text-[#94A3B8]
+
+            sm:text-[11px]
           "
         >
           {description}
@@ -824,20 +1250,109 @@ function SummaryCard({
 
       <div
         className="
-          w-[44px]
-          h-[44px]
+          flex
+          h-[42px]
+          w-[42px]
+          shrink-0
+          items-center
+          justify-center
           rounded-[10px]
           bg-[#EAF0FF]
           text-[#09379A]
-          flex
-          items-center
-          justify-center
-          shrink-0
+
+          sm:h-[44px]
+          sm:w-[44px]
         "
       >
-        <Icon size={21} strokeWidth={1.8} />
+        <Icon
+          size={21}
+          strokeWidth={1.8}
+        />
       </div>
-    </div>
+    </article>
+  );
+}
+
+/* =========================================================
+   WEEK BADGE
+========================================================= */
+
+function WeekBadge({
+  week,
+}) {
+  return (
+    <span
+      className="
+        inline-flex
+        min-h-[34px]
+        min-w-[46px]
+        items-center
+        justify-center
+        rounded-[9px]
+        bg-[#E9EEFF]
+        px-[9px]
+        text-[12px]
+        font-bold
+        text-[#09379A]
+
+        sm:text-[13px]
+      "
+    >
+      {week}
+    </span>
+  );
+}
+
+/* =========================================================
+   OUTPUT BADGE
+========================================================= */
+
+function OutputBadge({
+  text,
+  final = false,
+}) {
+  return (
+    <span
+      className={`
+        inline-flex
+        min-h-[28px]
+        max-w-full
+        items-center
+        gap-[6px]
+        rounded-[7px]
+        px-[10px]
+        py-[5px]
+        text-[10px]
+        font-medium
+        leading-[17px]
+
+        ${
+          final
+            ? `
+              bg-[#09379A]
+              text-white
+            `
+            : `
+              bg-[#EEF3FF]
+              text-[#475569]
+            `
+        }
+      `}
+    >
+      {final ? (
+        <Check
+          size={12}
+          className="shrink-0"
+        />
+      ) : (
+        <FileText
+          size={12}
+          className="shrink-0"
+        />
+      )}
+
+      {text}
+    </span>
   );
 }
 
@@ -845,49 +1360,63 @@ function SummaryCard({
    STATUS BADGE
 ========================================================= */
 
-function StatusBadge({ status, type }) {
+function StatusBadge({
+  status,
+  type,
+}) {
   const styles = {
-    completed: `
-      bg-[#EAF1FF]
-      text-[#09379A]
-    `,
-    progress: `
-      bg-[#FFF0E8]
-      text-[#EA580C]
-    `,
-    upcoming: `
-      bg-[#F1F5F9]
-      text-[#94A3B8]
-    `,
+    completed: {
+      wrapper:
+        "bg-[#ECFDF3] text-[#15803D]",
+
+      dot:
+        "bg-[#22C55E]",
+    },
+
+    progress: {
+      wrapper:
+        "bg-[#FFF0E8] text-[#EA580C]",
+
+      dot:
+        "bg-[#FF6B35]",
+    },
+
+    upcoming: {
+      wrapper:
+        "bg-[#F1F5F9] text-[#64748B]",
+
+      dot:
+        "bg-[#CBD5E1]",
+    },
   };
+
+  const current =
+    styles[type] ||
+    styles.upcoming;
 
   return (
     <span
       className={`
         inline-flex
-        min-h-[24px]
-        px-[9px]
-        rounded-[12px]
+        min-h-[25px]
         items-center
         gap-[6px]
-        text-[9px]
+        rounded-full
+        px-[9px]
+        text-[10px]
         font-bold
-        ${styles[type]}
+
+        ${current.wrapper}
       `}
     >
       <span
         className={`
-          w-[5px]
-          h-[5px]
+          h-[6px]
+          w-[6px]
+          shrink-0
           rounded-full
 
-          ${
-            type === "completed"
-              ? "bg-[#09379A]"
-              : type === "progress"
-              ? "bg-[#FF6B35]"
-              : "bg-[#CBD5E1]"
-          }
+          ${current.dot}
         `}
       />
 

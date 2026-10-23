@@ -2,11 +2,17 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
+  ArrowLeft,
+  BookOpenCheck,
   Building2,
   CalendarDays,
   CheckCircle2,
   Clock3,
+  FileCheck2,
+  FileText,
   MapPin,
+  NotebookPen,
+  Star,
 } from "lucide-react";
 
 import Header from "../../components/student/Header";
@@ -16,6 +22,10 @@ export default function TrainingProfile() {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState("basic");
+
+  /* =========================================================
+     TABS
+  ========================================================= */
 
   const tabs = [
     {
@@ -36,29 +46,43 @@ export default function TrainingProfile() {
     },
   ];
 
+  /* =========================================================
+     TRAINING DATA
+  ========================================================= */
+
   const trainingData = {
     organization: "شركة القدس للاتصالات",
-    description: "تدريب في مجال هندسة الاتصالات",
+
+    description:
+      "تدريب في مجال هندسة الاتصالات",
 
     status: "نشط / معتمد",
 
     duration: "8 أسابيع",
 
-    dateRange: "2025/10/01 - 2025/12/01",
+    dateRange:
+      "2025/10/01 - 2025/12/01",
 
-    location: "غزة - الرمال",
+    location:
+      "غزة - الرمال",
 
-    academicYear: "السنة الأكاديمية 2024/2025",
+    academicYear:
+      "السنة الأكاديمية 2024/2025",
 
-    studentName: "أمل أحمد",
+    studentName:
+      "أمل أحمد",
 
-    academicSupervisor: "د. أحمد محمد",
+    academicSupervisor:
+      "د. أحمد محمد",
 
-    fieldSupervisor: "م. سارة خليل",
+    fieldSupervisor:
+      "م. سارة خليل",
 
-    major: "هندسة الاتصالات",
+    major:
+      "هندسة الاتصالات",
 
-    trainingLocation: "غزة - الرمال",
+    trainingLocation:
+      "غزة - الرمال",
 
     trainingDescription:
       "التدريب على الأنظمة والشبكات والمعدات الحديثة في مجال الاتصالات.",
@@ -68,11 +92,11 @@ export default function TrainingProfile() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
-        bg-white
+        bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
@@ -89,44 +113,55 @@ export default function TrainingProfile() {
 
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
-          bg-white
+          bg-[#F8FAFC]
         "
       >
         {/* =====================================================
-            FIXED HEADER
-      ====================================================== */}
+            HEADER
+        ====================================================== */}
 
-        <Header />
+        <div className="relative shrink-0">
+          <Header />
+        </div>
 
         {/* =====================================================
-            SCROLLABLE PAGE CONTENT
-      ====================================================== */}
+            SCROLLABLE CONTENT
+        ====================================================== */}
 
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
+            overflow-y-auto
+            bg-[#F8FAFC]
 
-            px-[24px]
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+            md:pt-7
+
             xl:px-[40px]
-
-            pt-[18px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
           <div
             className="
+              mx-auto
               w-full
               max-w-[1080px]
-              mx-auto
             "
           >
             {/* =================================================
@@ -134,75 +169,47 @@ export default function TrainingProfile() {
             ================================================== */}
 
             <section>
-              {/* Breadcrumb */}
+              {/* ===============================================
+                  BREADCRUMB
+              ================================================ */}
 
-              <div
+              <nav
+                aria-label="مسار التنقل"
                 className="
                   flex
+                  flex-wrap
                   items-center
                   gap-[7px]
-
-                  text-[13px]
+                  text-[11px]
+                  font-medium
                   leading-[20px]
+
+                  sm:text-[12px]
+
+                  xl:text-[13px]
                 "
               >
                 <button
                   type="button"
                   onClick={() =>
-                    navigate("/student/dashboard")
+                    navigate(
+                      "/student/dashboard"
+                    )
                   }
                   className="
                     border-0
                     bg-transparent
                     p-0
-
-                    font-normal
                     text-[#64748B]
-
-                    cursor-pointer
-
                     transition
+
                     hover:text-[#09379A]
                   "
                 >
                   الرئيسية
                 </button>
 
-                <span
-                  className="
-                    text-[#94A3B8]
-                  "
-                >
-                  ›
-                </span>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    navigate("/student/opportunities")
-                  }
-                  className="
-                    border-0
-                    bg-transparent
-                    p-0
-
-                    font-normal
-                    text-[#64748B]
-
-                    cursor-pointer
-
-                    transition
-                    hover:text-[#09379A]
-                  "
-                >
-                  فرص التدريب
-                </button>
-
-                <span
-                  className="
-                    text-[#94A3B8]
-                  "
-                >
+                <span className="text-[#94A3B8]">
                   ›
                 </span>
 
@@ -214,30 +221,37 @@ export default function TrainingProfile() {
                 >
                   ملفي التدريبي
                 </span>
-              </div>
+              </nav>
 
-              {/* Title + Academic Year */}
+              {/* ===============================================
+                  TITLE + ACADEMIC YEAR
+              ================================================ */}
 
               <div
                 className="
-                  mt-[6px]
-
+                  mt-[7px]
                   flex
-                  items-center
-                  justify-between
-                  gap-[20px]
+                  flex-col
+                  gap-3
+
+                  sm:flex-row
+                  sm:items-center
+                  sm:justify-between
+                  sm:gap-5
                 "
               >
                 <h1
                   className="
                     m-0
-
-                    text-[28px]
-                    leading-[40px]
-
+                    text-[24px]
                     font-bold
-
+                    leading-[36px]
                     text-[#14213D]
+
+                    sm:text-[26px]
+
+                    xl:text-[28px]
+                    xl:leading-[40px]
                   "
                 >
                   ملفي التدريبي
@@ -245,26 +259,21 @@ export default function TrainingProfile() {
 
                 <div
                   className="
-                    h-[30px]
-
-                    px-[12px]
-
-                    rounded-[15px]
-
-                    border
-                    border-[#D8E0EA]
-
-                    bg-[#F8FAFC]
-
                     flex
+                    min-h-[30px]
+                    w-fit
                     items-center
                     gap-[7px]
-
-                    text-[11px]
-                    font-normal
+                    rounded-full
+                    border
+                    border-[#D8E0EA]
+                    bg-white
+                    px-[12px]
+                    text-[10px]
+                    font-medium
                     text-[#64748B]
 
-                    whitespace-nowrap
+                    sm:text-[11px]
                   "
                 >
                   <CheckCircle2
@@ -280,12 +289,11 @@ export default function TrainingProfile() {
                 </div>
               </div>
 
-              {/* Dashed separator */}
+              {/* SEPARATOR */}
 
               <div
                 className="
-                  mt-[14px]
-
+                  mt-[15px]
                   border-b
                   border-dashed
                   border-[#D9E2EC]
@@ -299,78 +307,77 @@ export default function TrainingProfile() {
 
             <section
               className="
-                mt-[24px]
-
+                mt-5
+                flex
                 w-full
-                min-h-[145px]
-
+                flex-col
+                gap-5
                 rounded-[14px]
-
                 border
                 border-[#DDE5EF]
-
                 bg-white
-
-                px-[30px]
-                py-[28px]
-
-                flex
-                items-center
-                justify-between
-
-                gap-[24px]
-
+                p-4
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                sm:p-5
+
+                lg:flex-row
+                lg:items-center
+                lg:justify-between
+
+                xl:mt-[24px]
+                xl:min-h-[150px]
+                xl:px-[30px]
+                xl:py-[26px]
               "
             >
-              {/* Training information */}
+              {/* ===============================================
+                  TRAINING INFORMATION
+              ================================================ */}
 
               <div
                 className="
                   flex
-                  items-center
-                  gap-[18px]
-
                   min-w-0
+                  items-start
+                  gap-[14px]
+
+                  sm:items-center
+                  sm:gap-[18px]
                 "
               >
-                {/* Organization logo */}
+                {/* ORGANIZATION LOGO */}
 
                 <div
                   className="
-                    w-[64px]
-                    h-[64px]
-
-                    shrink-0
-
-                    rounded-[12px]
-
-                    border
-                    border-[#E2E8F0]
-
-                    bg-[#F1F5F9]
-
                     flex
+                    h-[58px]
+                    w-[58px]
+                    shrink-0
                     flex-col
                     items-center
                     justify-center
-
+                    rounded-[12px]
+                    border
+                    border-[#E2E8F0]
+                    bg-[#F1F5F9]
                     text-[#09379A]
+
+                    sm:h-[64px]
+                    sm:w-[64px]
                   "
                 >
                   <Building2
-                    size={27}
+                    size={26}
                     strokeWidth={1.8}
                   />
 
                   <span
                     className="
                       mt-[2px]
-
                       text-[7px]
-                      leading-[10px]
-
                       font-bold
+                      leading-[9px]
                     "
                   >
                     PALTEL
@@ -379,32 +386,29 @@ export default function TrainingProfile() {
                   <span
                     className="
                       text-[6px]
-                      leading-[8px]
-
                       font-bold
+                      leading-[8px]
                     "
                   >
                     GROUP
                   </span>
                 </div>
 
-                {/* Content */}
+                {/* CONTENT */}
 
-                <div
-                  className="
-                    min-w-0
-                  "
-                >
+                <div className="min-w-0">
                   <h2
                     className="
                       m-0
-
-                      text-[20px]
-                      leading-[30px]
-
+                      text-[17px]
                       font-bold
-
+                      leading-[27px]
                       text-[#1E293B]
+
+                      sm:text-[19px]
+
+                      xl:text-[20px]
+                      xl:leading-[30px]
                     "
                   >
                     {trainingData.organization}
@@ -413,36 +417,39 @@ export default function TrainingProfile() {
                   <p
                     className="
                       m-0
-                      mt-[2px]
-
-                      text-[13px]
+                      mt-[3px]
+                      text-[11px]
                       leading-[20px]
-
-                      font-normal
-
                       text-[#64748B]
+
+                      sm:text-[12px]
+
+                      xl:text-[13px]
                     "
                   >
                     {trainingData.description}
                   </p>
 
-                  {/* Metadata */}
+                  {/* METADATA */}
 
                   <div
                     className="
-                      mt-[14px]
-
+                      mt-[12px]
                       flex
-                      flex-wrap
-                      items-center
-
-                      gap-x-[22px]
-                      gap-y-[8px]
-
-                      text-[11px]
+                      flex-col
+                      gap-[7px]
+                      text-[10px]
                       leading-[18px]
-
                       text-[#64748B]
+
+                      sm:flex-row
+                      sm:flex-wrap
+                      sm:items-center
+                      sm:gap-x-[22px]
+                      sm:gap-y-[8px]
+
+                      xl:mt-[14px]
+                      xl:text-[11px]
                     "
                   >
                     <div
@@ -455,6 +462,7 @@ export default function TrainingProfile() {
                       <Clock3
                         size={15}
                         strokeWidth={1.7}
+                        className="shrink-0"
                       />
 
                       <span>
@@ -472,6 +480,7 @@ export default function TrainingProfile() {
                       <CalendarDays
                         size={15}
                         strokeWidth={1.7}
+                        className="shrink-0"
                       />
 
                       <span dir="ltr">
@@ -489,6 +498,7 @@ export default function TrainingProfile() {
                       <MapPin
                         size={15}
                         strokeWidth={1.7}
+                        className="shrink-0"
                       />
 
                       <span>
@@ -499,47 +509,200 @@ export default function TrainingProfile() {
                 </div>
               </div>
 
-              {/* Status */}
+              {/* ===============================================
+                  STATUS + ACTIONS
+              ================================================ */}
 
               <div
                 className="
-                  h-[31px]
-
-                  px-[14px]
-
-                  rounded-[16px]
-
-                  border
-                  border-[#C8DAFF]
-
-                  bg-[#EFF5FF]
-
                   flex
-                  items-center
-                  gap-[7px]
-
+                  w-full
                   shrink-0
+                  flex-col
+                  gap-[11px]
 
-                  text-[11px]
-                  leading-[18px]
-
-                  font-bold
-
-                  text-[#09379A]
+                  lg:w-auto
+                  lg:items-end
                 "
               >
-                <span
+                {/* STATUS */}
+
+                <div
                   className="
-                    w-[7px]
-                    h-[7px]
-
+                    flex
+                    min-h-[31px]
+                    w-fit
+                    items-center
+                    gap-[7px]
                     rounded-full
+                    border
+                    border-[#C8DAFF]
+                    bg-[#EFF5FF]
+                    px-[14px]
+                    text-[10px]
+                    font-bold
+                    leading-[18px]
+                    text-[#09379A]
 
-                    bg-[#2563EB]
+                    sm:text-[11px]
                   "
-                />
+                >
+                  <span
+                    className="
+                      h-[7px]
+                      w-[7px]
+                      rounded-full
+                      bg-[#2563EB]
+                    "
+                  />
 
-                {trainingData.status}
+                  {trainingData.status}
+                </div>
+
+                {/* ACTION BUTTONS */}
+
+                <div
+                  className="
+                    grid
+                    w-full
+                    grid-cols-1
+                    gap-[9px]
+
+                    sm:grid-cols-2
+
+                    lg:flex
+                    lg:w-auto
+                    lg:items-center
+                  "
+                >
+                  {/* TRAINING PLAN */}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      navigate(
+                        "/student/training-plan"
+                      )
+                    }
+                    className="
+                      group
+                      flex
+                      min-h-[43px]
+                      w-full
+                      items-center
+                      justify-center
+                      gap-[8px]
+                      rounded-[9px]
+                      border-0
+                      bg-[#09379A]
+                      px-[16px]
+                      text-[11px]
+                      font-bold
+                      text-white
+                      shadow-[0_4px_12px_rgba(9,55,154,0.18)]
+                      transition-all
+                      duration-200
+
+                      hover:bg-[#072E81]
+                      hover:shadow-[0_6px_16px_rgba(9,55,154,0.22)]
+
+                      active:translate-y-[1px]
+
+                      lg:w-auto
+                      lg:min-w-[155px]
+                    "
+                  >
+                    <BookOpenCheck
+                      size={16}
+                      strokeWidth={1.9}
+                    />
+
+                    عرض خطة التدريب
+
+                    <ArrowLeft
+                      size={14}
+                      className="
+                        transition-transform
+                        duration-200
+
+                        group-hover:-translate-x-[2px]
+                      "
+                    />
+                  </button>
+
+                  {/* DAILY TRAINING LOG */}
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      navigate(
+                        "/student/daily-training-log"
+                      )
+                    }
+                    className="
+                      group
+                      flex
+                      min-h-[43px]
+                      w-full
+                      items-center
+                      justify-center
+                      gap-[8px]
+                      rounded-[9px]
+                      border
+                      border-[#BFD0EF]
+                      bg-white
+                      px-[16px]
+                      text-[11px]
+                      font-bold
+                      text-[#09379A]
+                      shadow-[0_2px_6px_rgba(15,23,42,0.04)]
+                      transition-all
+                      duration-200
+
+                      hover:border-[#9EB8E8]
+                      hover:bg-[#F5F8FF]
+                      hover:shadow-[0_4px_10px_rgba(9,55,154,0.08)]
+
+                      active:translate-y-[1px]
+
+                      lg:w-auto
+                      lg:min-w-[180px]
+                    "
+                  >
+                    <NotebookPen
+                      size={16}
+                      strokeWidth={1.9}
+                    />
+
+                    السجل التدريبي اليومي
+
+                    <ArrowLeft
+                      size={14}
+                      className="
+                        transition-transform
+                        duration-200
+
+                        group-hover:-translate-x-[2px]
+                      "
+                    />
+                  </button>
+                </div>
+
+                {/* SMALL SUPPORT TEXT */}
+
+                <p
+                  className="
+                    m-0
+                    hidden
+                    text-[9px]
+                    leading-[16px]
+                    text-[#94A3B8]
+
+                    lg:block
+                  "
+                >
+                  تابع خطتك وسجّل أنشطتك الميدانية من هنا
+                </p>
               </div>
             </section>
 
@@ -549,22 +712,30 @@ export default function TrainingProfile() {
 
             <section
               className="
-                mt-[13px]
-
+                mt-4
                 w-full
-
+                overflow-x-auto
                 border-b
                 border-[#E2E8F0]
+
+                xl:mt-[16px]
               "
             >
               <div
                 className="
                   flex
+                  min-w-max
                   items-center
+                  gap-7
+                  px-[3px]
 
-                  gap-[42px]
+                  sm:gap-9
 
-                  px-[6px]
+                  lg:min-w-0
+                  lg:justify-start
+
+                  xl:gap-[42px]
+                  xl:px-[6px]
                 "
               >
                 {tabs.map((tab) => {
@@ -580,20 +751,15 @@ export default function TrainingProfile() {
                       }
                       className={`
                         relative
-
                         h-[48px]
-
-                        px-[5px]
-
                         border-0
                         bg-transparent
-
-                        text-[13px]
+                        px-[6px]
+                        text-[12px]
                         leading-[20px]
-
-                        cursor-pointer
-
                         transition-colors
+
+                        sm:text-[13px]
 
                         ${
                           isActive
@@ -602,7 +768,7 @@ export default function TrainingProfile() {
                               text-[#09379A]
                             `
                             : `
-                              font-normal
+                              font-medium
                               text-[#64748B]
 
                               hover:text-[#09379A]
@@ -616,15 +782,11 @@ export default function TrainingProfile() {
                         <span
                           className="
                             absolute
-
-                            right-0
-                            left-0
                             bottom-0
-
+                            left-0
+                            right-0
                             h-[3px]
-
                             rounded-t-full
-
                             bg-[#09379A]
                           "
                         />
@@ -642,62 +804,69 @@ export default function TrainingProfile() {
             {activeTab === "basic" && (
               <section
                 className="
-                  mt-[24px]
-
+                  mt-5
                   w-full
-
                   rounded-[14px]
-
                   border
                   border-[#DDE5EF]
-
                   bg-white
-
-                  px-[32px]
-                  py-[32px]
-
+                  p-4
                   shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                  sm:p-5
+
+                  md:p-6
+
+                  xl:mt-[24px]
+                  xl:px-[32px]
+                  xl:py-[32px]
                 "
               >
-                {/* Section title */}
+                {/* SECTION TITLE */}
 
                 <h2
                   className="
                     m-0
-
-                    text-[20px]
-                    leading-[30px]
-
-                    font-medium
-
+                    text-[18px]
+                    font-semibold
+                    leading-[28px]
                     text-[#334155]
+
+                    xl:text-[20px]
+                    xl:leading-[30px]
                   "
                 >
                   البيانات الأساسية
                 </h2>
 
-                {/* Main fields */}
+                {/* MAIN FIELDS */}
 
                 <div
                   className="
-                    mt-[24px]
-
+                    mt-5
                     grid
                     grid-cols-1
-                    md:grid-cols-2
+                    gap-3
 
-                    gap-x-[24px]
-                    gap-y-[24px]
+                    sm:grid-cols-2
+
+                    xl:mt-[24px]
+                    xl:gap-x-[24px]
+                    xl:gap-y-[24px]
                   "
                 >
                   <InfoField
                     label="اسم الطالب"
-                    value={trainingData.studentName}
+                    value={
+                      trainingData.studentName
+                    }
                   />
 
                   <InfoField
                     label="الجهة التدريبية"
-                    value={trainingData.organization}
+                    value={
+                      trainingData.organization
+                    }
                   />
 
                   <InfoField
@@ -716,7 +885,9 @@ export default function TrainingProfile() {
 
                   <InfoField
                     label="التخصص"
-                    value={trainingData.major}
+                    value={
+                      trainingData.major
+                    }
                   />
 
                   <InfoField
@@ -727,35 +898,34 @@ export default function TrainingProfile() {
                   />
                 </div>
 
-                {/* Training description */}
+                {/* TRAINING DESCRIPTION */}
 
                 <div
                   className="
-                    mt-[24px]
-
+                    mt-4
                     min-h-[87px]
-
                     rounded-[12px]
-
                     border
                     border-[#EEF2F6]
-
                     bg-[#F8FAFC]
-
-                    px-[20px]
+                    px-4
                     py-[15px]
+
+                    sm:px-5
+
+                    xl:mt-[24px]
+                    xl:px-[20px]
                   "
                 >
                   <p
                     className="
                       m-0
-
-                      text-[11px]
+                      text-[10px]
+                      font-medium
                       leading-[18px]
-
-                      font-normal
-
                       text-[#94A3B8]
+
+                      sm:text-[11px]
                     "
                   >
                     وصف التدريب
@@ -765,51 +935,51 @@ export default function TrainingProfile() {
                     className="
                       m-0
                       mt-[7px]
-
-                      text-[13px]
-                      leading-[22px]
-
+                      text-[12px]
                       font-medium
-
+                      leading-[22px]
                       text-[#334155]
+
+                      sm:text-[13px]
                     "
                   >
-                    {
-                      trainingData.trainingDescription
-                    }
+                    {trainingData.trainingDescription}
                   </p>
                 </div>
               </section>
             )}
 
             {/* =================================================
-                ATTACHMENTS PLACEHOLDER
+                ATTACHMENTS TAB
             ================================================== */}
 
             {activeTab === "attachments" && (
               <EmptyTabMessage
+                icon={FileText}
                 title="المرفقات"
                 text="سيتم عرض المرفقات المعتمدة الخاصة بملف التدريب هنا."
               />
             )}
 
             {/* =================================================
-                EVALUATIONS PLACEHOLDER
+                EVALUATIONS TAB
             ================================================== */}
 
             {activeTab === "evaluations" && (
               <EmptyTabMessage
+                icon={Star}
                 title="التقييمات"
                 text="سيتم عرض تقييمات التدريب المعتمدة هنا."
               />
             )}
 
             {/* =================================================
-                CERTIFICATE PLACEHOLDER
+                CERTIFICATE TAB
             ================================================== */}
 
             {activeTab === "certificate" && (
               <EmptyTabMessage
+                icon={FileCheck2}
                 title="الشهادة"
                 text="ستظهر شهادة التدريب بعد استكمال واعتماد جميع متطلبات التدريب."
               />
@@ -825,37 +995,38 @@ export default function TrainingProfile() {
    INFO FIELD
 ========================================================= */
 
-function InfoField({ label, value }) {
+function InfoField({
+  label,
+  value,
+}) {
   return (
     <div
       className="
-        min-h-[84px]
-
-        rounded-[12px]
-
-        border
-        border-[#EEF2F6]
-
-        bg-[#F8FAFC]
-
-        px-[20px]
-        py-[16px]
-
         flex
+        min-h-[78px]
         flex-col
         justify-center
+        rounded-[12px]
+        border
+        border-[#EEF2F6]
+        bg-[#F8FAFC]
+        px-4
+        py-[14px]
+
+        sm:min-h-[84px]
+        sm:px-5
+        sm:py-[16px]
       "
     >
       <p
         className="
           m-0
-
-          text-[11px]
+          text-[10px]
+          font-medium
           leading-[18px]
-
-          font-normal
-
           text-[#94A3B8]
+
+          sm:text-[11px]
         "
       >
         {label}
@@ -864,14 +1035,13 @@ function InfoField({ label, value }) {
       <p
         className="
           m-0
-          mt-[6px]
-
-          text-[14px]
-          leading-[22px]
-
+          mt-[5px]
+          text-[13px]
           font-bold
-
+          leading-[22px]
           text-[#334155]
+
+          sm:text-[14px]
         "
       >
         {value}
@@ -884,42 +1054,61 @@ function InfoField({ label, value }) {
    EMPTY TAB
 ========================================================= */
 
-function EmptyTabMessage({ title, text }) {
+function EmptyTabMessage({
+  icon: Icon,
+  title,
+  text,
+}) {
   return (
     <section
       className="
-        mt-[24px]
-
-        min-h-[220px]
-
-        w-full
-
-        rounded-[14px]
-
-        border
-        border-[#DDE5EF]
-
-        bg-white
-
-        px-[32px]
-        py-[30px]
-
+        mt-5
         flex
+        min-h-[220px]
+        w-full
         flex-col
         items-center
         justify-center
-
+        rounded-[14px]
+        border
+        border-[#DDE5EF]
+        bg-white
+        px-5
+        py-[30px]
         text-center
+
+        sm:px-8
+
+        xl:mt-[24px]
       "
     >
+      <div
+        className="
+          flex
+          h-[48px]
+          w-[48px]
+          items-center
+          justify-center
+          rounded-[12px]
+          bg-[#EEF3FF]
+          text-[#09379A]
+        "
+      >
+        <Icon
+          size={22}
+          strokeWidth={1.8}
+        />
+      </div>
+
       <h2
         className="
           m-0
-
-          text-[18px]
+          mt-3
+          text-[17px]
           font-bold
-
           text-[#1E293B]
+
+          sm:text-[18px]
         "
       >
         {title}
@@ -929,11 +1118,12 @@ function EmptyTabMessage({ title, text }) {
         className="
           m-0
           mt-[7px]
-
-          text-[12px]
+          max-w-[460px]
+          text-[11px]
           leading-[21px]
-
           text-[#64748B]
+
+          sm:text-[12px]
         "
       >
         {text}
