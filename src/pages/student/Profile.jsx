@@ -44,6 +44,9 @@ export default function Profile() {
         "0599123456",
     });
 
+  const [savedData, setSavedData] =
+    useState(formData);
+
   const handleChange = (
     event
   ) => {
@@ -60,12 +63,28 @@ export default function Profile() {
     );
   };
 
+  const handleEdit = () => {
+    setSavedData(formData);
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setFormData(savedData);
+    setIsEditing(false);
+  };
+
   const handleSave = () => {
+    setSavedData(formData);
     setIsEditing(false);
 
     console.log(
       "Saved profile data:",
-      formData
+      {
+        email:
+          formData.email,
+        phone:
+          formData.phone,
+      }
     );
   };
 
@@ -73,9 +92,9 @@ export default function Profile() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
         bg-[#F8FAFC]
         font-['Cairo']
@@ -85,58 +104,83 @@ export default function Profile() {
       {/* =========================================
           SIDEBAR
       ========================================== */}
+
       <Sidebar />
 
       {/* =========================================
           MAIN AREA
       ========================================== */}
+
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
+          bg-[#F8FAFC]
         "
       >
         {/* =========================================
             HEADER
         ========================================== */}
-        <Header />
+
+        <div className="relative shrink-0">
+          <Header />
+        </div>
 
         {/* =========================================
             CONTENT
         ========================================== */}
+
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+
             xl:px-[40px]
-            pt-[18px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
           <div
             className="
+              mx-auto
               w-full
               max-w-[1080px]
-              mx-auto
             "
           >
             {/* =====================================
                 BREADCRUMB
             ====================================== */}
-            <div
+
+            <nav
+              aria-label="مسار التنقل"
               className="
                 flex
+                flex-wrap
                 items-center
                 gap-[7px]
-                text-[13px]
+                text-[11px]
+                font-medium
                 leading-[20px]
+
+                sm:text-[12px]
+
+                xl:text-[13px]
               "
             >
               <button
@@ -151,8 +195,8 @@ export default function Profile() {
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
                   transition
+
                   hover:text-[#09379A]
                 "
               >
@@ -175,11 +219,12 @@ export default function Profile() {
               >
                 الملف الشخصي
               </span>
-            </div>
+            </nav>
 
             {/* =====================================
                 PAGE HEADER
             ====================================== */}
+
             <section
               className="
                 mt-[6px]
@@ -188,10 +233,15 @@ export default function Profile() {
               <h1
                 className="
                   m-0
-                  text-[30px]
-                  leading-[42px]
+                  text-[25px]
                   font-bold
+                  leading-[38px]
                   text-[#14213D]
+
+                  sm:text-[27px]
+
+                  xl:text-[30px]
+                  xl:leading-[42px]
                 "
               >
                 الملف الشخصي
@@ -201,9 +251,12 @@ export default function Profile() {
                 className="
                   m-0
                   mt-[2px]
+                  max-w-[600px]
                   text-[12px]
-                  leading-[20px]
+                  leading-[22px]
                   text-[#64748B]
+
+                  sm:text-[13px]
                 "
               >
                 عرض بيانات الطالب الأكاديمية
@@ -214,41 +267,47 @@ export default function Profile() {
             {/* =====================================
                 PROFILE HERO
             ====================================== */}
+
             <section
               className="
                 mt-[22px]
-                min-h-[220px]
+                flex
+                min-h-[215px]
+                flex-col
+                items-center
+                justify-center
                 rounded-[14px]
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[24px]
-                py-[26px]
-                flex
-                flex-col
-                items-center
-                justify-center
+                px-4
+                py-6
                 text-center
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                sm:min-h-[220px]
+                sm:px-[24px]
+                sm:py-[26px]
               "
             >
-              <div
-                className="
-                  relative
-                "
-              >
+              {/* AVATAR */}
+
+              <div className="relative">
                 <div
                   className="
-                    w-[86px]
-                    h-[86px]
+                    flex
+                    h-[82px]
+                    w-[82px]
+                    items-center
+                    justify-center
                     rounded-full
                     border
                     border-[#DDE5EF]
                     bg-[#F8FAFC]
                     text-[#94A3B8]
-                    flex
-                    items-center
-                    justify-center
+
+                    sm:h-[86px]
+                    sm:w-[86px]
                   "
                 >
                   <UserRound
@@ -260,18 +319,18 @@ export default function Profile() {
                 <div
                   className="
                     absolute
-                    bottom-[2px]
-                    left-[2px]
-                    w-[24px]
-                    h-[24px]
+                    bottom-[1px]
+                    left-[1px]
+                    flex
+                    h-[25px]
+                    w-[25px]
+                    items-center
+                    justify-center
                     rounded-full
                     border-[3px]
                     border-white
                     bg-[#10B981]
                     text-white
-                    flex
-                    items-center
-                    justify-center
                   "
                 >
                   <CheckCircle2
@@ -281,22 +340,30 @@ export default function Profile() {
                 </div>
               </div>
 
+              {/* NAME */}
+
               <h2
                 className="
                   m-0
                   mt-[14px]
-                  text-[19px]
+                  text-[18px]
                   font-bold
+                  leading-[30px]
                   text-[#1E293B]
+
+                  sm:text-[19px]
                 "
               >
                 {formData.fullName}
               </h2>
 
+              {/* META */}
+
               <div
                 className="
                   mt-[10px]
                   flex
+                  max-w-full
                   flex-wrap
                   items-center
                   justify-center
@@ -305,59 +372,66 @@ export default function Profile() {
               >
                 <span
                   className="
-                    h-[26px]
-                    px-[10px]
-                    rounded-[13px]
-                    bg-[#F1F5F9]
-                    text-[#64748B]
-                    flex
+                    inline-flex
+                    min-h-[27px]
+                    max-w-full
                     items-center
                     gap-[6px]
-                    text-[9px]
+                    rounded-full
+                    bg-[#F1F5F9]
+                    px-[11px]
+                    text-[10px]
+                    text-[#64748B]
+
+                    sm:text-[11px]
                   "
                 >
                   الرقم الجامعي:
 
                   <strong
+                    dir="ltr"
                     className="
+                      font-bold
                       text-[#334155]
                     "
                   >
-                    {
-                      formData.studentId
-                    }
+                    {formData.studentId}
                   </strong>
                 </span>
 
                 <span
                   className="
-                    h-[26px]
-                    px-[10px]
-                    rounded-[13px]
+                    inline-flex
+                    min-h-[27px]
+                    max-w-full
+                    items-center
+                    gap-[6px]
+                    rounded-full
                     border
                     border-[#BAE6FD]
                     bg-[#EFFAFF]
-                    text-[#0369A1]
-                    flex
-                    items-center
-                    gap-[6px]
-                    text-[9px]
+                    px-[11px]
+                    text-[10px]
                     font-bold
+                    text-[#0369A1]
+
+                    sm:text-[11px]
                   "
                 >
                   <span
                     className="
-                      w-[6px]
                       h-[6px]
+                      w-[6px]
+                      shrink-0
                       rounded-full
                       bg-[#0EA5E9]
                     "
                   />
 
-                  التخصص التقني:
-                  {
-                    formData.major
-                  }
+                  <span className="truncate">
+                    التخصص التقني:{" "}
+                    {formData.major}
+                  </span>
                 </span>
               </div>
             </section>
@@ -365,6 +439,7 @@ export default function Profile() {
             {/* =====================================
                 BASIC INFORMATION
             ====================================== */}
+
             <section
               className="
                 mt-[22px]
@@ -372,20 +447,29 @@ export default function Profile() {
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[22px]
-                py-[20px]
+                px-4
+                py-5
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                sm:px-[22px]
+                sm:py-[20px]
               "
             >
+              {/* HEADER */}
+
               <div
                 className="
                   flex
-                  items-center
-                  justify-between
-                  gap-[15px]
-                  pb-[14px]
+                  flex-col
+                  gap-3
                   border-b
                   border-[#EEF2F7]
+                  pb-[14px]
+
+                  sm:flex-row
+                  sm:items-center
+                  sm:justify-between
+                  sm:gap-[15px]
                 "
               >
                 <div
@@ -397,27 +481,31 @@ export default function Profile() {
                 >
                   <div
                     className="
-                      w-[31px]
-                      h-[31px]
+                      flex
+                      h-[32px]
+                      w-[32px]
+                      shrink-0
+                      items-center
+                      justify-center
                       rounded-[7px]
                       bg-[#EEF4FF]
                       text-[#09379A]
-                      flex
-                      items-center
-                      justify-center
                     "
                   >
                     <IdCard
                       size={16}
+                      strokeWidth={1.8}
                     />
                   </div>
 
                   <h2
                     className="
                       m-0
-                      text-[17px]
+                      text-[16px]
                       font-bold
                       text-[#1E293B]
+
+                      sm:text-[17px]
                     "
                   >
                     المعلومات الأساسية
@@ -426,41 +514,40 @@ export default function Profile() {
 
                 <span
                   className="
-                    h-[23px]
-                    px-[9px]
+                    flex
+                    min-h-[24px]
+                    w-fit
+                    items-center
                     rounded-[6px]
                     bg-[#F1F5F9]
+                    px-[9px]
+                    text-[10px]
                     text-[#64748B]
-                    flex
-                    items-center
-                    text-[8px]
                   "
                 >
                   بيانات السجل الرسمي
                 </span>
               </div>
 
+              {/* DATA GRID */}
+
               <div
                 className="
-                  mt-[18px]
+                  mt-[20px]
                   grid
                   grid-cols-1
-                  md:grid-cols-2
                   gap-x-[38px]
-                  gap-y-[22px]
+                  gap-y-[24px]
+
+                  md:grid-cols-2
                 "
               >
+                {/* Academic fixed fields */}
+
                 <ProfileField
                   label="الاسم الكامل"
                   value={
                     formData.fullName
-                  }
-                  name="fullName"
-                  editable={
-                    isEditing
-                  }
-                  onChange={
-                    handleChange
                   }
                 />
 
@@ -486,6 +573,8 @@ export default function Profile() {
                   }
                 />
 
+                {/* Contact editable fields */}
+
                 <ProfileField
                   label="البريد الإلكتروني"
                   value={
@@ -504,9 +593,11 @@ export default function Profile() {
                       ? "تعديل التواصل"
                       : null
                   }
-                  onAction={() =>
-                    setIsEditing(true)
+                  onAction={
+                    handleEdit
                   }
+                  inputType="email"
+                  dir="ltr"
                 />
 
                 <ProfileField
@@ -527,9 +618,11 @@ export default function Profile() {
                       ? "تعديل التواصل"
                       : null
                   }
-                  onAction={() =>
-                    setIsEditing(true)
+                  onAction={
+                    handleEdit
                   }
+                  inputType="tel"
+                  dir="ltr"
                 />
               </div>
             </section>
@@ -537,6 +630,7 @@ export default function Profile() {
             {/* =====================================
                 ACCOUNT INFORMATION
             ====================================== */}
+
             <section
               className="
                 mt-[22px]
@@ -544,65 +638,80 @@ export default function Profile() {
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[22px]
-                py-[20px]
+                px-4
+                py-5
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                sm:px-[22px]
+                sm:py-[20px]
               "
             >
+              {/* TITLE */}
+
               <div
                 className="
                   flex
                   items-center
                   gap-[9px]
-                  pb-[14px]
                   border-b
                   border-[#EEF2F7]
+                  pb-[14px]
                 "
               >
                 <div
                   className="
-                    w-[31px]
-                    h-[31px]
+                    flex
+                    h-[32px]
+                    w-[32px]
+                    items-center
+                    justify-center
                     rounded-[7px]
                     bg-[#F2F0FF]
                     text-[#6366F1]
-                    flex
-                    items-center
-                    justify-center
                   "
                 >
                   <ShieldCheck
                     size={16}
+                    strokeWidth={1.8}
                   />
                 </div>
 
                 <h2
                   className="
                     m-0
-                    text-[17px]
+                    text-[16px]
                     font-bold
                     text-[#1E293B]
+
+                    sm:text-[17px]
                   "
                 >
                   معلومات الحساب
                 </h2>
               </div>
 
+              {/* ACCOUNT CONTENT */}
+
               <div
                 className="
                   mt-[18px]
                   grid
                   grid-cols-1
-                  md:grid-cols-2
-                  gap-[18px]
                   items-center
+                  gap-[18px]
+
+                  md:grid-cols-2
+
+                  lg:gap-[32px]
                 "
               >
+                {/* STATUS */}
+
                 <div>
                   <p
                     className="
                       m-0
-                      text-[9px]
+                      text-[11px]
                       text-[#94A3B8]
                     "
                   >
@@ -613,17 +722,19 @@ export default function Profile() {
                     className="
                       mt-[7px]
                       inline-flex
-                      h-[30px]
-                      px-[11px]
+                      min-h-[31px]
+                      items-center
+                      gap-[7px]
                       rounded-[7px]
                       border
                       border-[#A7E6C4]
                       bg-[#ECFDF5]
-                      text-[#047857]
-                      items-center
-                      gap-[7px]
-                      text-[9px]
+                      px-[11px]
+                      text-[10px]
                       font-bold
+                      text-[#047857]
+
+                      sm:text-[11px]
                     "
                   >
                     <CheckCircle2
@@ -634,30 +745,33 @@ export default function Profile() {
                   </div>
                 </div>
 
+                {/* LINKED SYSTEM */}
+
                 <div
                   className="
-                    min-h-[56px]
+                    flex
+                    min-h-[60px]
+                    items-center
+                    gap-[11px]
                     rounded-[9px]
                     border
                     border-[#DDE5EF]
                     bg-[#F8FAFC]
                     px-[14px]
-                    flex
-                    items-center
-                    gap-[10px]
+                    py-[11px]
                   "
                 >
                   <div
                     className="
-                      w-[32px]
-                      h-[32px]
+                      flex
+                      h-[34px]
+                      w-[34px]
+                      shrink-0
+                      items-center
+                      justify-center
                       rounded-[8px]
                       bg-[#E9FFF4]
                       text-[#10B981]
-                      flex
-                      items-center
-                      justify-center
-                      shrink-0
                     "
                   >
                     <Building2
@@ -667,8 +781,8 @@ export default function Profile() {
 
                   <span
                     className="
-                      text-[9px]
-                      leading-[17px]
+                      text-[11px]
+                      leading-[20px]
                       text-[#475569]
                     "
                   >
@@ -682,25 +796,35 @@ export default function Profile() {
             {/* =====================================
                 BOTTOM ACTIONS
             ====================================== */}
+
             <section
               className="
-                mt-[90px]
-                pt-[18px]
+                mt-[55px]
+                flex
+                flex-col
+                gap-4
                 border-t
                 border-[#E2E8F0]
-                flex
-                flex-wrap
-                items-center
-                justify-between
-                gap-[15px]
+                pt-[18px]
+
+                sm:flex-row
+                sm:flex-wrap
+                sm:items-center
+                sm:justify-between
+
+                xl:mt-[90px]
               "
             >
               <p
                 className="
                   m-0
-                  text-[9px]
-                  leading-[17px]
+                  max-w-[650px]
+                  text-[10px]
+                  leading-[19px]
                   text-[#94A3B8]
+
+                  sm:text-[11px]
+                  sm:leading-[20px]
                 "
               >
                 * يسمح بتعديل بيانات التواصل فقط
@@ -711,26 +835,29 @@ export default function Profile() {
               {!isEditing ? (
                 <button
                   type="button"
-                  onClick={() =>
-                    setIsEditing(true)
+                  onClick={
+                    handleEdit
                   }
                   className="
-                    h-[42px]
-                    px-[18px]
-                    rounded-[8px]
-                    border-0
-                    bg-[#09379A]
-                    text-white
                     flex
+                    min-h-[42px]
+                    w-full
                     items-center
                     justify-center
                     gap-[8px]
-                    text-[10px]
+                    rounded-[8px]
+                    border-0
+                    bg-[#09379A]
+                    px-[18px]
+                    text-[11px]
                     font-bold
-                    cursor-pointer
+                    text-white
                     shadow-[0_3px_8px_rgba(9,55,154,0.16)]
                     transition
+
                     hover:bg-[#072E81]
+
+                    sm:w-auto
                   "
                 >
                   <Edit3
@@ -743,26 +870,32 @@ export default function Profile() {
                 <div
                   className="
                     flex
-                    items-center
+                    w-full
+                    flex-col-reverse
                     gap-[9px]
+
+                    sm:w-auto
+                    sm:flex-row
+                    sm:items-center
                   "
                 >
                   <button
                     type="button"
-                    onClick={() =>
-                      setIsEditing(false)
+                    onClick={
+                      handleCancel
                     }
                     className="
-                      h-[40px]
-                      px-[15px]
+                      min-h-[40px]
                       rounded-[8px]
                       border
                       border-[#D9E2EC]
                       bg-white
-                      text-[#475569]
-                      text-[10px]
+                      px-[15px]
+                      text-[11px]
                       font-bold
-                      cursor-pointer
+                      text-[#475569]
+                      transition
+
                       hover:bg-[#F8FAFC]
                     "
                   >
@@ -775,18 +908,20 @@ export default function Profile() {
                       handleSave
                     }
                     className="
-                      h-[40px]
-                      px-[17px]
+                      flex
+                      min-h-[40px]
+                      items-center
+                      justify-center
+                      gap-[7px]
                       rounded-[8px]
                       border-0
                       bg-[#09379A]
-                      text-white
-                      flex
-                      items-center
-                      gap-[7px]
-                      text-[10px]
+                      px-[17px]
+                      text-[11px]
                       font-bold
-                      cursor-pointer
+                      text-white
+                      transition
+
                       hover:bg-[#072E81]
                     "
                   >
@@ -819,13 +954,20 @@ function ProfileField({
   icon: Icon,
   actionText,
   onAction,
+  inputType = "text",
+  dir,
 }) {
   return (
-    <div>
+    <div
+      className="
+        min-w-0
+      "
+    >
       <p
         className="
           m-0
-          text-[9px]
+          text-[11px]
+          leading-[18px]
           text-[#94A3B8]
         "
       >
@@ -834,23 +976,27 @@ function ProfileField({
 
       {editable ? (
         <input
+          type={inputType}
           name={name}
           value={value}
           onChange={onChange}
+          dir={dir}
           className="
             mt-[6px]
+            h-[42px]
             w-full
-            h-[40px]
             rounded-[7px]
             border
             border-[#D9E2EC]
             bg-white
             px-[11px]
-            outline-none
             font-['Cairo']
-            text-[10px]
+            text-[12px]
+            font-semibold
             text-[#334155]
+            outline-none
             transition
+
             focus:border-[#09379A]
             focus:ring-2
             focus:ring-[#09379A]/10
@@ -859,25 +1005,27 @@ function ProfileField({
       ) : (
         <div
           className="
-            mt-[6px]
-            min-h-[26px]
+            mt-[7px]
             flex
+            min-h-[28px]
             items-center
             justify-between
             gap-[12px]
           "
         >
+          {/* VALUE */}
+
           <div
             className="
               flex
+              min-w-0
               items-center
               gap-[7px]
-              min-w-0
             "
           >
             {Icon && (
               <Icon
-                size={13}
+                size={14}
                 className="
                   shrink-0
                   text-[#94A3B8]
@@ -886,37 +1034,49 @@ function ProfileField({
             )}
 
             <strong
+              dir={dir}
               className="
-                text-[10px]
-                text-[#334155]
+                min-w-0
                 break-all
+                text-[12px]
+                font-bold
+                leading-[20px]
+                text-[#334155]
+
+                sm:text-[13px]
               "
             >
               {value}
             </strong>
           </div>
 
+          {/* ACTION */}
+
           {actionText && (
             <button
               type="button"
-              onClick={onAction}
+              onClick={
+                onAction
+              }
               className="
-                border-0
-                bg-transparent
-                p-0
-                text-[#09379A]
-                text-[8px]
-                font-bold
-                cursor-pointer
                 flex
+                shrink-0
                 items-center
                 gap-[4px]
                 whitespace-nowrap
+                border-0
+                bg-transparent
+                p-0
+                text-[10px]
+                font-bold
+                text-[#09379A]
+                transition
+
                 hover:underline
               "
             >
               <Edit3
-                size={11}
+                size={12}
               />
 
               {actionText}

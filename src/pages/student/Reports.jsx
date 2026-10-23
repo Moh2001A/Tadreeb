@@ -10,152 +10,383 @@ import {
   History,
   RefreshCw,
   UserX,
+  X,
 } from "lucide-react";
 
 import Header from "../../components/student/Header";
 import Sidebar from "../../components/student/Sidebar";
 
+const availableReports = [
+  {
+    id: 1,
+    type: "attendance",
+    title: "تقرير الحضور والغياب",
+    meta: "PDF • تقرير الحضور",
+  },
+  {
+    id: 2,
+    type: "performance",
+    title: "تقرير أداء الطالب",
+    meta: "PDF • تقرير الأداء",
+  },
+  {
+    id: 3,
+    type: "evaluation",
+    title: "تقرير تقييم المدرب",
+    meta: "PDF • تقرير التقييم",
+  },
+  {
+    id: 4,
+    type: "final",
+    title: "تقرير ختامي للتدريب",
+    meta: "PDF • التقرير الختامي",
+  },
+];
+
+const weeklyHours = [
+  {
+    week: "الأسبوع 1",
+    value: 28,
+  },
+  {
+    week: "الأسبوع 2",
+    value: 26,
+  },
+  {
+    week: "الأسبوع 3",
+    value: 30,
+  },
+  {
+    week: "الأسبوع 4",
+    value: 27,
+  },
+];
+
 export default function Reports() {
   const navigate = useNavigate();
 
-  const [reportType, setReportType] = useState("attendance");
-  const [trainingProgram, setTrainingProgram] = useState("all");
-  const [dateRange, setDateRange] = useState("");
+  const [reportType, setReportType] =
+    useState("attendance");
 
-  const availableReports = [
-    {
-      id: 1,
-      title: "تقرير الحضور والغياب",
-      meta: "PDF • 240 KB",
-    },
-    {
-      id: 2,
-      title: "تقرير أداء الطالب",
-      meta: "PDF • 410 KB",
-    },
-    {
-      id: 3,
-      title: "تقرير تقييم المدرب",
-      meta: "PDF • 180 KB",
-    },
-    {
-      id: 4,
-      title: "تقرير ختامي للتدريب",
-      meta: "PDF • 650 KB",
-    },
-  ];
+  const [trainingProgram, setTrainingProgram] =
+    useState("all");
 
-  const weeklyHours = [
-    {
-      week: "الأسبوع 1",
-      value: 28,
-    },
-    {
-      week: "الأسبوع 2",
-      value: 26,
-    },
-    {
-      week: "الأسبوع 3",
-      value: 30,
-    },
-    {
-      week: "الأسبوع 4",
-      value: 27,
-    },
-  ];
+  const [fromDate, setFromDate] =
+    useState("");
 
-  const maxHours = 40;
+  const [toDate, setToDate] =
+    useState("");
 
-  const handleDownloadReport = () => {
-    console.log({
-      reportType,
-      trainingProgram,
-      dateRange,
-    });
+  const [history, setHistory] =
+    useState([]);
+
+  const [historyOpen, setHistoryOpen] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const selectedReport =
+    availableReports.find(
+      (report) =>
+        report.type === reportType
+    ) || availableReports[0];
+
+  /* =========================================================
+     DOWNLOAD REPORT
+  ========================================================= */
+
+  const handleDownloadReport = (
+    report = selectedReport
+  ) => {
+    setError("");
+
+    if (
+      fromDate &&
+      toDate &&
+      fromDate > toDate
+    ) {
+      setError(
+        "تاريخ البداية يجب ألا يكون بعد تاريخ النهاية."
+      );
+      return;
+    }
+
+    const programNames = {
+      all: "جميع البرامج",
+      networks: "شبكات واتصالات",
+      it: "تقنية المعلومات",
+    };
+
+    const reportRows = [
+      ["اسم التقرير", report.title],
+      [
+        "البرنامج التدريبي",
+        programNames[trainingProgram],
+      ],
+      [
+        "من تاريخ",
+        fromDate || "غير محدد",
+      ],
+      [
+        "إلى تاريخ",
+        toDate || "غير محدد",
+      ],
+      [
+        "إجمالي الساعات",
+        "120 ساعة",
+      ],
+      [
+        "نسبة الحضور",
+        "92%",
+      ],
+      [
+        "عدد أيام الحضور",
+        "24 يوما",
+      ],
+      [
+        "عدد مرات الغياب",
+        "يومان",
+      ],
+    ];
+
+    const tableRows =
+      reportRows
+        .map(
+          ([label, value]) => `
+            <tr>
+              <th>${label}</th>
+              <td>${value}</td>
+            </tr>
+          `
+        )
+        .join("");
+
+    const printWindow =
+      window.open("", "_blank");
+
+    if (!printWindow) {
+      setError(
+        "تعذر فتح التقرير. يرجى السماح بالنوافذ المنبثقة للصفحة."
+      );
+      return;
+    }
+
+    printWindow.document.open();
+
+    printWindow.document.write(`
+      <!DOCTYPE html>
+
+      <html
+        lang="ar"
+        dir="rtl"
+      >
+        <head>
+          <meta charset="UTF-8" />
+
+          <title>
+            ${report.title}
+          </title>
+
+          <style>
+            body {
+              font-family: Tahoma, Arial, sans-serif;
+              direction: rtl;
+              margin: 40px;
+              color: #1e293b;
+            }
+
+            h1 {
+              color: #09379A;
+              font-size: 24px;
+              margin-bottom: 8px;
+            }
+
+            p {
+              color: #64748b;
+              font-size: 13px;
+            }
+
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 28px;
+            }
+
+            th,
+            td {
+              border: 1px solid #dbe3ef;
+              padding: 13px;
+              text-align: right;
+              font-size: 13px;
+            }
+
+            th {
+              width: 35%;
+              background: #f1f5f9;
+            }
+
+            @media print {
+              body {
+                margin: 15mm;
+              }
+            }
+          </style>
+        </head>
+
+        <body>
+          <h1>
+            ${report.title}
+          </h1>
+
+          <p>
+            بوابة التدريب الميداني — تقرير تجريبي
+          </p>
+
+          <p>
+            تاريخ الإصدار:
+            ${new Date().toLocaleDateString(
+              "ar"
+            )}
+          </p>
+
+          <table>
+            ${tableRows}
+          </table>
+        </body>
+      </html>
+    `);
+
+    printWindow.document.close();
+
+    setHistory(
+      (previous) => [
+        {
+          id: `${Date.now()}-${report.id}`,
+          reportId: report.id,
+          title: report.title,
+          date: new Date().toLocaleString(
+            "ar"
+          ),
+        },
+        ...previous,
+      ]
+    );
+
+    printWindow.focus();
+    printWindow.print();
   };
 
   return (
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
         bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
-      {/* =========================
+      {/* =====================================================
           SIDEBAR
-      ========================== */}
+      ====================================================== */}
+
       <Sidebar />
 
-      {/* =========================
+      {/* =====================================================
           MAIN AREA
-      ========================== */}
+      ====================================================== */}
+
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
         "
       >
-        {/* =========================
-            HEADER
-        ========================== */}
-        <Header />
+        {/* HEADER */}
 
-        {/* =========================
-            SCROLLABLE CONTENT
-        ========================== */}
+        <div className="shrink-0">
+          <Header />
+        </div>
+
+        {/* =====================================================
+            CONTENT
+        ====================================================== */}
+
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
-            xl:px-[40px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
             pt-[18px]
-            pb-[40px]
+
+            sm:px-[24px]
+
+            xl:px-[40px]
+            xl:pb-[40px]
           "
         >
-          <div className="w-full max-w-[1080px] mx-auto">
-
-            {/* =========================
+          <div
+            className="
+              mx-auto
+              w-full
+              max-w-[1080px]
+            "
+          >
+            {/* =================================================
                 BREADCRUMB
-            ========================== */}
+            ================================================== */}
+
             <div
               className="
                 flex
                 items-center
                 gap-[7px]
-                text-[13px]
+                text-[12px]
                 leading-[20px]
+
+                sm:text-[13px]
               "
             >
               <button
                 type="button"
-                onClick={() => navigate("/student/dashboard")}
+                onClick={() =>
+                  navigate(
+                    "/student/dashboard"
+                  )
+                }
                 className="
                   border-0
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
                   transition
+
                   hover:text-[#09379A]
                 "
               >
                 الرئيسية
               </button>
 
-              <span className="text-[#94A3B8]">›</span>
+              <span
+                className="
+                  text-[#94A3B8]
+                "
+              >
+                ›
+              </span>
 
               <span
                 className="
@@ -167,26 +398,35 @@ export default function Reports() {
               </span>
             </div>
 
-            {/* =========================
+            {/* =================================================
                 PAGE TITLE
-            ========================== */}
-            <section className="mt-[5px]">
+                لا نكبر العنوان الرئيسي
+            ================================================== */}
+
+            <section
+              className="
+                mt-[5px]
+              "
+            >
               <h1
                 className="
                   m-0
-                  text-[30px]
-                  leading-[42px]
+                  text-[26px]
                   font-bold
+                  leading-[42px]
                   text-[#14213D]
+
+                  sm:text-[30px]
                 "
               >
                 التقارير
               </h1>
             </section>
 
-            {/* =========================
+            {/* =================================================
                 FILTER CARD
-            ========================== */}
+            ================================================== */}
+
             <section
               className="
                 mt-[18px]
@@ -195,54 +435,66 @@ export default function Reports() {
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[24px]
-                py-[22px]
+                px-4
+                py-5
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                sm:px-[24px]
+                sm:py-[22px]
               "
             >
-              {/* Row 1 */}
+              {/* ROW 1 */}
+
               <div
                 className="
                   grid
                   grid-cols-1
-                  lg:grid-cols-2
                   gap-[22px]
+
+                  lg:grid-cols-2
                 "
               >
-                {/* Report Type */}
+                {/* TYPE */}
+
                 <FilterSelect
                   label="نوع التقرير"
                   value={reportType}
-                  onChange={(event) =>
-                    setReportType(event.target.value)
+                  onChange={(
+                    event
+                  ) =>
+                    setReportType(
+                      event.target.value
+                    )
                   }
                 >
-                  <option value="attendance">
-                    تقرير الحضور والغياب
-                  </option>
-
-                  <option value="performance">
-                    تقرير أداء الطالب
-                  </option>
-
-                  <option value="evaluation">
-                    تقرير تقييم المدرب
-                  </option>
-
-                  <option value="final">
-                    التقرير الختامي للتدريب
-                  </option>
+                  {availableReports.map(
+                    (report) => (
+                      <option
+                        key={
+                          report.id
+                        }
+                        value={
+                          report.type
+                        }
+                      >
+                        {
+                          report.title
+                        }
+                      </option>
+                    )
+                  )}
                 </FilterSelect>
 
-                {/* Date Range */}
+                {/* DATE RANGE */}
+
                 <div>
                   <label
                     className="
                       mb-[7px]
                       block
-                      text-[11px]
-                      leading-[18px]
+                      text-[12px]
                       font-medium
+                      leading-[18px]
                       text-[#64748B]
                     "
                   >
@@ -251,16 +503,17 @@ export default function Reports() {
 
                   <div
                     className="
-                      h-[44px]
+                      flex
+                      min-h-[44px]
+                      items-center
+                      gap-2
                       rounded-[8px]
                       border
                       border-[#D9E2EC]
                       bg-white
-                      px-[13px]
-                      flex
-                      items-center
-                      gap-[9px]
+                      px-3
                       transition
+
                       focus-within:border-[#09379A]
                       focus-within:ring-2
                       focus-within:ring-[#09379A]/10
@@ -275,42 +528,114 @@ export default function Reports() {
                       "
                     />
 
-                    <input
-                      type="text"
-                      value={dateRange}
-                      onChange={(event) =>
-                        setDateRange(event.target.value)
-                      }
-                      placeholder="من تاريخ - إلى تاريخ"
+                    <div
                       className="
-                        w-full
-                        h-full
-                        border-0
-                        outline-none
-                        bg-transparent
-                        font-['Cairo']
-                        text-[11px]
-                        text-[#334155]
-                        placeholder:text-[#94A3B8]
+                        grid
+                        min-w-0
+                        flex-1
+                        grid-cols-[1fr_auto_1fr]
+                        items-center
+                        gap-2
                       "
-                    />
+                    >
+                      <input
+                        aria-label="من تاريخ"
+                        type="date"
+                        value={
+                          fromDate
+                        }
+                        max={
+                          toDate ||
+                          undefined
+                        }
+                        onChange={(
+                          event
+                        ) =>
+                          setFromDate(
+                            event
+                              .target
+                              .value
+                          )
+                        }
+                        className="
+                          min-w-0
+                          w-full
+                          border-0
+                          bg-transparent
+                          font-['Cairo']
+                          text-[11px]
+                          text-[#334155]
+                          outline-none
+
+                          sm:text-[12px]
+                        "
+                      />
+
+                      <span
+                        className="
+                          text-[11px]
+                          text-[#94A3B8]
+                        "
+                      >
+                        إلى
+                      </span>
+
+                      <input
+                        aria-label="إلى تاريخ"
+                        type="date"
+                        value={toDate}
+                        min={
+                          fromDate ||
+                          undefined
+                        }
+                        onChange={(
+                          event
+                        ) =>
+                          setToDate(
+                            event
+                              .target
+                              .value
+                          )
+                        }
+                        className="
+                          min-w-0
+                          w-full
+                          border-0
+                          bg-transparent
+                          font-['Cairo']
+                          text-[11px]
+                          text-[#334155]
+                          outline-none
+
+                          sm:text-[12px]
+                        "
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Row 2 */}
+              {/* ROW 2 */}
+
               <div
                 className="
                   mt-[20px]
                   w-full
-                  lg:w-[calc(50%_-_11px)]
+
+                  lg:w-[calc(50%-11px)]
                 "
               >
                 <FilterSelect
                   label="البرنامج التدريبي"
-                  value={trainingProgram}
-                  onChange={(event) =>
-                    setTrainingProgram(event.target.value)
+                  value={
+                    trainingProgram
+                  }
+                  onChange={(
+                    event
+                  ) =>
+                    setTrainingProgram(
+                      event.target.value
+                    )
                   }
                 >
                   <option value="all">
@@ -327,76 +652,94 @@ export default function Reports() {
                 </FilterSelect>
               </div>
 
-              {/* Actions */}
+              {error && (
+                <p
+                  role="alert"
+                  className="
+                    mt-3
+                    text-[12px]
+                    font-medium
+                    text-red-600
+                  "
+                >
+                  {error}
+                </p>
+              )}
+
+              {/* ACTIONS */}
+
               <div
                 className="
                   mt-[22px]
-                  pt-[18px]
-                  border-t
-                  border-[#EEF2F7]
                   flex
                   flex-wrap
                   items-center
                   justify-start
                   gap-[10px]
+                  border-t
+                  border-[#EEF2F7]
+                  pt-[18px]
                 "
               >
-                {/* Primary - Orange */}
                 <button
                   type="button"
-                  onClick={handleDownloadReport}
+                  onClick={() =>
+                    handleDownloadReport()
+                  }
                   className="
-                    h-[42px]
-                    px-[19px]
-                    rounded-[8px]
-                    border-0
-                    bg-[#FF6B35]
-                    text-white
                     flex
+                    min-h-[42px]
                     items-center
                     justify-center
                     gap-[8px]
-                    text-[11px]
+                    rounded-[8px]
+                    border-0
+                    bg-[#FF6B35]
+                    px-[19px]
+                    text-[12px]
                     font-bold
-                    cursor-pointer
+                    text-white
                     shadow-[0_3px_7px_rgba(255,107,53,0.18)]
                     transition
+
                     hover:bg-[#EA5A28]
                   "
                 >
                   <Download
                     size={15}
-                    strokeWidth={1.8}
                   />
 
                   تحميل تقرير
                 </button>
 
-                {/* Secondary */}
                 <button
                   type="button"
+                  onClick={() =>
+                    setHistoryOpen(
+                      true
+                    )
+                  }
                   className="
-                    h-[42px]
-                    px-[17px]
+                    flex
+                    min-h-[42px]
+                    items-center
+                    justify-center
+                    gap-[8px]
                     rounded-[8px]
                     border
                     border-[#C9D9F8]
                     bg-white
-                    text-[#09379A]
-                    flex
-                    items-center
-                    justify-center
-                    gap-[8px]
-                    text-[11px]
+                    px-[17px]
+                    text-[12px]
                     font-bold
-                    cursor-pointer
+                    text-[#09379A]
                     transition
+
                     hover:bg-[#F5F8FF]
                   "
                 >
                   <History
                     size={15}
-                    strokeWidth={1.8}
                   />
 
                   سجل التحميل
@@ -404,17 +747,20 @@ export default function Reports() {
               </div>
             </section>
 
-            {/* =========================
+            {/* =================================================
                 STATISTICS
-            ========================== */}
+            ================================================== */}
+
             <section
               className="
                 mt-[22px]
                 grid
                 grid-cols-1
-                sm:grid-cols-2
-                xl:grid-cols-4
                 gap-[18px]
+
+                sm:grid-cols-2
+
+                xl:grid-cols-4
               "
             >
               <StatisticCard
@@ -422,7 +768,10 @@ export default function Reports() {
                 value="120"
                 description="ساعة تدريبية معتمدة"
                 icon={Clock3}
-                iconClass="bg-[#EEF4FF] text-[#09379A]"
+                iconClass="
+                  bg-[#EEF4FF]
+                  text-[#09379A]
+                "
               />
 
               <StatisticCard
@@ -430,17 +779,27 @@ export default function Reports() {
                 value="92%"
                 description="أداء فصلي مرتفع"
                 icon={RefreshCw}
-                iconClass="bg-[#E9FFF4] text-[#10B981]"
+                iconClass="
+                  bg-[#E9FFF4]
+                  text-[#10B981]
+                "
                 badge="ممتاز"
-                valueClass="text-[#09379A]"
+                valueClass="
+                  text-[#09379A]
+                "
               />
 
               <StatisticCard
                 label="عدد الأيام الفعلية"
                 value="24"
                 description="يوما من أصل 26"
-                icon={CalendarDays}
-                iconClass="bg-[#EEF4FF] text-[#09379A]"
+                icon={
+                  CalendarDays
+                }
+                iconClass="
+                  bg-[#EEF4FF]
+                  text-[#09379A]
+                "
               />
 
               <StatisticCard
@@ -448,36 +807,49 @@ export default function Reports() {
                 value="2"
                 description="غياب موثق بعذر"
                 icon={UserX}
-                iconClass="bg-[#FFF0F0] text-[#EF4444]"
-                valueClass="text-[#EF4444]"
+                iconClass="
+                  bg-[#FFF0F0]
+                  text-[#EF4444]
+                "
+                valueClass="
+                  text-[#EF4444]
+                "
               />
             </section>
 
-            {/* =========================
+            {/* =================================================
                 LOWER CONTENT
-            ========================== */}
+            ================================================== */}
+
             <section
               className="
                 mt-[22px]
                 grid
                 grid-cols-1
-                lg:grid-cols-3
-                gap-[20px]
                 items-stretch
+                gap-[20px]
+
+                lg:grid-cols-2
+
+                xl:grid-cols-3
               "
             >
-              {/* =====================
+              {/* =================================================
                   AVAILABLE REPORTS
-              ====================== */}
+              ================================================== */}
+
               <article
                 className="
+                  min-w-0
                   rounded-[14px]
                   border
                   border-[#DDE5EF]
                   bg-white
-                  px-[20px]
-                  py-[20px]
+                  px-4
+                  py-5
                   shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                  sm:px-[20px]
                 "
               >
                 <h2
@@ -495,7 +867,8 @@ export default function Reports() {
                   className="
                     m-0
                     mt-[3px]
-                    text-[9px]
+                    text-[11px]
+                    leading-[19px]
                     text-[#94A3B8]
                   "
                 >
@@ -510,132 +883,153 @@ export default function Reports() {
                     gap-[11px]
                   "
                 >
-                  {availableReports.map((report) => (
-                    <button
-                      key={report.id}
-                      type="button"
-                      className="
-                        min-h-[63px]
-                        w-full
-                        rounded-[9px]
-                        border
-                        border-[#E7ECF2]
-                        bg-white
-                        px-[12px]
-                        flex
-                        items-center
-                        justify-between
-                        gap-[10px]
-                        text-right
-                        cursor-pointer
-                        transition
-                        hover:bg-[#F8FAFC]
-                        hover:border-[#C9D7EA]
-                      "
-                    >
-                      <div
+                  {availableReports.map(
+                    (report) => (
+                      <button
+                        key={
+                          report.id
+                        }
+                        type="button"
+                        onClick={() =>
+                          handleDownloadReport(
+                            report
+                          )
+                        }
                         className="
                           flex
+                          min-h-[63px]
+                          w-full
                           items-center
+                          justify-between
                           gap-[10px]
-                          min-w-0
+                          rounded-[9px]
+                          border
+                          border-[#E7ECF2]
+                          bg-white
+                          px-[12px]
+                          text-right
+                          transition
+
+                          hover:border-[#C9D7EA]
+                          hover:bg-[#F8FAFC]
                         "
                       >
                         <div
                           className="
-                            w-[34px]
-                            h-[34px]
-                            rounded-[8px]
-                            bg-[#EEF4FF]
-                            text-[#09379A]
                             flex
+                            min-w-0
                             items-center
-                            justify-center
-                            shrink-0
+                            gap-[10px]
                           "
                         >
-                          <FileText
-                            size={16}
-                            strokeWidth={1.8}
-                          />
-                        </div>
-
-                        <div className="min-w-0">
-                          <h3
+                          <div
                             className="
-                              m-0
-                              text-[11px]
-                              font-bold
-                              text-[#334155]
+                              flex
+                              h-[34px]
+                              w-[34px]
+                              shrink-0
+                              items-center
+                              justify-center
+                              rounded-[8px]
+                              bg-[#EEF4FF]
+                              text-[#09379A]
                             "
                           >
-                            {report.title}
-                          </h3>
+                            <FileText
+                              size={
+                                16
+                              }
+                            />
+                          </div>
 
-                          <p
-                            dir="ltr"
-                            className="
-                              m-0
-                              mt-[4px]
-                              text-[8px]
-                              text-[#94A3B8]
-                              text-right
-                            "
-                          >
-                            {report.meta}
-                          </p>
+                          <div className="min-w-0">
+                            <h3
+                              className="
+                                m-0
+                                text-[12px]
+                                font-bold
+                                text-[#334155]
+                              "
+                            >
+                              {
+                                report.title
+                              }
+                            </h3>
+
+                            <p
+                              className="
+                                m-0
+                                mt-[4px]
+                                text-[10px]
+                                text-[#94A3B8]
+                              "
+                            >
+                              اضغط
+                              لعرض
+                              التقرير
+                              وحفظه
+                            </p>
+                          </div>
                         </div>
-                      </div>
 
-                      <Download
-                        size={14}
-                        className="
-                          shrink-0
-                          text-[#94A3B8]
-                        "
-                      />
-                    </button>
-                  ))}
+                        <Download
+                          size={14}
+                          className="
+                            shrink-0
+                            text-[#94A3B8]
+                          "
+                        />
+                      </button>
+                    )
+                  )}
                 </div>
 
                 <div
                   className="
                     mt-[18px]
-                    pt-[12px]
-                    border-t
-                    border-[#EEF2F7]
                     flex
                     items-center
                     gap-[6px]
-                    text-[8px]
+                    border-t
+                    border-[#EEF2F7]
+                    pt-[12px]
+                    text-[10px]
+                    leading-[18px]
                     text-[#94A3B8]
                   "
                 >
                   <span
                     className="
-                      w-[6px]
                       h-[6px]
+                      w-[6px]
+                      shrink-0
                       rounded-full
                       bg-[#10B981]
                     "
                   />
 
-                  جميع التقارير معتمدة وموقعة إلكترونيا
+                  التقارير المعروضة تجريبية وغير مرتبطة
+                  بقاعدة بيانات فعلية.
                 </div>
               </article>
 
-              {/* =====================
+              {/* =================================================
                   WEEKLY HOURS
-              ====================== */}
+                  مطابق أكثر للصورة
+              ================================================== */}
+
               <article
                 className="
+                  min-w-0
                   rounded-[14px]
                   border
                   border-[#DDE5EF]
                   bg-white
-                  px-[20px]
-                  py-[20px]
+                  px-4
+                  py-5
                   shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                  sm:px-[20px]
                 "
               >
                 <h2
@@ -653,86 +1047,218 @@ export default function Reports() {
                   className="
                     m-0
                     mt-[3px]
-                    text-[9px]
+                    text-[11px]
+                    leading-[19px]
                     text-[#94A3B8]
                   "
                 >
                   معدل الساعات المنجزة أسبوعيا
                 </p>
 
+                {/* CHART */}
+
                 <div
                   className="
-                    mt-[26px]
-                    h-[210px]
-                    flex
-                    items-end
-                    justify-between
-                    gap-[15px]
-                    border-b
-                    border-[#EEF2F7]
-                    px-[8px]
+                    relative
+                    mt-[24px]
+                    h-[218px]
+                    w-full
+                    overflow-hidden
                   "
                 >
-                  {weeklyHours.map((item) => {
-                    const height =
-                      (item.value / maxHours) * 100;
+                  {/* 40 HOURS LINE */}
 
-                    return (
-                      <div
-                        key={item.week}
-                        className="
-                          flex-1
-                          h-full
-                          flex
-                          flex-col
-                          justify-end
-                          items-center
-                        "
-                      >
-                        <div
-                          className="
-                            w-full
-                            max-w-[42px]
-                            flex-1
-                            flex
-                            items-end
-                          "
-                        >
+                  <div
+                    className="
+                      absolute
+                      left-0
+                      right-0
+                      top-[15px]
+                      border-t
+                      border-dashed
+                      border-[#E8EEF5]
+                    "
+                  >
+                    <span
+                      className="
+                        absolute
+                        -top-[17px]
+                        left-0
+                        text-[9px]
+                        text-[#94A3B8]
+                      "
+                    >
+                      40 س
+                    </span>
+                  </div>
+
+                  {/* 20 HOURS LINE */}
+
+                  <div
+                    className="
+                      absolute
+                      left-0
+                      right-0
+                      top-[96px]
+                      border-t
+                      border-dashed
+                      border-[#E8EEF5]
+                    "
+                  >
+                    <span
+                      className="
+                        absolute
+                        -top-[16px]
+                        left-0
+                        text-[9px]
+                        text-[#94A3B8]
+                      "
+                    >
+                      20 س
+                    </span>
+                  </div>
+
+                  {/* BASE LINE */}
+
+                  <div
+                    className="
+                      absolute
+                      bottom-[34px]
+                      left-0
+                      right-0
+                      border-t
+                      border-[#E8EEF5]
+                    "
+                  />
+
+                  {/* COLUMNS */}
+
+                  <div
+                    className="
+                      absolute
+                      inset-x-[8px]
+                      bottom-0
+                      top-[18px]
+                      flex
+                      items-end
+                      justify-between
+                      gap-[12px]
+
+                      sm:gap-[18px]
+                    "
+                  >
+                    {weeklyHours.map(
+                      (item) => {
+                        const barHeight =
+                          Math.max(
+                            20,
+                            (item.value /
+                              40) *
+                              142
+                          );
+
+                        return (
                           <div
+                            key={
+                              item.week
+                            }
                             className="
-                              w-full
-                              rounded-t-[5px]
-                              bg-[#09379A]
-                              transition-all
+                              flex
+                              h-full
+                              min-w-0
+                              flex-1
+                              flex-col
+                              items-center
+                              justify-end
                             "
-                            style={{
-                              height: `${height}%`,
-                            }}
-                          />
-                        </div>
+                          >
+                            {/* VALUE */}
 
-                        <span
-                          className="
-                            mt-[8px]
-                            mb-[8px]
-                            text-[8px]
-                            text-[#64748B]
-                            whitespace-nowrap
-                          "
-                        >
-                          {item.week}
-                        </span>
-                      </div>
-                    );
-                  })}
+                            <span
+                              className="
+                                mb-[5px]
+                                text-[10px]
+                                font-bold
+                                text-[#64748B]
+                              "
+                            >
+                              {
+                                item.value
+                              }
+                            </span>
+
+                            {/* BAR */}
+
+                            <div
+                              className="
+                                flex
+                                h-[142px]
+                                w-full
+                                items-end
+                                justify-center
+                              "
+                            >
+                              <div
+                                title={`${item.week}: ${item.value} ساعة`}
+                                className="
+                                  w-full
+                                  max-w-[46px]
+                                  rounded-t-[6px]
+                                  bg-[#09379A]
+                                  shadow-[0_2px_5px_rgba(9,55,154,0.08)]
+                                  transition
+
+                                  hover:bg-[#1749B8]
+
+                                  sm:max-w-[52px]
+                                "
+                                style={{
+                                  height: `${barHeight}px`,
+                                }}
+                              />
+                            </div>
+
+                            {/* WEEK */}
+
+                            <span
+                              className="
+                                mt-[9px]
+                                whitespace-nowrap
+                                text-[10px]
+                                font-medium
+                                text-[#64748B]
+
+                                sm:text-[11px]
+                              "
+                            >
+                              {
+                                item.week
+                              }
+                            </span>
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
                 </div>
 
-                <div className="mt-[22px] text-center">
+                {/* FOOTER */}
+
+                <div
+                  className="
+                    mt-[10px]
+                    border-t
+                    border-[#EEF2F7]
+                    pt-[16px]
+                    text-center
+                  "
+                >
                   <p
                     className="
                       m-0
-                      text-[9px]
-                      font-medium
+                      text-[11px]
+                      font-semibold
+                      leading-[19px]
                       text-[#10A36A]
                     "
                   >
@@ -743,8 +1269,8 @@ export default function Reports() {
                   <p
                     className="
                       m-0
-                      mt-[3px]
-                      text-[9px]
+                      mt-[4px]
+                      text-[11px]
                       font-bold
                       text-[#10A36A]
                     "
@@ -754,18 +1280,26 @@ export default function Reports() {
                 </div>
               </article>
 
-              {/* =====================
+              {/* =================================================
                   ATTENDANCE DONUT
-              ====================== */}
+              ================================================== */}
+
               <article
                 className="
+                  min-w-0
                   rounded-[14px]
                   border
                   border-[#DDE5EF]
                   bg-white
-                  px-[20px]
-                  py-[20px]
+                  px-4
+                  py-5
                   shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                  sm:px-[20px]
+
+                  lg:col-span-2
+
+                  xl:col-span-1
                 "
               >
                 <h2
@@ -783,7 +1317,8 @@ export default function Reports() {
                   className="
                     m-0
                     mt-[3px]
-                    text-[9px]
+                    text-[11px]
+                    leading-[19px]
                     text-[#94A3B8]
                   "
                 >
@@ -799,10 +1334,12 @@ export default function Reports() {
                   "
                 >
                   <div
+                    role="img"
+                    aria-label="نسبة الحضور 92 بالمئة"
                     className="
                       relative
-                      w-[160px]
                       h-[160px]
+                      w-[160px]
                       rounded-full
                     "
                     style={{
@@ -814,19 +1351,19 @@ export default function Reports() {
                       className="
                         absolute
                         inset-[16px]
-                        rounded-full
-                        bg-white
                         flex
                         flex-col
                         items-center
                         justify-center
+                        rounded-full
+                        bg-white
                       "
                     >
                       <strong
                         className="
                           text-[27px]
-                          leading-[30px]
                           font-bold
+                          leading-[30px]
                           text-[#1E293B]
                         "
                       >
@@ -836,7 +1373,7 @@ export default function Reports() {
                       <span
                         className="
                           mt-[3px]
-                          text-[9px]
+                          text-[10px]
                           text-[#94A3B8]
                         "
                       >
@@ -849,14 +1386,16 @@ export default function Reports() {
                 <div
                   className="
                     mt-[38px]
-                    pt-[14px]
-                    border-t
-                    border-[#EEF2F7]
                     flex
+                    flex-wrap
                     items-center
                     justify-center
-                    gap-[28px]
-                    text-[9px]
+                    gap-x-[28px]
+                    gap-y-3
+                    border-t
+                    border-[#EEF2F7]
+                    pt-[14px]
+                    text-[10px]
                     text-[#64748B]
                   "
                 >
@@ -869,8 +1408,8 @@ export default function Reports() {
                   >
                     <span
                       className="
-                        w-[7px]
                         h-[7px]
+                        w-[7px]
                         rounded-full
                         bg-[#10B981]
                       "
@@ -888,14 +1427,14 @@ export default function Reports() {
                   >
                     <span
                       className="
-                        w-[7px]
                         h-[7px]
+                        w-[7px]
                         rounded-full
                         bg-[#EF4444]
                       "
                     />
 
-                    غائب (2 يومان)
+                    غائب (يومان)
                   </div>
                 </div>
               </article>
@@ -903,6 +1442,295 @@ export default function Reports() {
           </div>
         </main>
       </div>
+
+      {/* =====================================================
+          DOWNLOAD HISTORY
+      ====================================================== */}
+
+      {historyOpen && (
+        <div
+          className="
+            fixed
+            inset-0
+            z-50
+            flex
+            items-center
+            justify-center
+            bg-slate-900/40
+            p-4
+          "
+          onMouseDown={(
+            event
+          ) => {
+            if (
+              event.target ===
+              event.currentTarget
+            ) {
+              setHistoryOpen(
+                false
+              );
+            }
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="download-history-title"
+            className="
+              max-h-[85dvh]
+              w-full
+              max-w-[480px]
+              overflow-y-auto
+              rounded-[14px]
+              border
+              border-[#DDE5EF]
+              bg-white
+              p-5
+              shadow-2xl
+
+              sm:p-6
+            "
+          >
+            <div
+              className="
+                flex
+                items-center
+                justify-between
+                gap-3
+              "
+            >
+              <div>
+                <h2
+                  id="download-history-title"
+                  className="
+                    text-[17px]
+                    font-bold
+                    text-[#14213D]
+                  "
+                >
+                  سجل التحميل
+                </h2>
+
+                <p
+                  className="
+                    mt-1
+                    text-[11px]
+                    leading-[19px]
+                    text-[#94A3B8]
+                  "
+                >
+                  التقارير التي طلبت عرضها خلال
+                  الجلسة الحالية
+                </p>
+              </div>
+
+              <button
+                type="button"
+                aria-label="إغلاق"
+                onClick={() =>
+                  setHistoryOpen(
+                    false
+                  )
+                }
+                className="
+                  rounded-lg
+                  p-2
+                  text-slate-500
+                  transition
+
+                  hover:bg-slate-100
+                "
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {history.length === 0 ? (
+              <div
+                className="
+                  py-10
+                  text-center
+                "
+              >
+                <History
+                  className="
+                    mx-auto
+                    text-slate-300
+                  "
+                  size={30}
+                />
+
+                <p
+                  className="
+                    mt-3
+                    text-[13px]
+                    font-medium
+                    text-slate-600
+                  "
+                >
+                  لا توجد تقارير في سجل التحميل حتى
+                  الآن.
+                </p>
+
+                <p
+                  className="
+                    mt-1
+                    text-[11px]
+                    text-slate-400
+                  "
+                >
+                  عند فتح تقرير من القائمة سيظهر هنا.
+                </p>
+              </div>
+            ) : (
+              <div
+                className="
+                  mt-5
+                  space-y-3
+                "
+              >
+                {history.map(
+                  (item) => (
+                    <div
+                      key={
+                        item.id
+                      }
+                      className="
+                        flex
+                        items-center
+                        justify-between
+                        gap-3
+                        rounded-lg
+                        border
+                        border-[#E7ECF2]
+                        p-3
+                      "
+                    >
+                      <div
+                        className="
+                          flex
+                          min-w-0
+                          items-center
+                          gap-3
+                        "
+                      >
+                        <span
+                          className="
+                            flex
+                            h-9
+                            w-9
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-lg
+                            bg-[#EEF4FF]
+                            text-[#09379A]
+                          "
+                        >
+                          <FileText
+                            size={
+                              17
+                            }
+                          />
+                        </span>
+
+                        <div className="min-w-0">
+                          <p
+                            className="
+                              text-[12px]
+                              font-bold
+                              text-slate-700
+                            "
+                          >
+                            {
+                              item.title
+                            }
+                          </p>
+
+                          <p
+                            className="
+                              mt-1
+                              text-[10px]
+                              text-slate-400
+                            "
+                          >
+                            {
+                              item.date
+                            }
+                          </p>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const report =
+                            availableReports.find(
+                              (
+                                entry
+                              ) =>
+                                entry.id ===
+                                item.reportId
+                            );
+
+                          if (
+                            report
+                          ) {
+                            handleDownloadReport(
+                              report
+                            );
+                          }
+                        }}
+                        className="
+                          shrink-0
+                          rounded-lg
+                          p-2
+                          text-[#09379A]
+                          transition
+
+                          hover:bg-blue-50
+                        "
+                        aria-label={`فتح ${item.title}`}
+                      >
+                        <Download
+                          size={
+                            16
+                          }
+                        />
+                      </button>
+                    </div>
+                  )
+                )}
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() =>
+                setHistoryOpen(
+                  false
+                )
+              }
+              className="
+                mt-5
+                min-h-[40px]
+                w-full
+                rounded-lg
+                bg-[#09379A]
+                px-4
+                text-[12px]
+                font-bold
+                text-white
+                transition
+
+                hover:bg-[#072E81]
+              "
+            >
+              إغلاق
+            </button>
+          </section>
+        </div>
+      )}
     </div>
   );
 }
@@ -918,14 +1746,14 @@ function FilterSelect({
   children,
 }) {
   return (
-    <div>
+    <div className="min-w-0">
       <label
         className="
           mb-[7px]
           block
-          text-[11px]
-          leading-[18px]
+          text-[12px]
           font-medium
+          leading-[18px]
           text-[#64748B]
         "
       >
@@ -937,8 +1765,8 @@ function FilterSelect({
           value={value}
           onChange={onChange}
           className="
-            w-full
             h-[44px]
+            w-full
             appearance-none
             rounded-[8px]
             border
@@ -946,12 +1774,12 @@ function FilterSelect({
             bg-white
             px-[13px]
             pl-[36px]
-            outline-none
             font-['Cairo']
-            text-[11px]
+            text-[12px]
             text-[#334155]
-            cursor-pointer
+            outline-none
             transition
+
             focus:border-[#09379A]
             focus:ring-2
             focus:ring-[#09379A]/10
@@ -963,11 +1791,11 @@ function FilterSelect({
         <ChevronDown
           size={15}
           className="
+            pointer-events-none
             absolute
             left-[12px]
             top-1/2
             -translate-y-1/2
-            pointer-events-none
             text-[#94A3B8]
           "
         />
@@ -978,6 +1806,7 @@ function FilterSelect({
 
 /* =========================================================
    STATISTIC CARD
+   الأيقونة يمين والكلام يسار
 ========================================================= */
 
 function StatisticCard({
@@ -992,100 +1821,122 @@ function StatisticCard({
   return (
     <article
       className="
-        min-h-[135px]
+        min-h-[140px]
         rounded-[14px]
         border
         border-[#DDE5EF]
         bg-white
         px-[18px]
-        py-[17px]
+        py-[18px]
         shadow-[0_1px_2px_rgba(15,23,42,0.03)]
       "
     >
       <div
         className="
           flex
+          h-full
           items-start
           justify-between
+          gap-4
         "
       >
-        <p
-          className="
-            m-0
-            text-[10px]
-            text-[#64748B]
-          "
-        >
-          {label}
-        </p>
+        {/* ICON — RIGHT */}
 
         <div
           className={`
-            w-[34px]
-            h-[34px]
-            rounded-[8px]
             flex
+            h-[38px]
+            w-[38px]
+            shrink-0
             items-center
             justify-center
+            rounded-[9px]
+
             ${iconClass}
           `}
         >
           <Icon
-            size={16}
+            size={18}
             strokeWidth={1.8}
           />
         </div>
-      </div>
 
-      <div
-        className="
-          mt-[18px]
-          flex
-          items-end
-          gap-[8px]
-        "
-      >
-        <strong
-          className={`
-            text-[28px]
-            leading-[30px]
-            font-bold
-            ${valueClass}
-          `}
+        {/* CONTENT — LEFT */}
+
+        <div
+          className="
+            min-w-0
+            flex-1
+            text-left
+          "
+          dir="rtl"
         >
-          {value}
-        </strong>
-
-        {badge && (
-          <span
+          <p
             className="
-              mb-[2px]
-              h-[21px]
-              px-[8px]
-              rounded-[10px]
-              bg-[#E9FFF4]
-              text-[#16A34A]
-              flex
-              items-center
-              text-[8px]
-              font-bold
+              m-0
+              text-[12px]
+              font-medium
+              leading-[20px]
+              text-[#64748B]
             "
           >
-            {badge}
-          </span>
-        )}
-      </div>
+            {label}
+          </p>
 
-      <p
-        className="
-          m-0
-          mt-[8px]
-          text-[9px]
-          text-[#64748B]
-        "
-      >
-        {description}
-      </p>
+          <div
+            className="
+              mt-[12px]
+              flex
+              flex-wrap
+              items-center
+              justify-end
+              gap-[7px]
+            "
+          >
+            {badge && (
+              <span
+                className="
+                  flex
+                  min-h-[22px]
+                  items-center
+                  rounded-full
+                  bg-[#E9FFF4]
+                  px-[8px]
+                  text-[9px]
+                  font-bold
+                  text-[#16A34A]
+                "
+              >
+                {badge}
+              </span>
+            )}
+
+            <strong
+              className={`
+                text-[30px]
+                font-bold
+                leading-[34px]
+
+                ${valueClass}
+              `}
+            >
+              {value}
+            </strong>
+          </div>
+
+          <p
+            className="
+              m-0
+              mt-[7px]
+              text-[11px]
+              leading-[19px]
+              text-[#64748B]
+            "
+          >
+            {description}
+          </p>
+        </div>
+      </div>
     </article>
   );
 }

@@ -13,6 +13,7 @@ import TrainingPlan from "./pages/student/TrainingPlan";
 import DailyTrainingLog from "./pages/student/DailyTrainingLog";
 import DailyTrainingLogDetails from "./pages/student/DailyTrainingLogDetails";
 import Attendance from "./pages/student/Attendance";
+import AbsenceExcuse from "./pages/student/AbsenceExcuse";
 import Reports from "./pages/student/Reports";
 import Evaluation from "./pages/student/Evaluation";
 import FinishTraining from "./pages/student/FinishTraining";
@@ -90,6 +91,7 @@ function App() {
         <Route path="/student/daily-training-log" element={<DailyTrainingLog />} />
         <Route path="/student/daily-training-log/details" element={<DailyTrainingLogDetails />} />
         <Route path="/student/attendance" element={<Attendance />} />
+        <Route path="/student/attendance/absence-excuse" element={<AbsenceExcuse />} />
         <Route path="/student/reports" element={<Reports />} />
         <Route path="/student/evaluation" element={<Evaluation />} />
         <Route path="/student/finish-training" element={<FinishTraining />} />

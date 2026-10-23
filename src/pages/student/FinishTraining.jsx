@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import {
   Building2,
   CalendarDays,
@@ -10,13 +9,41 @@ import {
   FileCheck2,
   FileText,
   GraduationCap,
+  Pencil,
   ShieldCheck,
   Star,
-  UserRound,
 } from "lucide-react";
 
 import Header from "../../components/student/Header";
 import Sidebar from "../../components/student/Sidebar";
+
+const trainingSummary = {
+  organization: "شركة القدس للاتصالات والتكنولوجيا",
+  period: "2025/10/01 - 2025/12/01",
+  hours: 120,
+  finalEvaluation: 4.5,
+  academicSupervisor: "د. محمد السالم",
+  fieldSupervisor: "م. رامي أحمد",
+  semester: "دبلوم خريف 2025",
+};
+
+const steps = [
+  {
+    id: "review",
+    title: "مراجعة الملفات",
+    subtitle: "مكتمل",
+  },
+  {
+    id: "confirmation",
+    title: "التأكيد النهائي",
+    subtitle: "الخطوة الحالية",
+  },
+  {
+    id: "certificate",
+    title: "إصدار الشهادة",
+    subtitle: "قيد الانتظار",
+  },
+];
 
 export default function FinishTraining() {
   const navigate = useNavigate();
@@ -27,118 +54,82 @@ export default function FinishTraining() {
   const [showConfirmModal, setShowConfirmModal] =
     useState(false);
 
-  const trainingSummary = {
-    organization:
-      "شركة القدس للاتصالات والتكنولوجيا",
-
-    period:
-      "2025/10/01 - 2025/12/01",
-
-    hours: 120,
-
-    finalEvaluation: 4.5,
-
-    academicSupervisor:
-      "د. محمد السالم",
-
-    fieldSupervisor:
-      "م. رامي أحمد",
-
-    semester:
-      "دبلوم خريف 2025",
-  };
-
-  const steps = [
-    {
-      id: "review",
-      title: "مراجعة الملفات",
-      subtitle: "مكتمل",
-    },
-    {
-      id: "confirmation",
-      title: "التأكيد النهائي",
-      subtitle: "الخطوة الحالية",
-    },
-    {
-      id: "certificate",
-      title: "إصدار الشهادة",
-      subtitle: "قيد الانتظار",
-    },
-  ];
-
   const handleFinalConfirmation = () => {
     setShowConfirmModal(false);
     setCurrentStep("certificate");
+  };
+
+  const handleViewApplication = () => {
+    navigate("/student/applications");
   };
 
   return (
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
         bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
-      {/* =========================================
-          SIDEBAR
-      ========================================== */}
-      <Sidebar />
+      {/* SIDEBAR */}
 
-      {/* =========================================
-          MAIN AREA
-      ========================================== */}
+      <div className="shrink-0">
+        <Sidebar />
+      </div>
+
+      {/* MAIN AREA */}
+
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
+          bg-[#F8FAFC]
         "
       >
-        {/* =========================================
-            HEADER
-        ========================================== */}
-        <Header />
+        {/* HEADER */}
 
-        {/* =========================================
-            SCROLLABLE CONTENT
-        ========================================== */}
+        <div className="shrink-0">
+          <Header />
+        </div>
+
+        {/* SCROLLABLE CONTENT */}
+
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
-            xl:px-[40px]
-            pt-[18px]
-            pb-[40px]
+            overflow-y-auto
+            px-4
+            pb-8
+            pt-5
+            sm:px-5
+            md:px-6
+            xl:px-10
+            xl:pt-[18px]
           "
         >
-          <div
-            className="
-              w-full
-              max-w-[1080px]
-              mx-auto
-            "
-          >
-            {/* =====================================
-                BREADCRUMB
-            ====================================== */}
-            <div
+          <div className="mx-auto w-full max-w-[1080px]">
+
+            {/* BREADCRUMB */}
+
+            <nav
+              aria-label="مسار التنقل"
               className="
                 flex
                 items-center
                 gap-[7px]
-                text-[13px]
-                leading-[20px]
+                text-[12px]
+                leading-5
+                sm:text-[13px]
               "
             >
               <button
@@ -151,7 +142,6 @@ export default function FinishTraining() {
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
                   transition
                   hover:text-[#09379A]
                 "
@@ -163,36 +153,34 @@ export default function FinishTraining() {
                 ›
               </span>
 
-              <span
-                className="
-                  font-bold
-                  text-[#09379A]
-                "
-              >
+              <span className="font-bold text-[#09379A]">
                 إنهاء التدريب
               </span>
-            </div>
+            </nav>
 
-            {/* =====================================
-                PAGE HEADER
-            ====================================== */}
+            {/* PAGE HEADER */}
+
             <section
               className="
-                mt-[6px]
+                mt-2
                 flex
-                items-start
-                justify-between
-                gap-[20px]
+                flex-col
+                gap-4
+                lg:flex-row
+                lg:items-start
+                lg:justify-between
               "
             >
-              <div>
+              <div className="min-w-0">
                 <h1
                   className="
                     m-0
-                    text-[30px]
-                    leading-[42px]
+                    text-[25px]
                     font-bold
+                    leading-[1.5]
                     text-[#14213D]
+                    sm:text-[28px]
+                    xl:text-[30px]
                   "
                 >
                   إنهاء التدريب
@@ -201,41 +189,53 @@ export default function FinishTraining() {
                 <p
                   className="
                     m-0
-                    mt-[2px]
+                    mt-1
+                    max-w-[650px]
                     text-[12px]
-                    leading-[20px]
+                    leading-6
                     text-[#64748B]
+                    sm:text-[13px]
                   "
                 >
                   الخطوة الإجرائية الختامية لإغلاق
-                  السجل التدريبي وطلب الشهادة الرسمية
+                  السجل التدريبي وطلب الشهادة الرسمية.
                 </p>
               </div>
+
+              {/* HEADER ACTIONS */}
 
               <div
                 className="
                   flex
-                  items-center
-                  gap-[10px]
+                  w-full
+                  flex-col
+                  gap-2
+                  sm:w-auto
+                  sm:flex-row
+                  sm:flex-wrap
+                  sm:items-center
                 "
               >
                 <button
                   type="button"
+                  onClick={handleViewApplication}
                   className="
-                    h-[38px]
-                    px-[14px]
-                    rounded-[8px]
+                    inline-flex
+                    min-h-[40px]
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-lg
                     border
                     border-[#D9E2EC]
                     bg-white
-                    text-[#475569]
-                    flex
-                    items-center
-                    gap-[7px]
-                    text-[10px]
+                    px-4
+                    text-[11px]
                     font-bold
-                    cursor-pointer
+                    text-[#475569]
+                    transition
                     hover:bg-[#F8FAFC]
+                    sm:text-[12px]
                   "
                 >
                   معاينة حالة التقديم
@@ -243,52 +243,58 @@ export default function FinishTraining() {
 
                 <button
                   type="button"
+                  onClick={handleViewApplication}
                   className="
-                    h-[38px]
-                    px-[14px]
-                    rounded-[8px]
+                    inline-flex
+                    min-h-[40px]
+                    items-center
+                    justify-center
+                    gap-2
+                    rounded-lg
                     border
                     border-[#BFDBFE]
                     bg-[#F8FBFF]
-                    text-[#09379A]
-                    flex
-                    items-center
-                    gap-[7px]
-                    text-[10px]
+                    px-4
+                    text-[11px]
                     font-bold
-                    cursor-pointer
+                    text-[#09379A]
+                    transition
                     hover:bg-[#EEF4FF]
+                    sm:text-[12px]
                   "
                 >
+                  <Pencil size={14} />
                   تعديل أو إلغاء الطلب
                 </button>
               </div>
             </section>
 
-            {/* =====================================
-                STEPPER
-            ====================================== */}
+            {/* PROGRESS STEPPER */}
+
             <section
               className="
-                mt-[24px]
+                mt-6
                 rounded-[14px]
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[32px]
-                py-[24px]
+                px-4
+                py-5
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+                sm:px-6
+                sm:py-6
+                md:px-8
               "
             >
               <div
                 className="
                   grid
-                  grid-cols-[1fr_auto_1fr_auto_1fr]
+                  grid-cols-[minmax(0,1fr)_minmax(16px,0.7fr)_minmax(0,1fr)_minmax(16px,0.7fr)_minmax(0,1fr)]
                   items-start
-                  gap-[14px]
+                  gap-1
+                  sm:gap-3
                 "
               >
-                {/* STEP 1 */}
                 <StepItem
                   status={
                     currentStep === "review"
@@ -296,23 +302,22 @@ export default function FinishTraining() {
                       : "done"
                   }
                   number={1}
-                  title="مراجعة الملفات"
-                  subtitle="مكتمل"
+                  title={steps[0].title}
+                  subtitle={steps[0].subtitle}
                 />
 
                 <StepLine active />
 
-                {/* STEP 2 */}
                 <StepItem
                   status={
                     currentStep === "confirmation"
                       ? "current"
                       : currentStep === "certificate"
-                      ? "done"
-                      : "upcoming"
+                        ? "done"
+                        : "upcoming"
                   }
                   number={2}
-                  title="التأكيد النهائي"
+                  title={steps[1].title}
                   subtitle={
                     currentStep === "confirmation"
                       ? "الخطوة الحالية"
@@ -326,7 +331,6 @@ export default function FinishTraining() {
                   }
                 />
 
-                {/* STEP 3 */}
                 <StepItem
                   status={
                     currentStep === "certificate"
@@ -334,7 +338,7 @@ export default function FinishTraining() {
                       : "upcoming"
                   }
                   number={3}
-                  title="إصدار الشهادة"
+                  title={steps[2].title}
                   subtitle={
                     currentStep === "certificate"
                       ? "قيد المعالجة"
@@ -344,50 +348,53 @@ export default function FinishTraining() {
               </div>
             </section>
 
-            {/* =====================================
-                SUCCESS / CONFIRMATION CARD
-            ====================================== */}
+            {/* COMPLETION STATUS */}
+
             <section
               className="
-                mt-[24px]
+                mt-6
                 rounded-[14px]
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[24px]
-                py-[30px]
+                px-4
+                py-7
                 text-center
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+                sm:px-6
+                sm:py-8
               "
             >
               <div
                 className="
-                  w-[58px]
-                  h-[58px]
                   mx-auto
-                  rounded-full
-                  bg-[#E8FFF5]
-                  text-[#10B981]
                   flex
+                  h-[58px]
+                  w-[58px]
                   items-center
                   justify-center
-                  ring-[8px]
+                  rounded-full
+                  bg-[#10B981]
+                  text-white
+                  ring-8
                   ring-[#F1FFF8]
                 "
               >
                 <Check
                   size={29}
-                  strokeWidth={2.4}
+                  strokeWidth={2.5}
                 />
               </div>
 
               <h2
                 className="
                   m-0
-                  mt-[24px]
-                  text-[22px]
+                  mt-6
+                  text-[18px]
                   font-bold
+                  leading-8
                   text-[#14213D]
+                  sm:text-[21px]
                 "
               >
                 تم استكمال جميع متطلبات التدريب بنجاح
@@ -395,25 +402,29 @@ export default function FinishTraining() {
 
               <p
                 className="
-                  m-0
-                  mt-[6px]
-                  text-[11px]
-                  leading-[20px]
+                  mx-auto
+                  mb-0
+                  mt-2
+                  max-w-[720px]
+                  text-[12px]
+                  leading-6
                   text-[#64748B]
+                  sm:text-[13px]
                 "
               >
                 يمكنك الآن إنهاء التدريب وإصدار الشهادة
-                بعد اعتماد المشرفين الأكاديمي والميداني
+                بعد اعتماد المشرف الأكاديمي والميداني.
               </p>
 
               <div
                 className="
-                  mt-[24px]
+                  mt-6
                   flex
                   flex-wrap
                   items-center
                   justify-center
-                  gap-[10px]
+                  gap-2
+                  sm:gap-[10px]
                 "
               >
                 <CompletionBadge>
@@ -430,54 +441,53 @@ export default function FinishTraining() {
               </div>
             </section>
 
-            {/* =====================================
-                TRAINING SUMMARY
-            ====================================== */}
+            {/* TRAINING SUMMARY */}
+
             <section
               className="
-                mt-[24px]
+                mt-6
                 rounded-[14px]
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[22px]
-                py-[20px]
+                px-4
+                py-5
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+                sm:px-5
+                sm:py-6
               "
             >
-              {/* Header */}
+              {/* SUMMARY HEADER */}
+
               <div
                 className="
                   flex
-                  items-center
-                  justify-between
-                  gap-[15px]
-                  pb-[15px]
+                  flex-col
+                  gap-3
                   border-b
                   border-[#EEF2F7]
+                  pb-4
+                  sm:flex-row
+                  sm:items-center
+                  sm:justify-between
                 "
               >
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-[8px]
-                  "
-                >
+                <div className="flex items-center gap-2">
                   <div
                     className="
-                      w-[30px]
-                      h-[30px]
-                      rounded-[7px]
-                      bg-[#EEF4FF]
-                      text-[#09379A]
                       flex
+                      h-[30px]
+                      w-[30px]
+                      shrink-0
                       items-center
                       justify-center
+                      rounded-lg
+                      bg-[#EEF4FF]
+                      text-[#09379A]
                     "
                   >
                     <FileText
-                      size={15}
+                      size={16}
                       strokeWidth={1.8}
                     />
                   </div>
@@ -485,9 +495,10 @@ export default function FinishTraining() {
                   <h2
                     className="
                       m-0
-                      text-[16px]
+                      text-[15px]
                       font-bold
                       text-[#1E293B]
+                      sm:text-[16px]
                     "
                   >
                     ملخص التدريب المكتمل
@@ -496,29 +507,33 @@ export default function FinishTraining() {
 
                 <span
                   className="
-                    h-[23px]
-                    px-[9px]
-                    rounded-[11px]
-                    bg-[#EEF4FF]
-                    text-[#09379A]
-                    flex
+                    inline-flex
+                    min-h-[25px]
+                    w-fit
                     items-center
-                    text-[8px]
+                    rounded-full
+                    bg-[#EEF4FF]
+                    px-3
+                    text-[10px]
                     font-bold
+                    text-[#09379A]
+                    sm:text-[11px]
                   "
                 >
                   {trainingSummary.semester}
                 </span>
               </div>
 
-              {/* Grid */}
+              {/* SUMMARY GRID */}
+
               <div
                 className="
-                  mt-[18px]
+                  mt-5
                   grid
                   grid-cols-1
-                  md:grid-cols-2
-                  gap-[14px]
+                  gap-3
+                  sm:grid-cols-2
+                  sm:gap-[14px]
                 "
               >
                 <SummaryItem
@@ -534,80 +549,62 @@ export default function FinishTraining() {
                 />
 
                 <SummaryItem
+                  icon={Clock3}
+                  label="عدد الساعات المنجزة"
+                  value={`${trainingSummary.hours} ساعة معتمدة`}
+                />
+
+                <SummaryItem
                   icon={Star}
                   label="التقييم النهائي التراكمي"
                   value={`${trainingSummary.finalEvaluation} / 5.0`}
                   badge="ممتاز"
                   accent="yellow"
                 />
-
-                <SummaryItem
-                  icon={Clock3}
-                  label="عدد الساعات المنجزة"
-                  value={`${trainingSummary.hours} ساعة معتمدة`}
-                />
               </div>
 
-              {/* Supervisors */}
+              {/* SUPERVISORS */}
+
               <div
                 className="
-                  mt-[16px]
-                  pt-[14px]
-                  border-t
-                  border-[#EEF2F7]
+                  mt-4
                   grid
                   grid-cols-1
-                  md:grid-cols-2
-                  gap-[12px]
-                  text-[9px]
+                  gap-3
+                  border-t
+                  border-[#EEF2F7]
+                  pt-4
+                  text-[11px]
+                  leading-5
                   text-[#64748B]
+                  sm:grid-cols-2
+                  sm:gap-4
+                  sm:text-[12px]
                 "
               >
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-[7px]
-                  "
-                >
+                <div className="flex items-start gap-2">
                   <ShieldCheck
-                    size={14}
-                    className="text-[#09379A]"
+                    size={15}
+                    className="mt-0.5 shrink-0 text-[#09379A]"
                   />
 
                   <span>
                     المشرف الأكاديمي:
-                    <strong
-                      className="
-                        mr-[4px]
-                        text-[#334155]
-                      "
-                    >
+                    <strong className="mr-1 text-[#334155]">
                       {trainingSummary.academicSupervisor}
                     </strong>
                   </span>
                 </div>
 
-                <div
-                  className="
-                    flex
-                    items-center
-                    gap-[7px]
-                  "
-                >
+                <div className="flex items-start gap-2">
                   <Building2
-                    size={14}
-                    className="text-[#64748B]"
+                    size={15}
+                    className="mt-0.5 shrink-0 text-[#64748B]"
                   />
 
                   <span>
                     مشرف جهة التدريب:
-                    <strong
-                      className="
-                        mr-[4px]
-                        text-[#334155]
-                      "
-                    >
+                    <strong className="mr-1 text-[#334155]">
                       {trainingSummary.fieldSupervisor}
                     </strong>
                   </span>
@@ -615,16 +612,15 @@ export default function FinishTraining() {
               </div>
             </section>
 
-            {/* =====================================
-                FINAL ACTION
-            ====================================== */}
+            {/* FINAL ACTION */}
+
             {currentStep === "confirmation" && (
               <section
                 className="
-                  mt-[22px]
+                  mt-6
                   flex
-                  items-center
-                  justify-end
+                  justify-stretch
+                  sm:justify-end
                 "
               >
                 <button
@@ -633,26 +629,28 @@ export default function FinishTraining() {
                     setShowConfirmModal(true)
                   }
                   className="
-                    h-[44px]
-                    px-[20px]
-                    rounded-[8px]
-                    border-0
-                    bg-[#09379A]
-                    text-white
-                    flex
+                    inline-flex
+                    min-h-[46px]
+                    w-full
                     items-center
                     justify-center
-                    gap-[8px]
-                    text-[11px]
+                    gap-2
+                    rounded-lg
+                    border-0
+                    bg-[#09379A]
+                    px-6
+                    text-[12px]
                     font-bold
-                    cursor-pointer
+                    text-white
                     shadow-[0_3px_8px_rgba(9,55,154,0.16)]
                     transition
                     hover:bg-[#072E81]
+                    sm:w-auto
+                    sm:min-w-[210px]
                   "
                 >
                   <CheckCircle2
-                    size={16}
+                    size={17}
                     strokeWidth={2}
                   />
 
@@ -661,49 +659,48 @@ export default function FinishTraining() {
               </section>
             )}
 
-            {/* =====================================
-                CERTIFICATE PROCESSING STATE
-            ====================================== */}
+            {/* CERTIFICATE PROCESSING */}
+
             {currentStep === "certificate" && (
               <section
                 className="
-                  mt-[22px]
-                  rounded-[12px]
+                  mt-6
+                  flex
+                  items-start
+                  gap-3
+                  rounded-xl
                   border
                   border-[#BFDBFE]
                   bg-[#F8FBFF]
-                  px-[18px]
-                  py-[16px]
-                  flex
-                  items-start
-                  gap-[11px]
+                  px-4
+                  py-4
+                  sm:px-5
                 "
               >
                 <div
                   className="
-                    w-[34px]
-                    h-[34px]
-                    rounded-[8px]
-                    bg-[#EEF4FF]
-                    text-[#09379A]
                     flex
+                    h-[38px]
+                    w-[38px]
+                    shrink-0
                     items-center
                     justify-center
-                    shrink-0
+                    rounded-lg
+                    bg-[#EEF4FF]
+                    text-[#09379A]
                   "
                 >
-                  <GraduationCap
-                    size={18}
-                  />
+                  <GraduationCap size={20} />
                 </div>
 
-                <div>
+                <div className="min-w-0">
                   <h3
                     className="
                       m-0
-                      text-[12px]
+                      text-[13px]
                       font-bold
                       text-[#09379A]
+                      sm:text-[14px]
                     "
                   >
                     تم إنهاء التدريب بنجاح
@@ -712,15 +709,17 @@ export default function FinishTraining() {
                   <p
                     className="
                       m-0
-                      mt-[3px]
-                      text-[9px]
-                      leading-[17px]
+                      mt-1
+                      text-[11px]
+                      leading-5
                       text-[#64748B]
+                      sm:text-[12px]
                     "
                   >
-                    تم إغلاق السجل التدريبي وإرسال طلب إصدار
-                    الشهادة. يمكنك متابعة حالة الشهادة من صفحة
-                    الشهادة.
+                    تم تحديث حالة الواجهة إلى مرحلة إصدار
+                    الشهادة. في النظام الفعلي يجب ربط هذا
+                    الإجراء بالخادم لإغلاق السجل وإرسال
+                    طلب الإصدار.
                   </p>
 
                   <button
@@ -729,17 +728,21 @@ export default function FinishTraining() {
                       navigate("/student/certificate")
                     }
                     className="
-                      mt-[11px]
-                      h-[36px]
-                      px-[14px]
-                      rounded-[7px]
+                      mt-3
+                      inline-flex
+                      min-h-[38px]
+                      items-center
+                      justify-center
+                      rounded-lg
                       border-0
                       bg-[#09379A]
-                      text-white
-                      text-[9px]
+                      px-4
+                      text-[11px]
                       font-bold
-                      cursor-pointer
+                      text-white
+                      transition
                       hover:bg-[#072E81]
+                      sm:text-[12px]
                     "
                   >
                     متابعة حالة الشهادة
@@ -751,21 +754,21 @@ export default function FinishTraining() {
         </main>
       </div>
 
-      {/* =========================================
-          CONFIRMATION MODAL
-      ========================================== */}
+      {/* CONFIRMATION MODAL */}
+
       {showConfirmModal && (
         <div
           className="
             fixed
             inset-0
             z-[100]
-            bg-[#0F172A]/40
-            backdrop-blur-[2px]
             flex
             items-center
             justify-center
-            px-[20px]
+            bg-[#0F172A]/40
+            px-4
+            py-6
+            backdrop-blur-[2px]
           "
           onClick={() =>
             setShowConfirmModal(false)
@@ -773,41 +776,46 @@ export default function FinishTraining() {
         >
           <div
             dir="rtl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="finish-training-dialog-title"
             onClick={(event) =>
               event.stopPropagation()
             }
             className="
+              max-h-[90dvh]
               w-full
               max-w-[440px]
-              rounded-[16px]
+              overflow-y-auto
+              rounded-2xl
               border
               border-[#E2E8F0]
               bg-white
-              p-[22px]
+              p-5
               shadow-[0_20px_60px_rgba(15,23,42,0.18)]
+              sm:p-6
             "
           >
             <div
               className="
-                w-[42px]
-                h-[42px]
-                rounded-[10px]
-                bg-[#EEF4FF]
-                text-[#09379A]
                 flex
+                h-[44px]
+                w-[44px]
                 items-center
                 justify-center
+                rounded-xl
+                bg-[#EEF4FF]
+                text-[#09379A]
               "
             >
-              <FileCheck2
-                size={21}
-              />
+              <FileCheck2 size={22} />
             </div>
 
             <h3
+              id="finish-training-dialog-title"
               className="
                 m-0
-                mt-[14px]
+                mt-4
                 text-[17px]
                 font-bold
                 text-[#1E293B]
@@ -819,42 +827,44 @@ export default function FinishTraining() {
             <p
               className="
                 m-0
-                mt-[6px]
-                text-[10px]
-                leading-[19px]
+                mt-2
+                text-[12px]
+                leading-6
                 text-[#64748B]
               "
             >
-              بعد تأكيد إنهاء التدريب سيتم إغلاق السجل
-              التدريبي وإرسال طلب إصدار الشهادة الرسمية.
+              بعد تأكيد إنهاء التدريب سيتم الانتقال
+              إلى مرحلة إصدار الشهادة.
             </p>
 
             <div
               className="
-                mt-[16px]
-                rounded-[9px]
+                mt-4
+                rounded-lg
                 border
                 border-[#F6D58A]
                 bg-[#FFFBEB]
-                px-[13px]
-                py-[11px]
-                text-[9px]
-                leading-[17px]
+                px-3
+                py-3
+                text-[11px]
+                leading-5
                 text-[#92400E]
+                sm:text-[12px]
               "
             >
               تأكد من صحة جميع البيانات والتقييمات قبل
-              المتابعة، لأن بعض البيانات قد تصبح غير قابلة
-              للتعديل بعد الإنهاء النهائي.
+              المتابعة، لأن بعض البيانات قد تصبح غير
+              قابلة للتعديل بعد الإنهاء النهائي.
             </div>
 
             <div
               className="
-                mt-[20px]
+                mt-5
                 flex
-                items-center
-                justify-end
-                gap-[9px]
+                flex-col-reverse
+                gap-2
+                sm:flex-row
+                sm:justify-end
               "
             >
               <button
@@ -863,17 +873,18 @@ export default function FinishTraining() {
                   setShowConfirmModal(false)
                 }
                 className="
-                  h-[40px]
-                  px-[16px]
-                  rounded-[8px]
+                  min-h-[42px]
+                  rounded-lg
                   border
                   border-[#D9E2EC]
                   bg-white
-                  text-[#475569]
-                  text-[10px]
+                  px-5
+                  text-[12px]
                   font-bold
-                  cursor-pointer
+                  text-[#475569]
+                  transition
                   hover:bg-[#F8FAFC]
+                  sm:min-w-[95px]
                 "
               >
                 إلغاء
@@ -883,24 +894,25 @@ export default function FinishTraining() {
                 type="button"
                 onClick={handleFinalConfirmation}
                 className="
-                  h-[40px]
-                  px-[17px]
-                  rounded-[8px]
+                  inline-flex
+                  min-h-[42px]
+                  items-center
+                  justify-center
+                  gap-2
+                  rounded-lg
                   border-0
                   bg-[#09379A]
-                  text-white
-                  flex
-                  items-center
-                  gap-[7px]
-                  text-[10px]
+                  px-5
+                  text-[12px]
                   font-bold
-                  cursor-pointer
+                  text-white
                   transition
                   hover:bg-[#072E81]
+                  sm:min-w-[145px]
                 "
               >
                 <Check
-                  size={14}
+                  size={15}
                   strokeWidth={2}
                 />
 
@@ -914,9 +926,9 @@ export default function FinishTraining() {
   );
 }
 
-/* =========================================================
+/* =====================================================
    STEP ITEM
-========================================================= */
+===================================================== */
 
 function StepItem({
   status,
@@ -924,100 +936,63 @@ function StepItem({
   title,
   subtitle,
 }) {
-  const isDone =
-    status === "done";
-
-  const isCurrent =
-    status === "current";
+  const isDone = status === "done";
+  const isCurrent = status === "current";
 
   return (
     <div
       className="
         flex
+        min-w-0
         flex-col
         items-center
         text-center
-        min-w-[140px]
       "
     >
       <div
-        className={`
-          w-[44px]
-          h-[44px]
-          rounded-full
-          flex
-          items-center
-          justify-center
-          border-[5px]
-
-          ${
-            isDone
-              ? `
-                bg-[#10B981]
-                border-[#DDF9EE]
-                text-white
-              `
-              : isCurrent
-              ? `
-                bg-[#09379A]
-                border-[#E5ECFA]
-                text-white
-              `
-              : `
-                bg-[#F8FAFC]
-                border-[#EEF2F7]
-                text-[#94A3B8]
-              `
-          }
-        `}
+        className={[
+          "flex h-10 w-10 items-center justify-center rounded-full border-[4px] sm:h-11 sm:w-11",
+          isDone
+            ? "border-[#DDF9EE] bg-[#10B981] text-white"
+            : isCurrent
+              ? "border-[#E5ECFA] bg-[#09379A] text-white"
+              : "border-[#EEF2F7] bg-[#F8FAFC] text-[#94A3B8]",
+        ].join(" ")}
       >
         {isDone ? (
           <Check
-            size={20}
-            strokeWidth={2.2}
+            size={19}
+            strokeWidth={2.3}
           />
         ) : (
-          <span
-            className="
-              text-[12px]
-              font-bold
-            "
-          >
+          <span className="text-[11px] font-bold sm:text-[12px]">
             {number}
           </span>
         )}
       </div>
 
       <strong
-        className={`
-          mt-[8px]
-          text-[11px]
-
-          ${
-            isCurrent
-              ? "text-[#09379A]"
-              : isDone
+        className={[
+          "mt-2 max-w-full text-[10px] leading-5 sm:text-[11px] md:text-[12px]",
+          isCurrent
+            ? "text-[#09379A]"
+            : isDone
               ? "text-[#1E293B]"
-              : "text-[#94A3B8]"
-          }
-        `}
+              : "text-[#94A3B8]",
+        ].join(" ")}
       >
         {title}
       </strong>
 
       <span
-        className={`
-          mt-[2px]
-          text-[8px]
-
-          ${
-            isDone
-              ? "text-[#10B981]"
-              : isCurrent
+        className={[
+          "mt-0.5 text-[9px] leading-4 sm:text-[10px]",
+          isDone
+            ? "text-[#10B981]"
+            : isCurrent
               ? "text-[#2563EB]"
-              : "text-[#CBD5E1]"
-          }
-        `}
+              : "text-[#94A3B8]",
+        ].join(" ")}
       >
         {subtitle}
       </span>
@@ -1025,78 +1000,69 @@ function StepItem({
   );
 }
 
-/* =========================================================
+/* =====================================================
    STEP LINE
-========================================================= */
+===================================================== */
 
-function StepLine({
-  active = false,
-}) {
+function StepLine({ active = false }) {
   return (
-    <div
-      className="
-        pt-[21px]
-        w-full
-      "
-    >
+    <div className="w-full pt-5 sm:pt-[21px]">
       <div
-        className={`
-          h-[2px]
-          w-full
-          rounded-full
-
-          ${
-            active
-              ? "bg-[#10B981]"
-              : "bg-[#E2E8F0]"
-          }
-        `}
+        className={[
+          "h-[2px] w-full rounded-full",
+          active
+            ? "bg-[#10B981]"
+            : "bg-[#E2E8F0]",
+        ].join(" ")}
       />
     </div>
   );
 }
 
-/* =========================================================
+/* =====================================================
    COMPLETION BADGE
-========================================================= */
+===================================================== */
 
-function CompletionBadge({
-  children,
-}) {
+function CompletionBadge({ children }) {
   return (
     <div
       className="
-        h-[28px]
-        px-[12px]
-        rounded-[14px]
+        inline-flex
+        min-h-[29px]
+        max-w-full
+        items-center
+        gap-2
+        rounded-full
         border
         border-[#B8EED5]
         bg-[#ECFDF5]
-        text-[#047857]
-        flex
-        items-center
-        gap-[6px]
-        text-[9px]
+        px-3
+        py-1
+        text-[10px]
         font-bold
+        leading-5
+        text-[#047857]
+        sm:text-[11px]
       "
     >
       <span
         className="
-          w-[6px]
-          h-[6px]
+          h-1.5
+          w-1.5
+          shrink-0
           rounded-full
           bg-[#10B981]
         "
       />
 
-      {children}
+      <span>{children}</span>
     </div>
   );
 }
 
-/* =========================================================
+/* =====================================================
    SUMMARY ITEM
-========================================================= */
+===================================================== */
 
 function SummaryItem({
   icon: Icon,
@@ -1105,48 +1071,46 @@ function SummaryItem({
   badge,
   accent,
 }) {
-  const isYellow =
-    accent === "yellow";
+  const isYellow = accent === "yellow";
 
   return (
     <div
       className="
-        min-h-[70px]
+        flex
+        min-h-[72px]
+        items-center
+        justify-between
+        gap-3
         rounded-[9px]
         border
         border-[#E7ECF2]
         bg-[#F8FAFC]
-        px-[14px]
-        py-[12px]
-        flex
-        items-center
-        justify-between
-        gap-[12px]
+        px-3
+        py-3
+        sm:px-[14px]
       "
     >
-      <div>
+      <div className="min-w-0 flex-1">
         <p
           className="
             m-0
-            text-[8px]
+            text-[10px]
+            leading-5
             text-[#94A3B8]
+            sm:text-[11px]
           "
         >
           {label}
         </p>
 
-        <div
-          className="
-            mt-[5px]
-            flex
-            items-center
-            gap-[7px]
-          "
-        >
+        <div className="mt-1 flex flex-wrap items-center gap-2">
           <strong
             className="
-              text-[10px]
+              break-words
+              text-[11px]
+              leading-5
               text-[#334155]
+              sm:text-[12px]
             "
           >
             {value}
@@ -1155,15 +1119,15 @@ function SummaryItem({
           {badge && (
             <span
               className="
-                h-[20px]
-                px-[7px]
-                rounded-[9px]
-                bg-[#E9FFF4]
-                text-[#16A34A]
-                flex
+                inline-flex
+                min-h-5
                 items-center
-                text-[8px]
+                rounded-md
+                bg-[#E9FFF4]
+                px-2
+                text-[10px]
                 font-bold
+                text-[#16A34A]
               "
             >
               {badge}
@@ -1173,36 +1137,17 @@ function SummaryItem({
       </div>
 
       <div
-        className={`
-          w-[34px]
-          h-[34px]
-          rounded-[8px]
-          flex
-          items-center
-          justify-center
-          shrink-0
-
-          ${
-            isYellow
-              ? `
-                bg-[#FFF8E6]
-                text-[#F59E0B]
-              `
-              : `
-                bg-[#EEF4FF]
-                text-[#09379A]
-              `
-          }
-        `}
+        className={[
+          "flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-lg",
+          isYellow
+            ? "bg-[#FFF8E6] text-[#F59E0B]"
+            : "bg-[#EEF4FF] text-[#09379A]",
+        ].join(" ")}
       >
         <Icon
           size={16}
           strokeWidth={1.8}
-          fill={
-            isYellow
-              ? "#F59E0B"
-              : "none"
-          }
+          fill={isYellow ? "#F59E0B" : "none"}
         />
       </div>
     </div>

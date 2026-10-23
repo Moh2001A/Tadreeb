@@ -6,7 +6,6 @@ import {
   Bell,
   BookOpen,
   Check,
-  CheckCircle2,
   ClipboardCheck,
   FileText,
   Megaphone,
@@ -30,7 +29,7 @@ export default function Notifications() {
       category: "طلب ميداني",
       time: "اليوم — 10:30 ص",
       unread: true,
-      target: "/student/applications/status",
+      target: "/student/applications",
     },
     {
       id: 2,
@@ -115,58 +114,96 @@ export default function Notifications() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
         bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
+      {/* =====================================================
+          SIDEBAR
+      ====================================================== */}
+
       <Sidebar />
+
+      {/* =====================================================
+          MAIN AREA
+      ====================================================== */}
 
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
+          bg-[#F8FAFC]
         "
       >
-        <Header />
+        {/* =====================================================
+            HEADER
+        ====================================================== */}
+
+        <div className="relative shrink-0">
+          <Header />
+        </div>
+
+        {/* =====================================================
+            SCROLLABLE CONTENT
+        ====================================================== */}
 
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+
             xl:px-[40px]
-            pt-[18px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
           "
         >
           <div
             className="
+              mx-auto
               w-full
               max-w-[1080px]
-              mx-auto
             "
           >
-            {/* =====================================
+            {/* =================================================
                 BREADCRUMB
-            ====================================== */}
-            <div
+            ================================================== */}
+
+            <nav
+              aria-label="مسار التنقل"
               className="
                 flex
+                flex-wrap
                 items-center
                 gap-[7px]
-                text-[13px]
+                text-[11px]
+                font-medium
                 leading-[20px]
+                text-[#64748B]
+
+                sm:text-[12px]
+
+                xl:text-[13px]
               "
             >
               <button
@@ -179,7 +216,8 @@ export default function Notifications() {
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
+                  transition
+
                   hover:text-[#09379A]
                 "
               >
@@ -198,28 +236,38 @@ export default function Notifications() {
               >
                 الإشعارات
               </span>
-            </div>
+            </nav>
 
-            {/* =====================================
+            {/* =================================================
                 PAGE HEADER
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
                 mt-[6px]
                 flex
-                items-start
-                justify-between
-                gap-[20px]
+                flex-col
+                gap-2
+
+                md:flex-row
+                md:items-start
+                md:justify-between
+                md:gap-5
               "
             >
               <div>
                 <h1
                   className="
                     m-0
-                    text-[30px]
-                    leading-[42px]
+                    text-[26px]
                     font-bold
+                    leading-[40px]
                     text-[#09379A]
+
+                    sm:text-[28px]
+
+                    xl:text-[30px]
+                    xl:leading-[42px]
                   "
                 >
                   الإشعارات
@@ -229,9 +277,13 @@ export default function Notifications() {
                   className="
                     m-0
                     mt-[3px]
+                    max-w-[680px]
                     text-[12px]
-                    leading-[20px]
+                    leading-[22px]
                     text-[#64748B]
+
+                    sm:text-[13px]
+                    sm:leading-[24px]
                   "
                 >
                   تابع آخر التحديثات والإعلانات المتعلقة
@@ -240,26 +292,36 @@ export default function Notifications() {
               </div>
             </section>
 
-            {/* =====================================
+            {/* =================================================
                 FILTER BAR
-            ====================================== */}
+            ================================================== */}
+
             <section
               className="
                 mt-[22px]
-                pb-[16px]
+                flex
+                flex-col
+                gap-4
                 border-b
                 border-[#E2E8F0]
-                flex
-                items-center
-                justify-between
-                gap-[20px]
+                pb-[16px]
+
+                sm:flex-row
+                sm:items-center
+                sm:justify-between
+                sm:gap-5
               "
             >
+              {/* FILTER BUTTONS */}
+
               <div
                 className="
                   flex
+                  w-full
                   items-center
                   gap-[8px]
+
+                  sm:w-auto
                 "
               >
                 <button
@@ -268,14 +330,20 @@ export default function Notifications() {
                     setFilter("all")
                   }
                   className={`
+                    flex
                     h-[38px]
-                    px-[18px]
+                    min-w-[72px]
+                    flex-1
+                    items-center
+                    justify-center
                     rounded-[8px]
                     border
-                    text-[10px]
+                    px-[18px]
+                    text-[11px]
                     font-bold
-                    cursor-pointer
                     transition
+
+                    sm:flex-none
 
                     ${
                       filter === "all"
@@ -288,6 +356,7 @@ export default function Notifications() {
                           border-[#D9E2EC]
                           bg-white
                           text-[#475569]
+
                           hover:bg-[#F8FAFC]
                         `
                     }
@@ -302,17 +371,21 @@ export default function Notifications() {
                     setFilter("unread")
                   }
                   className={`
+                    flex
                     h-[38px]
-                    px-[14px]
+                    min-w-[115px]
+                    flex-1
+                    items-center
+                    justify-center
+                    gap-[7px]
                     rounded-[8px]
                     border
-                    flex
-                    items-center
-                    gap-[7px]
-                    text-[10px]
+                    px-[14px]
+                    text-[11px]
                     font-bold
-                    cursor-pointer
                     transition
+
+                    sm:flex-none
 
                     ${
                       filter === "unread"
@@ -325,6 +398,7 @@ export default function Notifications() {
                           border-[#D9E2EC]
                           bg-white
                           text-[#475569]
+
                           hover:bg-[#F8FAFC]
                         `
                     }
@@ -335,17 +409,17 @@ export default function Notifications() {
                   {unreadCount > 0 && (
                     <span
                       className="
-                        min-w-[21px]
-                        h-[21px]
-                        px-[6px]
-                        rounded-full
-                        bg-[#FF6B35]
-                        text-white
                         flex
+                        h-[21px]
+                        min-w-[21px]
                         items-center
                         justify-center
-                        text-[8px]
+                        rounded-full
+                        bg-[#FF6B35]
+                        px-[6px]
+                        text-[9px]
                         font-bold
+                        text-white
                       "
                     >
                       {unreadCount}
@@ -354,37 +428,41 @@ export default function Notifications() {
                 </button>
               </div>
 
+              {/* MARK ALL */}
+
               <button
                 type="button"
                 onClick={markAllAsRead}
                 disabled={unreadCount === 0}
                 className={`
+                  flex
+                  w-fit
+                  items-center
+                  gap-[6px]
                   border-0
                   bg-transparent
                   p-0
-                  flex
-                  items-center
-                  gap-[6px]
-                  text-[9px]
+                  text-[11px]
                   font-bold
                   transition
 
                   ${
                     unreadCount > 0
                       ? `
-                        text-[#09379A]
                         cursor-pointer
+                        text-[#09379A]
+
                         hover:underline
                       `
                       : `
-                        text-[#94A3B8]
                         cursor-default
+                        text-[#94A3B8]
                       `
                   }
                 `}
               >
                 <Check
-                  size={13}
+                  size={14}
                   strokeWidth={2}
                 />
 
@@ -392,27 +470,36 @@ export default function Notifications() {
               </button>
             </section>
 
-            {/* =====================================
-                NOTIFICATIONS LIST
-            ====================================== */}
+            {/* =================================================
+                NOTIFICATIONS
+            ================================================== */}
+
             <section
               className="
-                mt-[28px]
+                mt-[27px]
                 flex
                 flex-col
-                gap-[16px]
+                gap-[15px]
+
+                sm:gap-[16px]
               "
             >
               {visibleNotifications.length > 0 ? (
-                visibleNotifications.map((notification) => (
-                  <NotificationCard
-                    key={notification.id}
-                    notification={notification}
-                    onClick={() =>
-                      openNotification(notification)
-                    }
-                  />
-                ))
+                visibleNotifications.map(
+                  (notification) => (
+                    <NotificationCard
+                      key={notification.id}
+                      notification={
+                        notification
+                      }
+                      onClick={() =>
+                        openNotification(
+                          notification
+                        )
+                      }
+                    />
+                  )
+                )
               ) : (
                 <EmptyNotifications />
               )}
@@ -468,15 +555,11 @@ function NotificationCard({
   return (
     <article
       className={`
-        min-h-[116px]
+        relative
+        w-full
+        overflow-hidden
         rounded-[14px]
         border
-        px-[20px]
-        py-[18px]
-        flex
-        items-center
-        justify-between
-        gap-[20px]
         transition
 
         ${
@@ -484,7 +567,7 @@ function NotificationCard({
             ? `
               border-[#D8E4F5]
               bg-white
-              shadow-[0_2px_6px_rgba(15,23,42,0.04)]
+              shadow-[0_2px_7px_rgba(15,23,42,0.04)]
             `
             : `
               border-[#E2E8F0]
@@ -496,142 +579,226 @@ function NotificationCard({
       <div
         className="
           flex
-          items-start
-          gap-[14px]
-          min-w-0
-          flex-1
+          flex-col
+          gap-4
+          px-4
+          py-4
+
+          sm:px-[18px]
+          sm:py-[17px]
+
+          md:flex-row
+          md:items-center
+          md:justify-between
+          md:gap-5
+
+          xl:min-h-[116px]
+          xl:px-[20px]
+          xl:py-[18px]
         "
       >
-        {/* Icon */}
+        {/* =================================================
+            MAIN CONTENT
+        ================================================== */}
+
         <div
-          className={`
-            w-[48px]
-            h-[48px]
-            rounded-[10px]
+          className="
             flex
-            items-center
-            justify-center
-            shrink-0
-            ${iconBox}
-          `}
+            min-w-0
+            flex-1
+            items-start
+            gap-[12px]
+
+            sm:gap-[14px]
+          "
         >
-          <Icon
-            size={22}
-            strokeWidth={1.7}
-          />
-        </div>
+          {/* ICON */}
 
-        {/* Content */}
-        <div className="min-w-0">
           <div
-            className="
+            className={`
               flex
+              h-[44px]
+              w-[44px]
+              shrink-0
               items-center
-              gap-[7px]
-              flex-wrap
-            "
-          >
-            {notification.unread && (
-              <span
-                className="
-                  w-[8px]
-                  h-[8px]
-                  rounded-full
-                  bg-[#FF6B35]
-                  ring-[4px]
-                  ring-[#FFF0E9]
-                "
-              />
-            )}
+              justify-center
+              rounded-[10px]
 
-            <h2
+              sm:h-[48px]
+              sm:w-[48px]
+
+              ${iconBox}
+            `}
+          >
+            <Icon
+              size={21}
+              strokeWidth={1.7}
+            />
+          </div>
+
+          {/* TEXT */}
+
+          <div className="min-w-0 flex-1">
+            {/* TITLE */}
+
+            <div
+              className="
+                flex
+                flex-wrap
+                items-center
+                gap-[8px]
+              "
+            >
+              {notification.unread && (
+                <span
+                  aria-label="غير مقروء"
+                  className="
+                    h-[8px]
+                    w-[8px]
+                    shrink-0
+                    rounded-full
+                    bg-[#FF6B35]
+                    ring-[4px]
+                    ring-[#FFF0E9]
+                  "
+                />
+              )}
+
+              <h2
+                className="
+                  m-0
+                  text-[14px]
+                  font-bold
+                  leading-[22px]
+                  text-[#1E293B]
+
+                  sm:text-[15px]
+                "
+              >
+                {notification.title}
+              </h2>
+            </div>
+
+            {/* DESCRIPTION */}
+
+            <p
               className="
                 m-0
-                text-[14px]
-                font-bold
-                text-[#1E293B]
+                mt-[5px]
+                max-w-[780px]
+                text-[11px]
+                leading-[21px]
+                text-[#64748B]
+
+                sm:text-[12px]
+                sm:leading-[23px]
               "
             >
-              {notification.title}
-            </h2>
-          </div>
+              {notification.description}
+            </p>
 
-          <p
-            className="
-              m-0
-              mt-[5px]
-              text-[10px]
-              leading-[20px]
-              text-[#64748B]
-            "
-          >
-            {notification.description}
-          </p>
+            {/* META */}
 
-          <div
-            className="
-              mt-[9px]
-              flex
-              items-center
-              gap-[10px]
-              flex-wrap
-            "
-          >
-            <span
+            <div
               className="
-                h-[23px]
-                px-[9px]
-                rounded-[6px]
-                bg-[#EEF4FF]
-                text-[#2563EB]
+                mt-[9px]
                 flex
+                flex-wrap
                 items-center
-                text-[8px]
-                font-bold
+                gap-x-[10px]
+                gap-y-[7px]
               "
             >
-              {notification.category}
-            </span>
+              <span
+                className="
+                  flex
+                  min-h-[24px]
+                  items-center
+                  rounded-[6px]
+                  bg-[#EEF4FF]
+                  px-[9px]
+                  text-[9px]
+                  font-bold
+                  text-[#2563EB]
 
-            <span
-              className="
-                text-[8px]
-                text-[#94A3B8]
-              "
-            >
-              {notification.time}
-            </span>
+                  sm:text-[10px]
+                "
+              >
+                {notification.category}
+              </span>
+
+              <span
+                className="
+                  hidden
+                  h-[4px]
+                  w-[4px]
+                  rounded-full
+                  bg-[#CBD5E1]
+
+                  sm:block
+                "
+              />
+
+              <span
+                className="
+                  text-[9px]
+                  text-[#94A3B8]
+
+                  sm:text-[10px]
+                "
+              >
+                {notification.time}
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Open */}
-      <button
-        type="button"
-        onClick={onClick}
-        aria-label={`فتح ${notification.title}`}
-        className="
-          w-[36px]
-          h-[36px]
-          shrink-0
-          rounded-full
-          border-0
-          bg-transparent
-          text-[#94A3B8]
-          flex
-          items-center
-          justify-center
-          cursor-pointer
-          transition
-          hover:bg-[#F1F5F9]
-          hover:text-[#09379A]
-        "
-      >
-        <ArrowLeft
-          size={18}
-          strokeWidth={1.7}
-        />
-      </button>
+        {/* =================================================
+            OPEN BUTTON
+        ================================================== */}
+
+        <button
+          type="button"
+          onClick={onClick}
+          aria-label={`فتح ${notification.title}`}
+          className="
+            flex
+            h-[38px]
+            w-full
+            shrink-0
+            items-center
+            justify-center
+            gap-2
+            rounded-[8px]
+            border
+            border-[#E2E8F0]
+            bg-white
+            text-[11px]
+            font-bold
+            text-[#64748B]
+            transition
+
+            hover:border-[#C9D9F8]
+            hover:bg-[#F5F8FF]
+            hover:text-[#09379A]
+
+            md:h-[36px]
+            md:w-[36px]
+            md:rounded-full
+            md:border-0
+            md:bg-transparent
+          "
+        >
+          <span className="md:hidden">
+            فتح الإشعار
+          </span>
+
+          <ArrowLeft
+            size={18}
+            strokeWidth={1.7}
+          />
+        </button>
+      </div>
     </article>
   );
 }
@@ -644,30 +811,30 @@ function EmptyNotifications() {
   return (
     <div
       className="
+        flex
         min-h-[320px]
+        flex-col
+        items-center
+        justify-center
         rounded-[14px]
         border
         border-[#DDE5EF]
         bg-white
         px-[24px]
         py-[40px]
-        flex
-        flex-col
-        items-center
-        justify-center
         text-center
       "
     >
       <div
         className="
-          w-[56px]
+          flex
           h-[56px]
+          w-[56px]
+          items-center
+          justify-center
           rounded-full
           bg-[#EEF4FF]
           text-[#09379A]
-          flex
-          items-center
-          justify-center
         "
       >
         <Bell
@@ -680,7 +847,7 @@ function EmptyNotifications() {
         className="
           m-0
           mt-[14px]
-          text-[15px]
+          text-[16px]
           font-bold
           text-[#1E293B]
         "
@@ -692,10 +859,12 @@ function EmptyNotifications() {
         className="
           m-0
           mt-[5px]
-          max-w-[320px]
-          text-[10px]
-          leading-[18px]
+          max-w-[340px]
+          text-[11px]
+          leading-[20px]
           text-[#64748B]
+
+          sm:text-[12px]
         "
       >
         لا توجد إشعارات مطابقة للحالة المحددة حاليا.

@@ -3,12 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 import {
   BadgeCheck,
-  Building2,
   CheckCircle2,
   Download,
-  FileCheck2,
   GraduationCap,
-  QrCode,
   Share2,
   ShieldCheck,
 } from "lucide-react";
@@ -27,9 +24,11 @@ export default function Certificate() {
     organization:
       "شركة القدس للاتصالات",
 
-    startDate: "2025/10/01",
+    startDate:
+      "2025/10/01",
 
-    endDate: "2025/12/01",
+    endDate:
+      "2025/12/01",
 
     hours: 120,
 
@@ -53,18 +52,29 @@ export default function Certificate() {
       "رئيس قسم التدريب الميداني",
   };
 
+  /* =========================================================
+     DOWNLOAD CERTIFICATE
+     يفتح نافذة الطباعة ويمكن اختيار Save as PDF
+  ========================================================= */
+
   const handleDownloadCertificate = () => {
-    console.log(
-      "Download certificate PDF"
-    );
+    window.print();
   };
+
+  /* =========================================================
+     SHARE CERTIFICATE
+  ========================================================= */
 
   const handleShareCertificate = async () => {
     const shareData = {
       title:
         "شهادة التدريب الميداني",
-      text: `شهادة إتمام التدريب الميداني - ${certificate.studentName}`,
-      url: window.location.href,
+
+      text:
+        `شهادة إتمام التدريب الميداني - ${certificate.studentName}`,
+
+      url:
+        window.location.href,
     };
 
     try {
@@ -92,9 +102,9 @@ export default function Certificate() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
         bg-[#F8FAFC]
         font-['Cairo']
@@ -104,58 +114,93 @@ export default function Certificate() {
       {/* =========================================
           SIDEBAR
       ========================================== */}
-      <Sidebar />
+
+      <div className="print:hidden">
+        <Sidebar />
+      </div>
 
       {/* =========================================
           MAIN AREA
       ========================================== */}
+
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
+          bg-[#F8FAFC]
         "
       >
         {/* =========================================
             HEADER
         ========================================== */}
-        <Header />
+
+        <div className="relative shrink-0 print:hidden">
+          <Header />
+        </div>
 
         {/* =========================================
             CONTENT
         ========================================== */}
+
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+
             xl:px-[40px]
-            pt-[18px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[14px]
+
+            print:overflow-visible
+            print:bg-white
+            print:p-0
           "
         >
           <div
             className="
+              mx-auto
               w-full
               max-w-[1080px]
-              mx-auto
+
+              print:max-w-none
             "
           >
             {/* =====================================
                 BREADCRUMB
             ====================================== */}
-            <div
+
+            <nav
+              aria-label="مسار التنقل"
               className="
                 flex
+                flex-wrap
                 items-center
                 gap-[7px]
-                text-[13px]
+                text-[11px]
+                font-medium
                 leading-[20px]
+
+                sm:text-[12px]
+
+                xl:text-[13px]
+
+                print:hidden
               "
             >
               <button
@@ -170,8 +215,8 @@ export default function Certificate() {
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
                   transition
+
                   hover:text-[#09379A]
                 "
               >
@@ -194,29 +239,41 @@ export default function Certificate() {
               >
                 الشهادة
               </span>
-            </div>
+            </nav>
 
             {/* =====================================
                 PAGE HEADER
             ====================================== */}
+
             <section
               className="
                 mt-[6px]
                 flex
-                items-start
-                justify-between
-                gap-[20px]
+                flex-col
+                gap-4
+
+                lg:flex-row
+                lg:items-start
+                lg:justify-between
+
+                print:hidden
               "
             >
-              {/* Title */}
-              <div>
+              {/* TITLE */}
+
+              <div className="min-w-0">
                 <h1
                   className="
                     m-0
-                    text-[30px]
-                    leading-[42px]
+                    text-[25px]
                     font-bold
+                    leading-[38px]
                     text-[#09379A]
+
+                    sm:text-[28px]
+
+                    xl:text-[30px]
+                    xl:leading-[42px]
                   "
                 >
                   الشهادة الرسمية للتدريب الميداني
@@ -225,44 +282,50 @@ export default function Certificate() {
                 <p
                   className="
                     m-0
-                    mt-[3px]
+                    mt-[4px]
                     max-w-[700px]
                     text-[12px]
-                    leading-[20px]
+                    leading-[22px]
                     text-[#64748B]
+
+                    sm:text-[13px]
+                    sm:leading-[24px]
                   "
                 >
                   معاينة وتحميل الوثيقة الرسمية لإتمام
                   متطلبات التدريب الميداني المعتمدة
-                  أكاديميا من كلية الدراسات المتوسطة
+                  أكاديميا من كلية الدراسات المتوسطة.
                 </p>
               </div>
 
-              {/* Certificate State */}
+              {/* CERTIFICATE STATE */}
+
               <div
                 className="
-                  min-w-[230px]
+                  flex
+                  w-full
+                  flex-col
+                  gap-2
                   rounded-[10px]
                   border
                   border-[#D9E2EC]
                   bg-white
                   px-[14px]
-                  py-[10px]
-                  flex
-                  items-center
-                  justify-between
-                  gap-[14px]
+                  py-[11px]
+
+                  sm:w-auto
+                  sm:min-w-[250px]
+                  sm:flex-row
+                  sm:items-center
+                  sm:justify-between
+                  sm:gap-[14px]
                 "
               >
-                <div
-                  className="
-                    text-right
-                  "
-                >
+                <div>
                   <p
                     className="
                       m-0
-                      text-[8px]
+                      text-[10px]
                       text-[#94A3B8]
                     "
                   >
@@ -272,24 +335,26 @@ export default function Certificate() {
 
                 <div
                   className="
-                    min-w-[140px]
+                    flex
+                    min-h-[35px]
+                    items-center
+                    justify-center
+                    gap-[7px]
                     rounded-[7px]
                     border
                     border-[#BFDBFE]
                     bg-[#EFF6FF]
-                    px-[10px]
-                    py-[7px]
-                    flex
-                    items-center
-                    justify-center
-                    gap-[7px]
-                    text-[9px]
+                    px-[11px]
+                    text-[10px]
                     font-bold
                     text-[#09379A]
+
+                    sm:min-w-[155px]
+                    sm:text-[11px]
                   "
                 >
                   <BadgeCheck
-                    size={14}
+                    size={15}
                   />
 
                   الشهادة معتمدة وجاهزة
@@ -300,30 +365,52 @@ export default function Certificate() {
             {/* =====================================
                 CERTIFICATE
             ====================================== */}
+
             <section
+              id="certificate-print-area"
               className="
+                relative
                 mt-[24px]
+                overflow-hidden
                 rounded-[16px]
                 border-[2px]
                 border-[#0B4DBB]
                 bg-white
-                px-[44px]
-                py-[44px]
-                relative
-                overflow-hidden
+                px-4
+                py-8
                 shadow-[0_2px_4px_rgba(15,23,42,0.03)]
+
+                sm:px-6
+                sm:py-10
+
+                md:px-[36px]
+                md:py-[42px]
+
+                xl:px-[44px]
+                xl:py-[44px]
+
+                print:mt-0
+                print:min-h-[185mm]
+                print:rounded-none
+                print:border-[2px]
+                print:px-[16mm]
+                print:py-[12mm]
+                print:shadow-none
               "
             >
-              {/* Background watermark */}
+              {/* BACKGROUND WATERMARK */}
+
               <div
                 className="
+                  pointer-events-none
                   absolute
                   left-1/2
                   top-[53%]
                   -translate-x-1/2
                   -translate-y-1/2
                   opacity-[0.035]
-                  pointer-events-none
+
+                  print:opacity-[0.045]
                 "
               >
                 <GraduationCap
@@ -335,6 +422,8 @@ export default function Certificate() {
                 />
               </div>
 
+              {/* CERTIFICATE CONTENT */}
+
               <div
                 className="
                   relative
@@ -342,13 +431,21 @@ export default function Certificate() {
                   text-center
                 "
               >
-                {/* College */}
+                {/* COLLEGE */}
+
                 <h2
                   className="
                     m-0
-                    text-[27px]
+                    text-[20px]
                     font-bold
+                    leading-[32px]
                     text-[#1E293B]
+
+                    sm:text-[23px]
+
+                    md:text-[25px]
+
+                    xl:text-[27px]
                   "
                 >
                   كلية الدراسات المتوسطة - الأزهر
@@ -358,22 +455,35 @@ export default function Certificate() {
                   className="
                     m-0
                     mt-[5px]
-                    text-[11px]
+                    text-[10px]
+                    leading-[18px]
                     text-[#64748B]
+
+                    sm:text-[11px]
                   "
                 >
                   قسم التدريب الميداني والتطوير الأكاديمي
                 </p>
 
-                {/* Certificate title */}
+                {/* CERTIFICATE TITLE */}
+
                 <h3
                   className="
                     m-0
-                    mt-[34px]
-                    text-[38px]
-                    leading-[48px]
+                    mt-[27px]
+                    text-[28px]
                     font-bold
+                    leading-[40px]
                     text-[#09379A]
+
+                    sm:mt-[30px]
+                    sm:text-[32px]
+
+                    md:text-[35px]
+
+                    xl:mt-[34px]
+                    xl:text-[38px]
+                    xl:leading-[48px]
                   "
                 >
                   شهادة إتمام تدريب
@@ -382,15 +492,19 @@ export default function Certificate() {
                 <p
                   className="
                     m-0
-                    mt-[16px]
-                    text-[13px]
+                    mt-[13px]
+                    text-[11px]
                     text-[#64748B]
+
+                    sm:mt-[16px]
+                    sm:text-[13px]
                   "
                 >
                   تمنح هذه الشهادة للطالبة
                 </p>
 
-                {/* Student Name */}
+                {/* STUDENT NAME */}
+
                 <div
                   className="
                     mt-[8px]
@@ -401,18 +515,26 @@ export default function Certificate() {
                 >
                   <div
                     className="
-                      min-w-[200px]
+                      min-w-[180px]
                       border-b
                       border-[#BFDBFE]
+                      px-3
                       pb-[4px]
+
+                      sm:min-w-[200px]
                     "
                   >
                     <strong
                       className="
-                        text-[31px]
-                        leading-[38px]
+                        text-[25px]
                         font-bold
+                        leading-[36px]
                         text-[#09379A]
+
+                        sm:text-[28px]
+
+                        xl:text-[31px]
+                        xl:leading-[38px]
                       "
                     >
                       {certificate.studentName}
@@ -420,16 +542,21 @@ export default function Certificate() {
                   </div>
                 </div>
 
-                {/* Description */}
+                {/* DESCRIPTION */}
+
                 <p
                   className="
-                    m-0
-                    mt-[26px]
-                    max-w-[690px]
                     mx-auto
-                    text-[12px]
-                    leading-[24px]
+                    mb-0
+                    mt-[23px]
+                    max-w-[690px]
+                    text-[11px]
+                    leading-[23px]
                     text-[#475569]
+
+                    sm:mt-[26px]
+                    sm:text-[12px]
+                    sm:leading-[24px]
                   "
                 >
                   وذلك لإتمامها برنامج التدريب الميداني
@@ -443,8 +570,7 @@ export default function Certificate() {
                     {certificate.organization}
                   </strong>
 
-                  {" "}
-                  خلال الفترة من{" "}
+                  {" "}خلال الفترة من{" "}
 
                   <strong
                     dir="ltr"
@@ -456,8 +582,7 @@ export default function Certificate() {
                     {certificate.startDate}
                   </strong>
 
-                  {" "}
-                  إلى{" "}
+                  {" "}إلى{" "}
 
                   <strong
                     dir="ltr"
@@ -481,24 +606,34 @@ export default function Certificate() {
                   .
                 </p>
 
-                {/* Document Details */}
+                {/* =================================
+                    DOCUMENT DETAILS
+                ================================== */}
+
                 <div
                   className="
-                    mt-[30px]
-                    max-w-[760px]
                     mx-auto
+                    mt-[26px]
+                    grid
                     min-h-[52px]
+                    max-w-[760px]
+                    grid-cols-1
+                    items-center
+                    gap-3
                     rounded-[9px]
                     border
                     border-[#E2E8F0]
                     bg-[#F8FAFC]
-                    px-[16px]
-                    py-[10px]
-                    grid
-                    grid-cols-1
+                    px-[14px]
+                    py-[11px]
+
+                    sm:grid-cols-2
+
+                    md:mt-[30px]
                     md:grid-cols-3
-                    gap-[10px]
-                    items-center
+                    md:gap-[10px]
+                    md:px-[16px]
+                    md:py-[10px]
                   "
                 >
                   <CertificateMeta
@@ -515,17 +650,23 @@ export default function Certificate() {
                     }
                   />
 
+                  {/* GRADE */}
+
                   <div
                     className="
                       flex
                       items-center
                       justify-center
                       gap-[7px]
+
+                      sm:col-span-2
+
+                      md:col-span-1
                     "
                   >
                     <span
                       className="
-                        text-[8px]
+                        text-[10px]
                         text-[#94A3B8]
                       "
                     >
@@ -534,21 +675,20 @@ export default function Certificate() {
 
                     <span
                       className="
-                        h-[25px]
-                        px-[9px]
+                        flex
+                        min-h-[27px]
+                        items-center
                         rounded-[6px]
                         border
                         border-[#A7E6C4]
                         bg-[#ECFDF5]
-                        text-[#047857]
-                        flex
-                        items-center
-                        text-[9px]
+                        px-[9px]
+                        text-[10px]
                         font-bold
+                        text-[#047857]
                       "
                     >
-                      {certificate.grade}
-                      {" "}
+                      {certificate.grade}{" "}
                       (
                       {certificate.finalScore}
                       /
@@ -558,37 +698,45 @@ export default function Certificate() {
                   </div>
                 </div>
 
-                {/* Bottom Certificate Info */}
+                {/* =================================
+                    QR + SIGNATURE
+                ================================== */}
+
                 <div
                   className="
-                    mt-[48px]
+                    mt-[38px]
                     grid
                     grid-cols-1
-                    md:grid-cols-2
-                    gap-[30px]
                     items-end
+                    gap-[32px]
+
+                    md:mt-[48px]
+                    md:grid-cols-2
+                    md:gap-[30px]
                   "
                 >
                   {/* QR */}
+
                   <div
                     className="
                       flex
                       justify-center
+
                       md:justify-start
                     "
                   >
                     <div>
                       <div
                         className="
-                          w-[82px]
+                          flex
                           h-[82px]
+                          w-[82px]
+                          items-center
+                          justify-center
                           rounded-[8px]
                           border
                           border-[#CBD5E1]
                           bg-white
-                          flex
-                          items-center
-                          justify-center
                         "
                       >
                         <FakeQRCode />
@@ -598,7 +746,7 @@ export default function Certificate() {
                         className="
                           m-0
                           mt-[7px]
-                          text-[8px]
+                          text-[10px]
                           text-[#64748B]
                         "
                       >
@@ -607,25 +755,29 @@ export default function Certificate() {
                     </div>
                   </div>
 
-                  {/* Signature */}
+                  {/* SIGNATURE */}
+
                   <div
                     className="
                       flex
                       justify-center
+
                       md:justify-end
                     "
                   >
                     <div
                       className="
-                        text-center
                         min-w-[190px]
+                        text-center
                       "
                     >
                       <p
                         className="
                           m-0
-                          text-[9px]
+                          text-[10px]
                           text-[#64748B]
+
+                          sm:text-[11px]
                         "
                       >
                         {certificate.signerTitle}
@@ -633,20 +785,20 @@ export default function Certificate() {
 
                       <div
                         className="
-                          mt-[14px]
-                          h-[38px]
+                          mt-[12px]
                           flex
+                          h-[40px]
                           items-center
                           justify-center
                         "
                       >
                         <span
                           className="
+                            -rotate-[7deg]
+                            font-serif
                             text-[29px]
                             italic
-                            font-serif
                             text-[#09379A]
-                            rotate-[-7deg]
                           "
                         >
                           مـحـمـد
@@ -655,10 +807,12 @@ export default function Certificate() {
 
                       <strong
                         className="
-                          block
                           mt-[4px]
+                          block
                           text-[11px]
                           text-[#1E293B]
+
+                          sm:text-[12px]
                         "
                       >
                         {certificate.signer}
@@ -672,38 +826,52 @@ export default function Certificate() {
             {/* =====================================
                 ACTION BUTTONS
             ====================================== */}
+
             <section
               className="
                 mt-[24px]
                 flex
-                flex-wrap
-                items-center
+                flex-col
+                items-stretch
                 justify-center
-                gap-[12px]
+                gap-[10px]
+
+                sm:flex-row
+                sm:flex-wrap
+                sm:items-center
+                sm:gap-[12px]
+
+                print:hidden
               "
             >
+              {/* SHARE */}
+
               <button
                 type="button"
                 onClick={
                   handleShareCertificate
                 }
                 className="
-                  h-[44px]
-                  px-[20px]
-                  rounded-[8px]
-                  border-0
-                  bg-[#FF6B35]
-                  text-white
                   flex
+                  min-h-[44px]
+                  w-full
                   items-center
                   justify-center
                   gap-[8px]
+                  rounded-[8px]
+                  border-0
+                  bg-[#FF6B35]
+                  px-[20px]
                   text-[11px]
                   font-bold
-                  cursor-pointer
+                  text-white
                   shadow-[0_3px_8px_rgba(255,107,53,0.16)]
                   transition
+
                   hover:bg-[#EA5A28]
+
+                  sm:w-auto
+                  sm:min-w-[195px]
                 "
               >
                 <Share2
@@ -716,29 +884,35 @@ export default function Certificate() {
                   : "مشاركة الشهادة"}
               </button>
 
+              {/* DOWNLOAD */}
+
               <button
                 type="button"
                 onClick={
                   handleDownloadCertificate
                 }
                 className="
-                  h-[44px]
-                  px-[20px]
+                  flex
+                  min-h-[44px]
+                  w-full
+                  items-center
+                  justify-center
+                  gap-[8px]
                   rounded-[8px]
                   border
                   border-[#D5DFEA]
                   bg-white
-                  text-[#1E293B]
-                  flex
-                  items-center
-                  justify-center
-                  gap-[8px]
+                  px-[20px]
                   text-[11px]
                   font-bold
-                  cursor-pointer
+                  text-[#1E293B]
                   transition
-                  hover:bg-[#F8FAFC]
+
                   hover:border-[#B7C8DA]
+                  hover:bg-[#F8FAFC]
+
+                  sm:w-auto
+                  sm:min-w-[225px]
                 "
               >
                 <Download
@@ -756,44 +930,59 @@ export default function Certificate() {
             {/* =====================================
                 VALIDITY NOTICE
             ====================================== */}
+
             <section
               className="
                 mt-[22px]
-                min-h-[56px]
+                flex
+                min-h-[60px]
+                flex-col
+                gap-3
                 rounded-[11px]
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[18px]
+                px-[16px]
                 py-[13px]
-                flex
-                flex-wrap
-                items-center
-                justify-between
-                gap-[15px]
+
+                sm:flex-row
+                sm:flex-wrap
+                sm:items-center
+                sm:justify-between
+                sm:gap-[15px]
+
+                print:hidden
               "
             >
               <div
                 className="
                   flex
-                  items-center
+                  items-start
                   gap-[9px]
+
+                  sm:items-center
                 "
               >
                 <ShieldCheck
                   size={17}
                   className="
-                    text-[#09379A]
+                    mt-[1px]
                     shrink-0
+                    text-[#09379A]
+
+                    sm:mt-0
                   "
                 />
 
                 <p
                   className="
                     m-0
-                    text-[9px]
-                    leading-[17px]
+                    text-[10px]
+                    leading-[19px]
                     text-[#64748B]
+
+                    sm:text-[11px]
+                    sm:leading-[20px]
                   "
                 >
                   هذه الوثيقة مشفرة رقميا ومسجلة في
@@ -804,24 +993,25 @@ export default function Certificate() {
 
               <div
                 className="
-                  h-[25px]
-                  px-[10px]
-                  rounded-[12px]
+                  flex
+                  min-h-[27px]
+                  w-fit
+                  items-center
+                  gap-[6px]
+                  rounded-full
                   border
                   border-[#A7E6C4]
                   bg-[#ECFDF5]
-                  text-[#047857]
-                  flex
-                  items-center
-                  gap-[6px]
-                  text-[8px]
+                  px-[10px]
+                  text-[10px]
                   font-bold
+                  text-[#047857]
                 "
               >
                 <span
                   className="
-                    w-[6px]
                     h-[6px]
+                    w-[6px]
                     rounded-full
                     bg-[#10B981]
                   "
@@ -833,6 +1023,47 @@ export default function Certificate() {
           </div>
         </main>
       </div>
+
+      {/* =========================================
+          PRINT STYLES
+      ========================================== */}
+
+      <style>{`
+        @media print {
+          @page {
+            size: A4 landscape;
+            margin: 10mm;
+          }
+
+          html,
+          body,
+          #root {
+            width: 100%;
+            height: auto;
+            overflow: visible !important;
+            background: #ffffff !important;
+          }
+
+          body {
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+          }
+
+          .print\\:hidden {
+            display: none !important;
+          }
+
+          main {
+            overflow: visible !important;
+            height: auto !important;
+          }
+
+          #certificate-print-area {
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -856,7 +1087,7 @@ function CertificateMeta({
     >
       <span
         className="
-          text-[8px]
+          text-[10px]
           text-[#94A3B8]
         "
       >
@@ -866,8 +1097,11 @@ function CertificateMeta({
       <strong
         dir="ltr"
         className="
-          text-[9px]
+          text-[10px]
+          font-bold
           text-[#1E293B]
+
+          sm:text-[11px]
         "
       >
         {value}
@@ -877,8 +1111,7 @@ function CertificateMeta({
 }
 
 /* =========================================================
-   SIMPLE FRONTEND QR PLACEHOLDER
-   Replace later with a real QR generated from certificate ID
+   FRONTEND QR PLACEHOLDER
 ========================================================= */
 
 function FakeQRCode() {
@@ -897,26 +1130,28 @@ function FakeQRCode() {
       dir="ltr"
       className="
         grid
+        h-[56px]
+        w-[56px]
         grid-cols-7
         gap-[2px]
-        w-[56px]
-        h-[56px]
       "
     >
-      {cells.map((cell, index) => (
-        <span
-          key={index}
-          className={`
-            rounded-[1px]
+      {cells.map(
+        (cell, index) => (
+          <span
+            key={index}
+            className={`
+              rounded-[1px]
 
-            ${
-              cell
-                ? "bg-[#1E293B]"
-                : "bg-transparent"
-            }
-          `}
-        />
-      ))}
+              ${
+                cell
+                  ? "bg-[#1E293B]"
+                  : "bg-transparent"
+              }
+            `}
+          />
+        )
+      )}
     </div>
   );
 }
