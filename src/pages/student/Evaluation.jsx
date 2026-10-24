@@ -29,12 +29,8 @@ export default function Evaluation() {
   });
 
   const [notes, setNotes] = useState("");
-
-  const [showConfirmModal, setShowConfirmModal] =
-    useState(false);
-
-  const [isSubmitted, setIsSubmitted] =
-    useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const maxNotesLength = 900;
 
@@ -45,11 +41,40 @@ export default function Evaluation() {
     supervisor: "م. سارة خليل",
     organization: "شركة القدس للاتصالات",
     note:
-      "أظهر الطالب التزاما جيدا واهتماما بالتعلم، يحتاج إلى المزيد من التدريب العملي في إدارة السيرفرات الميدانية.",
+      "أظهر الطالب التزاما جيدا واهتماما بالتعلم، ويحتاج إلى المزيد من التدريب العملي في إدارة السيرفرات الميدانية.",
   };
+
+  const evaluationItems = [
+    {
+      key: "content",
+      title: "محتوى الدورة",
+      description:
+        "مدى ملاءمة المحتوى النظري والتطبيق العملي لمتطلبات التدريب.",
+    },
+    {
+      key: "trainer",
+      title: "أسلوب المدرب",
+      description:
+        "وضوح الشرح والتوجيه المستمر والتفاعل الإيجابي مع المتدرب.",
+    },
+    {
+      key: "practical",
+      title: "التطبيق العملي",
+      description:
+        "توفر المعدات والمختبرات وفرص التطبيق الميداني الفعلي.",
+    },
+    {
+      key: "attendance",
+      title: "الالتزام والحضور",
+      description:
+        "الالتزام بالمواعيد وتوافر المتابعة والإشراف أثناء التدريب.",
+    },
+  ];
 
   const studentAverage = useMemo(() => {
     const values = Object.values(ratings);
+
+    if (!values.length) return "0.0";
 
     const sum = values.reduce(
       (total, current) => total + current,
@@ -59,33 +84,6 @@ export default function Evaluation() {
     return (sum / values.length).toFixed(1);
   }, [ratings]);
 
-  const evaluationItems = [
-    {
-      key: "content",
-      title: "محتوى الدورة",
-      description:
-        "ملاءمة العناصر النظرية والتطبيق العملي للمهمة",
-    },
-    {
-      key: "trainer",
-      title: "أسلوب المدرب",
-      description:
-        "وضوح الشرح، التوجيه المستمر، والتفاعل الإيجابي",
-    },
-    {
-      key: "practical",
-      title: "التطبيق العملي",
-      description:
-        "وفرة المعدات، المختبرات والتجربة الميدانية الحقيقية",
-    },
-    {
-      key: "attendance",
-      title: "الالتزام والحضور",
-      description:
-        "انضباط مواعيد الورش وتوافر الكادر الإشرافي",
-    },
-  ];
-
   const handleRatingChange = (key, value) => {
     if (isSubmitted) return;
 
@@ -93,6 +91,19 @@ export default function Evaluation() {
       ...previous,
       [key]: value,
     }));
+  };
+
+  const handleReset = () => {
+    if (isSubmitted) return;
+
+    setRatings({
+      content: 0,
+      trainer: 0,
+      practical: 0,
+      attendance: 0,
+    });
+
+    setNotes("");
   };
 
   const handleConfirmSubmit = () => {
@@ -111,53 +122,88 @@ export default function Evaluation() {
     <div
       dir="rtl"
       className="
-        h-screen
-        w-full
         flex
+        h-dvh
+        w-full
         overflow-hidden
         bg-[#F8FAFC]
         font-['Cairo']
         text-[#1E293B]
       "
     >
+      {/* =====================================================
+          SIDEBAR
+      ====================================================== */}
+
       <Sidebar />
+
+      {/* =====================================================
+          MAIN AREA
+      ====================================================== */}
 
       <div
         className="
-          flex-1
-          min-w-0
-          h-screen
           flex
+          h-dvh
+          min-w-0
+          flex-1
           flex-col
           overflow-hidden
+          bg-[#F8FAFC]
         "
       >
-        <Header />
+        {/* HEADER */}
+
+        <div className="relative shrink-0">
+          <Header />
+        </div>
+
+        {/* =====================================================
+            CONTENT
+        ====================================================== */}
 
         <main
           className="
-            flex-1
             min-h-0
-            overflow-y-auto
+            flex-1
             overflow-x-hidden
-            px-[24px]
+            overflow-y-auto
+            bg-[#F8FAFC]
+
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            sm:pt-6
+
+            md:px-6
+
             xl:px-[40px]
-            pt-[18px]
-            pb-[40px]
+            xl:pb-[40px]
+            xl:pt-[18px]
           "
         >
-          <div className="w-full max-w-[1080px] mx-auto">
+          <div className="mx-auto w-full max-w-[1080px]">
 
-            {/* =========================
+            {/* =================================================
                 BREADCRUMB
-            ========================== */}
-            <div
+            ================================================== */}
+
+            <nav
+              aria-label="مسار التنقل"
               className="
                 flex
+                flex-wrap
                 items-center
                 gap-[7px]
-                text-[13px]
+                text-[11px]
+                font-medium
                 leading-[20px]
+
+                sm:text-[12px]
+
+                xl:text-[13px]
               "
             >
               <button
@@ -170,7 +216,6 @@ export default function Evaluation() {
                   bg-transparent
                   p-0
                   text-[#64748B]
-                  cursor-pointer
                   transition
                   hover:text-[#09379A]
                 "
@@ -182,44 +227,48 @@ export default function Evaluation() {
                 ›
               </span>
 
-              <span
-                className="
-                  font-bold
-                  text-[#09379A]
-                "
-              >
+              <span className="font-bold text-[#09379A]">
                 التقييم
               </span>
-            </div>
+            </nav>
 
-            {/* =========================
+            {/* =================================================
                 PAGE HEADER
-            ========================== */}
+            ================================================== */}
+
             <section
               className="
                 mt-[6px]
                 flex
-                items-start
-                justify-between
-                gap-[20px]
+                flex-col
+                gap-4
+
+                md:flex-row
+                md:items-start
+                md:justify-between
               "
             >
-              <div>
+              <div className="min-w-0">
                 <div
                   className="
                     flex
+                    flex-wrap
                     items-center
                     gap-[10px]
-                    flex-wrap
                   "
                 >
                   <h1
                     className="
                       m-0
-                      text-[29px]
-                      leading-[40px]
+                      text-[25px]
                       font-bold
+                      leading-[38px]
                       text-[#14213D]
+
+                      sm:text-[27px]
+
+                      xl:text-[29px]
+                      xl:leading-[40px]
                     "
                   >
                     التقييم الأكاديمي والميداني
@@ -227,17 +276,17 @@ export default function Evaluation() {
 
                   <span
                     className="
-                      h-[25px]
-                      px-[10px]
-                      rounded-[12px]
+                      inline-flex
+                      min-h-[27px]
+                      items-center
+                      rounded-full
                       border
                       border-[#BAE6FD]
                       bg-[#EFFAFF]
-                      text-[#0369A1]
-                      flex
-                      items-center
-                      text-[9px]
+                      px-[10px]
+                      text-[10px]
                       font-bold
+                      text-[#0369A1]
                     "
                   >
                     الفصل الأول 2025/2026
@@ -247,36 +296,54 @@ export default function Evaluation() {
                 <p
                   className="
                     m-0
-                    mt-[3px]
+                    mt-[4px]
+                    max-w-[700px]
                     text-[12px]
-                    leading-[20px]
+                    leading-[22px]
                     text-[#64748B]
+
+                    sm:text-[13px]
+                    sm:leading-[24px]
                   "
                 >
                   استعراض تقييم المشرف الميداني المعتمد
-                  وتقديم التقييم النهائي للدورة التدريبية
+                  وتقديم التقييم النهائي للدورة التدريبية.
                 </p>
               </div>
 
               <div
-                className="
-                  h-[34px]
-                  px-[12px]
-                  rounded-[8px]
-                  border
-                  border-[#BFDBFE]
-                  bg-[#F8FBFF]
-                  text-[#09379A]
+                className={`
                   flex
+                  min-h-[38px]
+                  w-fit
                   items-center
                   gap-[7px]
-                  text-[9px]
+                  rounded-[8px]
+                  border
+                  px-[12px]
+                  text-[10px]
                   font-bold
-                "
+
+                  sm:text-[11px]
+
+                  ${
+                    isSubmitted
+                      ? `
+                        border-[#A7E6C4]
+                        bg-[#F0FDF4]
+                        text-[#15803D]
+                      `
+                      : `
+                        border-[#BFDBFE]
+                        bg-[#F8FBFF]
+                        text-[#09379A]
+                      `
+                  }
+                `}
               >
                 <CheckCircle2
-                  size={14}
-                  strokeWidth={1.8}
+                  size={15}
+                  strokeWidth={1.9}
                 />
 
                 {isSubmitted
@@ -285,49 +352,58 @@ export default function Evaluation() {
               </div>
             </section>
 
-            {/* =========================
+            {/* =================================================
                 TRAINING SUMMARY
-            ========================== */}
+            ================================================== */}
+
             <section
               className="
                 mt-[24px]
-                min-h-[115px]
+                flex
+                flex-col
+                gap-5
                 rounded-[14px]
                 border
                 border-[#DDE5EF]
                 bg-white
-                px-[22px]
-                py-[18px]
-                flex
-                items-center
-                justify-between
-                gap-[20px]
+                px-4
+                py-5
                 shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                sm:px-5
+
+                lg:flex-row
+                lg:items-center
+                lg:justify-between
+                lg:px-[22px]
+                lg:py-[18px]
               "
             >
+              {/* ORGANIZATION */}
+
               <div
                 className="
                   flex
-                  items-center
-                  gap-[14px]
                   min-w-0
+                  items-center
+                  gap-[13px]
                 "
               >
                 <div
                   className="
-                    w-[50px]
+                    flex
                     h-[50px]
+                    w-[50px]
+                    shrink-0
+                    items-center
+                    justify-center
                     rounded-[10px]
                     bg-[#EEF3FF]
                     text-[#09379A]
-                    flex
-                    items-center
-                    justify-center
-                    shrink-0
                   "
                 >
                   <Building2
-                    size={24}
+                    size={23}
                     strokeWidth={1.8}
                   />
                 </div>
@@ -336,17 +412,20 @@ export default function Evaluation() {
                   <div
                     className="
                       flex
+                      flex-wrap
                       items-center
                       gap-[8px]
-                      flex-wrap
                     "
                   >
                     <h2
                       className="
                         m-0
-                        text-[18px]
+                        text-[17px]
                         font-bold
+                        leading-[25px]
                         text-[#1E293B]
+
+                        sm:text-[18px]
                       "
                     >
                       شركة القدس للاتصالات
@@ -354,15 +433,15 @@ export default function Evaluation() {
 
                     <span
                       className="
-                        h-[23px]
-                        px-[8px]
+                        inline-flex
+                        min-h-[24px]
+                        items-center
                         rounded-[6px]
                         bg-[#EEF4FF]
-                        text-[#2563EB]
-                        flex
-                        items-center
-                        text-[8px]
+                        px-[9px]
+                        text-[10px]
                         font-medium
+                        text-[#2563EB]
                       "
                     >
                       هندسة الاتصالات
@@ -373,8 +452,11 @@ export default function Evaluation() {
                     className="
                       m-0
                       mt-[5px]
-                      text-[9px]
-                      text-[#94A3B8]
+                      text-[11px]
+                      leading-[20px]
+                      text-[#64748B]
+
+                      sm:text-[12px]
                     "
                   >
                     برنامج التدريب العملي المعتمد لدى كلية
@@ -383,11 +465,19 @@ export default function Evaluation() {
                 </div>
               </div>
 
+              {/* SUMMARY BLOCKS */}
+
               <div
                 className="
-                  flex
-                  items-stretch
+                  grid
+                  w-full
+                  grid-cols-1
                   gap-[10px]
+
+                  sm:grid-cols-3
+
+                  lg:w-auto
+                  lg:min-w-[430px]
                 "
               >
                 <SummaryBlock
@@ -403,16 +493,16 @@ export default function Evaluation() {
 
                 <div
                   className={`
-                    min-w-[100px]
-                    rounded-[9px]
-                    px-[13px]
-                    py-[12px]
                     flex
+                    min-h-[68px]
                     flex-col
                     items-center
                     justify-center
-                    text-center
+                    rounded-[9px]
                     border
+                    px-[13px]
+                    py-[10px]
+                    text-center
 
                     ${
                       isSubmitted
@@ -429,8 +519,8 @@ export default function Evaluation() {
                 >
                   <span
                     className={`
-                      w-[7px]
                       h-[7px]
+                      w-[7px]
                       rounded-full
 
                       ${
@@ -443,8 +533,9 @@ export default function Evaluation() {
 
                   <strong
                     className={`
-                      mt-[5px]
-                      text-[10px]
+                      mt-[6px]
+                      text-[11px]
+                      font-bold
 
                       ${
                         isSubmitted
@@ -461,132 +552,159 @@ export default function Evaluation() {
               </div>
             </section>
 
-            {/* =========================
+            {/* =================================================
                 TABS
-            ========================== */}
+            ================================================== */}
+
             <section
               className="
                 mt-[20px]
+                overflow-x-auto
                 border-b
                 border-[#DDE5EF]
-                flex
-                items-end
-                gap-[28px]
               "
             >
-              <button
-                type="button"
-                onClick={() =>
-                  setActiveTab("student")
-                }
-                className={`
-                  pb-[12px]
-                  border-0
-                  border-b-[2px]
-                  bg-transparent
+              <div
+                className="
                   flex
-                  items-center
-                  gap-[7px]
-                  text-[12px]
-                  font-bold
-                  cursor-pointer
-                  transition
+                  min-w-max
+                  items-end
+                  gap-[22px]
 
-                  ${
-                    activeTab === "student"
-                      ? "border-[#09379A] text-[#1E293B]"
-                      : "border-transparent text-[#64748B]"
-                  }
-                `}
+                  sm:gap-[28px]
+                "
               >
-                <GraduationCap
-                  size={15}
-                  strokeWidth={1.8}
-                />
-
-                تقييم الطالب للدورة
-
-                <span
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveTab("student")
+                  }
                   className={`
-                    h-[21px]
-                    px-[7px]
-                    rounded-[10px]
                     flex
                     items-center
-                    text-[8px]
+                    gap-[7px]
+                    whitespace-nowrap
+                    border-0
+                    border-b-[2px]
+                    bg-transparent
+                    pb-[12px]
+                    text-[11px]
+                    font-bold
+                    transition
+
+                    sm:text-[12px]
 
                     ${
-                      isSubmitted
+                      activeTab === "student"
                         ? `
-                          bg-[#E9FFF4]
-                          text-[#16A34A]
+                          border-[#09379A]
+                          text-[#1E293B]
                         `
                         : `
-                          bg-[#09379A]
-                          text-white
+                          border-transparent
+                          text-[#64748B]
                         `
                     }
                   `}
                 >
-                  {isSubmitted
-                    ? "تم الاعتماد"
-                    : "مطلوب منك"}
-                </span>
-              </button>
+                  <GraduationCap
+                    size={16}
+                    strokeWidth={1.8}
+                  />
 
-              <button
-                type="button"
-                onClick={() =>
-                  setActiveTab("trainer")
-                }
-                className={`
-                  pb-[12px]
-                  border-0
-                  border-b-[2px]
-                  bg-transparent
-                  flex
-                  items-center
-                  gap-[7px]
-                  text-[12px]
-                  font-bold
-                  cursor-pointer
-                  transition
+                  تقييم الطالب للدورة
 
-                  ${
-                    activeTab === "trainer"
-                      ? "border-[#09379A] text-[#1E293B]"
-                      : "border-transparent text-[#64748B]"
+                  <span
+                    className={`
+                      inline-flex
+                      min-h-[22px]
+                      items-center
+                      rounded-full
+                      px-[8px]
+                      text-[9px]
+
+                      ${
+                        isSubmitted
+                          ? `
+                            bg-[#E9FFF4]
+                            text-[#16A34A]
+                          `
+                          : `
+                            bg-[#09379A]
+                            text-white
+                          `
+                      }
+                    `}
+                  >
+                    {isSubmitted
+                      ? "تم الاعتماد"
+                      : "مطلوب منك"}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveTab("trainer")
                   }
-                `}
-              >
-                <Check
-                  size={15}
-                  strokeWidth={2}
-                  className="text-[#10B981]"
-                />
-
-                تقييم المدرب الميداني
-
-                <span
-                  className="
-                    h-[20px]
-                    px-[7px]
-                    rounded-[10px]
-                    bg-[#F1F5F9]
-                    text-[#64748B]
+                  className={`
                     flex
                     items-center
-                    text-[8px]
-                  "
+                    gap-[7px]
+                    whitespace-nowrap
+                    border-0
+                    border-b-[2px]
+                    bg-transparent
+                    pb-[12px]
+                    text-[11px]
+                    font-bold
+                    transition
+
+                    sm:text-[12px]
+
+                    ${
+                      activeTab === "trainer"
+                        ? `
+                          border-[#09379A]
+                          text-[#1E293B]
+                        `
+                        : `
+                          border-transparent
+                          text-[#64748B]
+                        `
+                    }
+                  `}
                 >
-                  معتمد
-                </span>
-              </button>
+                  <Check
+                    size={15}
+                    strokeWidth={2}
+                    className="text-[#10B981]"
+                  />
+
+                  تقييم المدرب الميداني
+
+                  <span
+                    className="
+                      inline-flex
+                      min-h-[21px]
+                      items-center
+                      rounded-full
+                      bg-[#F1F5F9]
+                      px-[8px]
+                      text-[9px]
+                      text-[#64748B]
+                    "
+                  >
+                    معتمد
+                  </span>
+                </button>
+              </div>
             </section>
 
-            {/* =========================
+            {/* =================================================
                 STUDENT TAB
-            ========================== */}
+            ================================================== */}
+
             {activeTab === "student" ? (
               <section
                 dir="ltr"
@@ -594,12 +712,16 @@ export default function Evaluation() {
                   mt-[22px]
                   grid
                   grid-cols-1
-                  lg:grid-cols-[310px_minmax(0,1fr)]
-                  gap-[22px]
                   items-start
+                  gap-[22px]
+
+                  lg:grid-cols-[310px_minmax(0,1fr)]
                 "
               >
-                {/* TRAINER SUMMARY */}
+                {/* =============================================
+                    TRAINER SUMMARY
+                ============================================== */}
+
                 <aside
                   dir="rtl"
                   className="
@@ -607,17 +729,22 @@ export default function Evaluation() {
                     border
                     border-[#DDE5EF]
                     bg-white
-                    px-[20px]
-                    py-[20px]
+                    px-4
+                    py-5
                     shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                    sm:px-5
                   "
                 >
                   <div
                     className="
                       flex
-                      items-start
-                      justify-between
-                      gap-[10px]
+                      flex-col
+                      gap-3
+
+                      sm:flex-row
+                      sm:items-start
+                      sm:justify-between
                     "
                   >
                     <div
@@ -646,30 +773,33 @@ export default function Evaluation() {
 
                     <span
                       className="
-                        h-[26px]
-                        px-[9px]
-                        rounded-[12px]
+                        inline-flex
+                        min-h-[26px]
+                        w-fit
+                        items-center
+                        rounded-full
                         border
                         border-[#BFDBFE]
                         bg-[#EFF6FF]
-                        text-[#09379A]
-                        flex
-                        items-center
-                        text-[8px]
+                        px-[9px]
+                        text-[9px]
                         font-bold
+                        text-[#09379A]
                       "
                     >
                       معتمد أكاديميا
                     </span>
                   </div>
 
+                  {/* SCORE */}
+
                   <div
                     className="
                       mt-[18px]
                       rounded-[10px]
-                      bg-[#F8FAFC]
                       border
                       border-[#EEF2F7]
+                      bg-[#F8FAFC]
                       px-[16px]
                       py-[18px]
                       text-center
@@ -678,7 +808,8 @@ export default function Evaluation() {
                     <p
                       className="
                         m-0
-                        text-[9px]
+                        text-[11px]
+                        leading-[20px]
                         text-[#64748B]
                       "
                     >
@@ -697,6 +828,7 @@ export default function Evaluation() {
                       <strong
                         className="
                           text-[35px]
+                          font-bold
                           leading-[36px]
                           text-[#14213D]
                         "
@@ -707,7 +839,7 @@ export default function Evaluation() {
                       <span
                         className="
                           mb-[4px]
-                          text-[11px]
+                          text-[12px]
                           text-[#94A3B8]
                         "
                       >
@@ -715,65 +847,71 @@ export default function Evaluation() {
                       </span>
                     </div>
 
-                    <ReadOnlyStars
-                      value={trainerEvaluation.score}
-                      size={16}
-                    />
+                    <div className="mt-[8px]">
+                      <ReadOnlyStars
+                        value={trainerEvaluation.score}
+                        size={17}
+                      />
+                    </div>
 
                     <span
                       className="
+                        mt-[10px]
                         inline-flex
-                        mt-[9px]
-                        h-[22px]
-                        px-[9px]
-                        rounded-[11px]
-                        bg-[#EEF4FF]
-                        text-[#09379A]
+                        min-h-[24px]
                         items-center
-                        text-[8px]
+                        rounded-full
+                        bg-[#EEF4FF]
+                        px-[9px]
+                        text-[9px]
                         font-bold
+                        text-[#09379A]
                       "
                     >
-                      مستوى الأداء: جيد جدا ({trainerEvaluation.percentage}%)
+                      مستوى الأداء: جيد جدا (
+                      {trainerEvaluation.percentage}%)
                     </span>
                   </div>
+
+                  {/* SUPERVISOR */}
 
                   <div
                     className="
                       mt-[15px]
+                      flex
+                      items-center
+                      gap-[10px]
                       rounded-[9px]
                       border
                       border-[#D9E7FC]
                       bg-[#F8FBFF]
                       px-[12px]
                       py-[12px]
-                      flex
-                      items-center
-                      gap-[10px]
                     "
                   >
                     <div
                       className="
-                        w-[38px]
-                        h-[38px]
+                        flex
+                        h-[40px]
+                        w-[40px]
+                        shrink-0
+                        items-center
+                        justify-center
                         rounded-full
                         bg-[#09379A]
                         text-white
-                        flex
-                        items-center
-                        justify-center
-                        shrink-0
                       "
                     >
                       <UserRound size={18} />
                     </div>
 
-                    <div>
+                    <div className="min-w-0">
                       <p
                         className="
                           m-0
-                          text-[9px]
+                          text-[11px]
                           font-bold
+                          leading-[20px]
                           text-[#334155]
                         "
                       >
@@ -783,9 +921,10 @@ export default function Evaluation() {
 
                       <span
                         className="
-                          block
                           mt-[2px]
-                          text-[8px]
+                          block
+                          text-[10px]
+                          leading-[18px]
                           text-[#94A3B8]
                         "
                       >
@@ -794,13 +933,15 @@ export default function Evaluation() {
                     </div>
                   </div>
 
+                  {/* NOTE */}
+
                   <div
                     className="
                       mt-[15px]
                       rounded-[9px]
-                      bg-[#F8FAFC]
                       border
                       border-[#EEF2F7]
+                      bg-[#F8FAFC]
                       px-[13px]
                       py-[13px]
                     "
@@ -819,7 +960,7 @@ export default function Evaluation() {
 
                       <strong
                         className="
-                          text-[10px]
+                          text-[11px]
                           text-[#09379A]
                         "
                       >
@@ -831,8 +972,8 @@ export default function Evaluation() {
                       className="
                         m-0
                         mt-[8px]
-                        text-[9px]
-                        leading-[18px]
+                        text-[11px]
+                        leading-[21px]
                         text-[#475569]
                       "
                     >
@@ -841,7 +982,10 @@ export default function Evaluation() {
                   </div>
                 </aside>
 
-                {/* STUDENT EVALUATION */}
+                {/* =============================================
+                    STUDENT EVALUATION
+                ============================================== */}
+
                 <section
                   dir="rtl"
                   className="
@@ -849,17 +993,26 @@ export default function Evaluation() {
                     border
                     border-[#DDE5EF]
                     bg-white
-                    px-[22px]
-                    py-[22px]
+                    px-4
+                    py-5
                     shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                    sm:px-[22px]
+                    sm:py-[22px]
                   "
                 >
+                  {/* HEADER */}
+
                   <div
                     className="
                       flex
-                      items-start
-                      justify-between
-                      gap-[15px]
+                      flex-col
+                      gap-2
+
+                      sm:flex-row
+                      sm:items-start
+                      sm:justify-between
+                      sm:gap-[15px]
                     "
                   >
                     <div
@@ -878,9 +1031,11 @@ export default function Evaluation() {
                       <h2
                         className="
                           m-0
-                          text-[18px]
+                          text-[17px]
                           font-bold
                           text-[#1E293B]
+
+                          sm:text-[18px]
                         "
                       >
                         تقييم الطالب للدورة
@@ -890,8 +1045,11 @@ export default function Evaluation() {
                     <p
                       className="
                         m-0
-                        text-[9px]
+                        text-[10px]
+                        leading-[19px]
                         text-[#94A3B8]
+
+                        sm:text-[11px]
                       "
                     >
                       {isSubmitted
@@ -901,32 +1059,36 @@ export default function Evaluation() {
                   </div>
 
                   {/* SUBMITTED STATE */}
+
                   {isSubmitted && (
                     <div
                       className="
                         mt-[18px]
+                        flex
+                        items-start
+                        gap-[10px]
                         rounded-[10px]
                         border
                         border-[#A7E6C4]
                         bg-[#F0FDF4]
-                        px-[16px]
-                        py-[14px]
-                        flex
-                        items-start
-                        gap-[10px]
+                        px-[14px]
+                        py-[13px]
+
+                        sm:px-[16px]
+                        sm:py-[14px]
                       "
                     >
                       <div
                         className="
-                          w-[32px]
+                          flex
                           h-[32px]
+                          w-[32px]
+                          shrink-0
+                          items-center
+                          justify-center
                           rounded-full
                           bg-[#16A34A]
                           text-white
-                          flex
-                          items-center
-                          justify-center
-                          shrink-0
                         "
                       >
                         <Check
@@ -951,9 +1113,11 @@ export default function Evaluation() {
                           className="
                             m-0
                             mt-[3px]
-                            text-[9px]
-                            leading-[17px]
+                            text-[10px]
+                            leading-[19px]
                             text-[#64748B]
+
+                            sm:text-[11px]
                           "
                         >
                           تم حفظ تقييمك بنجاح. بعد الاعتماد
@@ -964,6 +1128,8 @@ export default function Evaluation() {
                     </div>
                   )}
 
+                  {/* EVALUATION ITEMS */}
+
                   <div
                     className="
                       mt-[20px]
@@ -972,46 +1138,49 @@ export default function Evaluation() {
                       gap-[12px]
                     "
                   >
-                    {evaluationItems.map(
-                      (item) => (
-                        <EvaluationRow
-                          key={item.key}
-                          title={item.title}
-                          description={item.description}
-                          value={ratings[item.key]}
-                          disabled={isSubmitted}
-                          onChange={(value) =>
-                            handleRatingChange(
-                              item.key,
-                              value
-                            )
-                          }
-                        />
-                      )
-                    )}
+                    {evaluationItems.map((item) => (
+                      <EvaluationRow
+                        key={item.key}
+                        title={item.title}
+                        description={item.description}
+                        value={ratings[item.key]}
+                        disabled={isSubmitted}
+                        onChange={(value) =>
+                          handleRatingChange(
+                            item.key,
+                            value
+                          )
+                        }
+                      />
+                    ))}
                   </div>
 
                   {/* AVERAGE */}
+
                   <div
                     className="
                       mt-[16px]
+                      flex
+                      flex-col
+                      gap-3
                       rounded-[9px]
                       border
                       border-[#E7ECF2]
                       bg-[#F8FAFC]
                       px-[16px]
                       py-[13px]
-                      flex
-                      items-center
-                      justify-between
-                      gap-[15px]
+
+                      sm:flex-row
+                      sm:items-center
+                      sm:justify-between
+                      sm:gap-[15px]
                     "
                   >
                     <div>
                       <p
                         className="
                           m-0
-                          text-[9px]
+                          text-[11px]
                           text-[#64748B]
                         "
                       >
@@ -1020,9 +1189,9 @@ export default function Evaluation() {
 
                       <strong
                         className="
-                          block
                           mt-[3px]
-                          text-[18px]
+                          block
+                          text-[20px]
                           text-[#1E293B]
                         "
                       >
@@ -1031,7 +1200,8 @@ export default function Evaluation() {
                         <span
                           className="
                             mr-[4px]
-                            text-[9px]
+                            text-[11px]
+                            font-medium
                             text-[#94A3B8]
                           "
                         >
@@ -1042,12 +1212,13 @@ export default function Evaluation() {
 
                     <ReadOnlyStars
                       value={Number(studentAverage)}
-                      size={18}
+                      size={19}
                       color="#FBBF24"
                     />
                   </div>
 
                   {/* NOTES */}
+
                   <div className="mt-[18px]">
                     <div
                       className="
@@ -1055,11 +1226,12 @@ export default function Evaluation() {
                         flex
                         items-center
                         justify-between
+                        gap-3
                       "
                     >
                       <label
                         className="
-                          text-[10px]
+                          text-[11px]
                           font-bold
                           text-[#334155]
                         "
@@ -1069,7 +1241,7 @@ export default function Evaluation() {
 
                       <span
                         className="
-                          text-[8px]
+                          text-[10px]
                           text-[#94A3B8]
                         "
                       >
@@ -1090,31 +1262,34 @@ export default function Evaluation() {
                       }}
                       placeholder="اكتب ملاحظاتك أو مقترحاتك حول بيئة ومحتوى التدريب..."
                       className={`
+                        min-h-[115px]
                         w-full
-                        min-h-[105px]
                         resize-none
                         rounded-[8px]
                         border
                         px-[13px]
                         py-[11px]
-                        outline-none
                         font-['Cairo']
-                        text-[10px]
-                        leading-[19px]
+                        text-[11px]
+                        leading-[21px]
+                        outline-none
                         transition
+
+                        sm:text-[12px]
 
                         ${
                           isSubmitted
                             ? `
+                              cursor-not-allowed
                               border-[#E2E8F0]
                               bg-[#F8FAFC]
                               text-[#64748B]
-                              cursor-not-allowed
                             `
                             : `
                               border-[#D9E2EC]
                               bg-white
                               text-[#334155]
+
                               focus:border-[#09379A]
                               focus:ring-2
                               focus:ring-[#09379A]/10
@@ -1125,22 +1300,26 @@ export default function Evaluation() {
                   </div>
 
                   {/* ACTIONS */}
+
                   <div
                     className="
                       mt-[22px]
-                      pt-[17px]
                       border-t
                       border-[#EEF2F7]
+                      pt-[17px]
                     "
                   >
                     {!isSubmitted ? (
                       <div
                         className="
                           flex
-                          flex-wrap
-                          items-center
-                          justify-between
-                          gap-[15px]
+                          flex-col
+                          gap-4
+
+                          sm:flex-row
+                          sm:flex-wrap
+                          sm:items-center
+                          sm:justify-between
                         "
                       >
                         <div
@@ -1148,14 +1327,14 @@ export default function Evaluation() {
                             flex
                             items-center
                             gap-[8px]
-                            text-[8px]
+                            text-[10px]
                             text-[#64748B]
                           "
                         >
                           <span
                             className="
-                              w-[7px]
                               h-[7px]
+                              w-[7px]
                               rounded-full
                               bg-[#10B981]
                             "
@@ -1167,32 +1346,31 @@ export default function Evaluation() {
                         <div
                           className="
                             flex
-                            items-center
-                            gap-[10px]
+                            w-full
+                            flex-col-reverse
+                            gap-[9px]
+
+                            sm:w-auto
+                            sm:flex-row
+                            sm:items-center
                           "
                         >
                           <button
                             type="button"
-                            onClick={() => {
-                              setRatings({
-                                content: 0,
-                                trainer: 0,
-                                practical: 0,
-                                attendance: 0,
-                              });
-
-                              setNotes("");
-                            }}
+                            onClick={handleReset}
                             className="
-                              h-[40px]
+                              min-h-[42px]
+                              rounded-[8px]
+                              border
+                              border-[#D9E2EC]
+                              bg-white
                               px-[14px]
-                              border-0
-                              bg-transparent
-                              text-[#64748B]
-                              text-[10px]
+                              text-[11px]
                               font-medium
-                              cursor-pointer
+                              text-[#64748B]
                               transition
+
+                              hover:bg-[#F8FAFC]
                               hover:text-[#09379A]
                             "
                           >
@@ -1205,21 +1383,21 @@ export default function Evaluation() {
                               setShowConfirmModal(true)
                             }
                             className="
-                              h-[42px]
-                              px-[18px]
-                              rounded-[8px]
-                              border-0
-                              bg-[#09379A]
-                              text-white
                               flex
+                              min-h-[42px]
                               items-center
                               justify-center
                               gap-[8px]
-                              text-[10px]
+                              rounded-[8px]
+                              border-0
+                              bg-[#09379A]
+                              px-[18px]
+                              text-[11px]
                               font-bold
-                              cursor-pointer
+                              text-white
                               shadow-[0_3px_7px_rgba(9,55,154,0.15)]
                               transition
+
                               hover:bg-[#072E81]
                             "
                           >
@@ -1236,9 +1414,12 @@ export default function Evaluation() {
                       <div
                         className="
                           flex
-                          items-center
-                          justify-between
-                          gap-[15px]
+                          flex-col
+                          gap-2
+
+                          sm:flex-row
+                          sm:items-center
+                          sm:justify-between
                         "
                       >
                         <div
@@ -1246,21 +1427,19 @@ export default function Evaluation() {
                             flex
                             items-center
                             gap-[8px]
-                            text-[9px]
+                            text-[11px]
                             font-medium
                             text-[#15803D]
                           "
                         >
-                          <CheckCircle2
-                            size={15}
-                          />
+                          <CheckCircle2 size={15} />
 
                           تم اعتماد تقييمك النهائي بنجاح
                         </div>
 
                         <span
                           className="
-                            text-[8px]
+                            text-[10px]
                             text-[#94A3B8]
                           "
                         >
@@ -1272,9 +1451,10 @@ export default function Evaluation() {
                 </section>
               </section>
             ) : (
-              /* =========================
+              /* =================================================
                   TRAINER TAB
-              ========================== */
+              ================================================== */
+
               <section
                 className="
                   mt-[22px]
@@ -1282,8 +1462,12 @@ export default function Evaluation() {
                   border
                   border-[#DDE5EF]
                   bg-white
-                  px-[24px]
-                  py-[24px]
+                  px-4
+                  py-5
+                  shadow-[0_1px_2px_rgba(15,23,42,0.03)]
+
+                  sm:px-[24px]
+                  sm:py-[24px]
                 "
               >
                 <div
@@ -1314,8 +1498,11 @@ export default function Evaluation() {
                   className="
                     m-0
                     mt-[8px]
-                    text-[10px]
+                    text-[11px]
+                    leading-[21px]
                     text-[#64748B]
+
+                    sm:text-[12px]
                   "
                 >
                   تم اعتماد تقييم المدرب الميداني وإرساله
@@ -1325,7 +1512,7 @@ export default function Evaluation() {
                 <div
                   className="
                     mt-[20px]
-                    max-w-[420px]
+                    max-w-[460px]
                     rounded-[10px]
                     border
                     border-[#EEF2F7]
@@ -1337,7 +1524,7 @@ export default function Evaluation() {
                   <p
                     className="
                       m-0
-                      text-[9px]
+                      text-[11px]
                       text-[#64748B]
                     "
                   >
@@ -1346,9 +1533,9 @@ export default function Evaluation() {
 
                   <strong
                     className="
-                      block
                       mt-[7px]
-                      text-[28px]
+                      block
+                      text-[30px]
                       text-[#14213D]
                     "
                   >
@@ -1357,7 +1544,8 @@ export default function Evaluation() {
                     <span
                       className="
                         mr-[4px]
-                        text-[11px]
+                        text-[12px]
+                        font-medium
                         text-[#94A3B8]
                       "
                     >
@@ -1368,7 +1556,7 @@ export default function Evaluation() {
                   <div className="mt-[10px]">
                     <ReadOnlyStars
                       value={trainerEvaluation.score}
-                      size={18}
+                      size={19}
                       color="#09379A"
                     />
                   </div>
@@ -1376,9 +1564,9 @@ export default function Evaluation() {
                   <p
                     className="
                       m-0
-                      mt-[12px]
-                      text-[9px]
-                      leading-[18px]
+                      mt-[14px]
+                      text-[11px]
+                      leading-[21px]
                       text-[#475569]
                     "
                   >
@@ -1391,21 +1579,23 @@ export default function Evaluation() {
         </main>
       </div>
 
-      {/* =========================
+      {/* =====================================================
           CONFIRMATION MODAL
-      ========================== */}
+      ====================================================== */}
+
       {showConfirmModal && (
         <div
           className="
             fixed
             inset-0
             z-[100]
-            bg-[#0F172A]/40
-            backdrop-blur-[2px]
             flex
             items-center
             justify-center
-            px-[20px]
+            bg-[#0F172A]/40
+            px-4
+            py-6
+            backdrop-blur-[2px]
           "
           onClick={() =>
             setShowConfirmModal(false)
@@ -1413,18 +1603,25 @@ export default function Evaluation() {
         >
           <div
             dir="rtl"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="evaluation-confirm-title"
             onClick={(event) =>
               event.stopPropagation()
             }
             className="
+              max-h-[90dvh]
               w-full
               max-w-[430px]
+              overflow-y-auto
               rounded-[16px]
-              bg-white
               border
               border-[#E2E8F0]
+              bg-white
+              p-5
               shadow-[0_20px_60px_rgba(15,23,42,0.18)]
-              p-[22px]
+
+              sm:p-[22px]
             "
           >
             <div
@@ -1444,24 +1641,23 @@ export default function Evaluation() {
               >
                 <div
                   className="
-                    w-[38px]
-                    h-[38px]
+                    flex
+                    h-[40px]
+                    w-[40px]
+                    shrink-0
+                    items-center
+                    justify-center
                     rounded-[10px]
                     bg-[#EEF4FF]
                     text-[#09379A]
-                    flex
-                    items-center
-                    justify-center
-                    shrink-0
                   "
                 >
-                  <CheckCircle2
-                    size={19}
-                  />
+                  <CheckCircle2 size={19} />
                 </div>
 
                 <div>
                   <h3
+                    id="evaluation-confirm-title"
                     className="
                       m-0
                       text-[16px]
@@ -1476,8 +1672,8 @@ export default function Evaluation() {
                     className="
                       m-0
                       mt-[4px]
-                      text-[10px]
-                      leading-[18px]
+                      text-[11px]
+                      leading-[20px]
                       text-[#64748B]
                     "
                   >
@@ -1489,20 +1685,23 @@ export default function Evaluation() {
 
               <button
                 type="button"
+                aria-label="إغلاق"
                 onClick={() =>
                   setShowConfirmModal(false)
                 }
                 className="
-                  w-[30px]
-                  h-[30px]
+                  flex
+                  h-[32px]
+                  w-[32px]
+                  shrink-0
+                  items-center
+                  justify-center
                   rounded-[7px]
                   border-0
                   bg-[#F8FAFC]
                   text-[#64748B]
-                  flex
-                  items-center
-                  justify-center
-                  cursor-pointer
+                  transition
+
                   hover:bg-[#EEF2F7]
                 "
               >
@@ -1524,8 +1723,8 @@ export default function Evaluation() {
               <p
                 className="
                   m-0
-                  text-[9px]
-                  leading-[17px]
+                  text-[11px]
+                  leading-[20px]
                   text-[#92400E]
                 "
               >
@@ -1538,9 +1737,12 @@ export default function Evaluation() {
               className="
                 mt-[20px]
                 flex
-                items-center
-                justify-end
+                flex-col-reverse
                 gap-[9px]
+
+                sm:flex-row
+                sm:items-center
+                sm:justify-end
               "
             >
               <button
@@ -1549,16 +1751,17 @@ export default function Evaluation() {
                   setShowConfirmModal(false)
                 }
                 className="
-                  h-[40px]
-                  px-[16px]
+                  min-h-[40px]
                   rounded-[8px]
                   border
                   border-[#D9E2EC]
                   bg-white
-                  text-[#475569]
-                  text-[10px]
+                  px-[16px]
+                  text-[11px]
                   font-bold
-                  cursor-pointer
+                  text-[#475569]
+                  transition
+
                   hover:bg-[#F8FAFC]
                 "
               >
@@ -1569,19 +1772,20 @@ export default function Evaluation() {
                 type="button"
                 onClick={handleConfirmSubmit}
                 className="
-                  h-[40px]
-                  px-[17px]
+                  flex
+                  min-h-[40px]
+                  items-center
+                  justify-center
+                  gap-[7px]
                   rounded-[8px]
                   border-0
                   bg-[#09379A]
-                  text-white
-                  flex
-                  items-center
-                  gap-[7px]
-                  text-[10px]
+                  px-[17px]
+                  text-[11px]
                   font-bold
-                  cursor-pointer
+                  text-white
                   transition
+
                   hover:bg-[#072E81]
                 "
               >
@@ -1612,22 +1816,24 @@ function SummaryBlock({
   return (
     <div
       className={`
-        min-w-[140px]
+        flex
+        min-h-[68px]
+        flex-col
+        justify-center
         rounded-[9px]
-        px-[14px]
-        py-[12px]
+        border
+        px-[13px]
+        py-[10px]
 
         ${
           highlighted
             ? `
-              border
               border-[#D7E5FF]
               bg-[#F6F9FF]
             `
             : `
-              bg-[#F8FAFC]
-              border
               border-[#EEF2F7]
+              bg-[#F8FAFC]
             `
         }
       `}
@@ -1635,7 +1841,8 @@ function SummaryBlock({
       <p
         className="
           m-0
-          text-[8px]
+          text-[10px]
+          leading-[18px]
           text-[#94A3B8]
         "
       >
@@ -1644,9 +1851,11 @@ function SummaryBlock({
 
       <strong
         className={`
-          block
           mt-[5px]
-          text-[10px]
+          block
+          text-[11px]
+          font-bold
+          leading-[19px]
 
           ${
             highlighted
@@ -1672,8 +1881,7 @@ function EvaluationRow({
   onChange,
   disabled = false,
 }) {
-  const [hoverValue, setHoverValue] =
-    useState(null);
+  const [hoverValue, setHoverValue] = useState(null);
 
   const visibleValue =
     !disabled && hoverValue !== null
@@ -1683,16 +1891,21 @@ function EvaluationRow({
   return (
     <div
       className={`
-        min-h-[70px]
+        flex
+        min-h-[76px]
+        flex-col
+        gap-4
         rounded-[9px]
         border
         border-[#E7ECF2]
-        px-[16px]
+        px-[14px]
         py-[13px]
-        flex
-        items-center
-        justify-between
-        gap-[20px]
+
+        sm:flex-row
+        sm:items-center
+        sm:justify-between
+        sm:gap-[20px]
+        sm:px-[16px]
 
         ${
           disabled
@@ -1701,13 +1914,16 @@ function EvaluationRow({
         }
       `}
     >
-      <div>
+      <div className="min-w-0">
         <h3
           className="
             m-0
             text-[12px]
             font-bold
+            leading-[20px]
             text-[#334155]
+
+            sm:text-[13px]
           "
         >
           {title}
@@ -1716,9 +1932,12 @@ function EvaluationRow({
         <p
           className="
             m-0
-            mt-[3px]
-            text-[8px]
+            mt-[4px]
+            text-[10px]
+            leading-[19px]
             text-[#94A3B8]
+
+            sm:text-[11px]
           "
         >
           {description}
@@ -1729,9 +1948,12 @@ function EvaluationRow({
         dir="ltr"
         className="
           flex
-          items-center
-          gap-[10px]
           shrink-0
+          items-center
+          justify-between
+          gap-[10px]
+
+          sm:justify-end
         "
       >
         <div
@@ -1762,21 +1984,14 @@ function EvaluationRow({
 
         <span
           className="
-            min-w-[40px]
-            h-[28px]
-            rounded-[5px]
-            border
-            border-[#DDE5EF]
-            bg-white
-            flex
-            items-center
-            justify-center
-            text-[9px]
+            min-w-[36px]
+            text-center
+            text-[11px]
             font-bold
-            text-[#475569]
+            text-[#334155]
           "
         >
-          {Number(visibleValue).toFixed(1)}
+          {Number(value).toFixed(1)}
         </span>
       </div>
     </div>
@@ -1797,71 +2012,62 @@ function HalfStarInput({
   const fullValue = starNumber;
   const halfValue = starNumber - 0.5;
 
-  const isFull =
-    value >= fullValue;
+  const fillPercentage =
+    value >= fullValue
+      ? 100
+      : value >= halfValue
+        ? 50
+        : 0;
 
-  const isHalf =
-    value >= halfValue &&
-    value < fullValue;
+  const uniqueId = `star-${starNumber}-${String(value).replace(
+    ".",
+    "-"
+  )}`;
 
   return (
     <div
-      className="
+      className={`
         relative
-        w-[22px]
-        h-[22px]
-      "
+        h-[24px]
+        w-[24px]
+
+        ${
+          disabled
+            ? "cursor-default"
+            : "cursor-pointer"
+        }
+      `}
     >
       <Star
-        size={22}
-        strokeWidth={1.5}
-        fill="#CBD5E1"
-        className="
-          absolute
-          inset-0
-          text-[#CBD5E1]
-        "
+        size={24}
+        strokeWidth={1.6}
+        className="absolute inset-0 text-[#CBD5E1]"
       />
 
-      {isFull && (
+      <div
+        className="
+          pointer-events-none
+          absolute
+          inset-0
+          overflow-hidden
+        "
+        style={{
+          width: `${fillPercentage}%`,
+        }}
+      >
         <Star
-          size={22}
-          strokeWidth={1.5}
+          size={24}
+          strokeWidth={1.6}
           fill="#FBBF24"
-          className="
-            absolute
-            inset-0
-            text-[#FBBF24]
-          "
+          className="text-[#FBBF24]"
         />
-      )}
-
-      {isHalf && (
-        <div
-          className="
-            absolute
-            inset-0
-            overflow-hidden
-            w-1/2
-          "
-        >
-          <Star
-            size={22}
-            strokeWidth={1.5}
-            fill="#FBBF24"
-            className="
-              text-[#FBBF24]
-              max-w-none
-            "
-          />
-        </div>
-      )}
+      </div>
 
       {!disabled && (
         <>
           <button
             type="button"
-            aria-label={`${halfValue} نجمة`}
+            aria-label={`${halfValue} من 5`}
             onMouseEnter={() =>
               onHover(halfValue)
             }
@@ -1873,21 +2079,19 @@ function HalfStarInput({
             }
             className="
               absolute
+              inset-y-0
               left-0
-              top-0
               z-10
               w-1/2
-              h-full
               border-0
               bg-transparent
               p-0
-              cursor-pointer
             "
           />
 
           <button
             type="button"
-            aria-label={`${fullValue} نجوم`}
+            aria-label={`${fullValue} من 5`}
             onMouseEnter={() =>
               onHover(fullValue)
             }
@@ -1899,19 +2103,21 @@ function HalfStarInput({
             }
             className="
               absolute
+              inset-y-0
               right-0
-              top-0
               z-10
               w-1/2
-              h-full
               border-0
               bg-transparent
               p-0
-              cursor-pointer
             "
           />
         </>
       )}
+
+      <span className="sr-only" id={uniqueId}>
+        {value}
+      </span>
     </div>
   );
 }
@@ -1923,7 +2129,7 @@ function HalfStarInput({
 function ReadOnlyStars({
   value,
   size = 16,
-  color = "#09379A",
+  color = "#FBBF24",
 }) {
   return (
     <div
@@ -1932,21 +2138,21 @@ function ReadOnlyStars({
         flex
         items-center
         justify-center
-        gap-[2px]
+        gap-[3px]
       "
+      aria-label={`التقييم ${value} من 5`}
     >
       {[1, 2, 3, 4, 5].map(
         (starNumber) => {
           const fullValue = starNumber;
-          const halfValue =
-            starNumber - 0.5;
+          const halfValue = starNumber - 0.5;
 
-          const isFull =
-            value >= fullValue;
-
-          const isHalf =
-            value >= halfValue &&
-            value < fullValue;
+          const fillPercentage =
+            value >= fullValue
+              ? 100
+              : value >= halfValue
+                ? 50
+                : 0;
 
           return (
             <div
@@ -1959,50 +2165,33 @@ function ReadOnlyStars({
             >
               <Star
                 size={size}
-                strokeWidth={1.5}
-                fill="#E2E8F0"
+                strokeWidth={1.6}
                 className="
                   absolute
                   inset-0
-                  text-[#E2E8F0]
+                  text-[#CBD5E1]
                 "
               />
 
-              {isFull && (
+              <div
+                className="
+                  absolute
+                  inset-0
+                  overflow-hidden
+                "
+                style={{
+                  width: `${fillPercentage}%`,
+                }}
+              >
                 <Star
                   size={size}
-                  strokeWidth={1.5}
+                  strokeWidth={1.6}
                   fill={color}
-                  className="
-                    absolute
-                    inset-0
-                  "
                   style={{
                     color,
                   }}
                 />
-              )}
-
-              {isHalf && (
-                <div
-                  className="
-                    absolute
-                    inset-0
-                    overflow-hidden
-                    w-1/2
-                  "
-                >
-                  <Star
-                    size={size}
-                    strokeWidth={1.5}
-                    fill={color}
-                    className="max-w-none"
-                    style={{
-                      color,
-                    }}
-                  />
-                </div>
-              )}
+              </div>
             </div>
           );
         }
