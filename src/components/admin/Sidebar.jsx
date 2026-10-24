@@ -9,12 +9,9 @@ import {
 
 import {
   LayoutDashboard,
-  ClipboardCheck,
   Megaphone,
   BookOpen,
   ClipboardList,
-  Users,
-  CalendarDays,
   UserRoundCog,
   GraduationCap,
   Award,
@@ -69,18 +66,6 @@ export default function Sidebar() {
         },
 
         {
-          name: "المهام التي تحتاج إجراء",
-
-          icon: ClipboardCheck,
-
-          path: "/admin/dashboard#tasks",
-
-          activePath: "/admin/dashboard",
-
-          exactHash: "#tasks",
-        },
-
-        {
           name: "الإعلانات والإشعارات",
 
           icon: Megaphone,
@@ -89,52 +74,6 @@ export default function Sidebar() {
 
           activePatterns: [
             "/admin/announcements",
-          ],
-        },
-      ],
-    },
-
-    /* =====================================================
-       ACADEMIC SETUP
-    ===================================================== */
-
-    {
-      title: "الإعداد الأكاديمي",
-
-      items: [
-        {
-          name: "الكليات والتخصصات",
-
-          icon: Building2,
-
-          path: "/admin/academic-structure",
-
-          activePatterns: [
-            "/admin/academic-structure",
-          ],
-        },
-
-        {
-          name: "الفصول والفترات التدريبية",
-
-          icon: CalendarDays,
-
-          path: "/admin/training-periods",
-
-          activePatterns: [
-            "/admin/training-periods",
-          ],
-        },
-
-        {
-          name: "متطلبات التدريب",
-
-          icon: BookOpenCheck,
-
-          path: "/admin/training-requirements",
-
-          activePatterns: [
-            "/admin/training-requirements",
           ],
         },
       ],
@@ -161,30 +100,6 @@ export default function Sidebar() {
         },
 
         {
-          name: "طلبات التسجيل",
-
-          icon: ClipboardList,
-
-          path: "/admin/courses/1/registration-requests",
-
-          activePatterns: [
-            "/admin/courses/:id/registration-requests",
-          ],
-        },
-
-        {
-          name: "المتدربون والحضور",
-
-          icon: Users,
-
-          path: "/admin/courses/1/trainees",
-
-          activePatterns: [
-            "/admin/courses/:id/trainees",
-          ],
-        },
-
-        {
           name: "مدربو الدورات",
 
           icon: UserRoundCog,
@@ -197,18 +112,6 @@ export default function Sidebar() {
         },
 
         {
-          name: "التقييم والنتائج",
-
-          icon: Star,
-
-          path: "/admin/courses/1/evaluations",
-
-          activePatterns: [
-            "/admin/courses/:id/evaluations",
-          ],
-        },
-
-        {
           name: "شهادات الدورات",
 
           icon: Award,
@@ -217,17 +120,6 @@ export default function Sidebar() {
 
           activePatterns: [
             "/admin/course-certificates",
-          ],
-        },
-
-        {
-          name: "التحقق من الشهادة",
-
-          icon: ShieldCheck,
-
-          path: "/admin/course-certificates/verify",
-
-          activePatterns: [
             "/admin/course-certificates/verify",
           ],
         },
@@ -417,6 +309,7 @@ export default function Sidebar() {
 
           activePatterns: [
             "/admin/reports",
+            "/admin/reports/custom",
           ],
         },
       ],
@@ -580,9 +473,17 @@ export default function Sidebar() {
     return false;
   };
 
+  /* =========================================================
+     CLOSE MOBILE
+  ========================================================= */
+
   const closeMobileSidebar = () => {
     setIsMobileOpen(false);
   };
+
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
 
   const handleLogout = () => {
     setIsMobileOpen(false);
