@@ -1,613 +1,3096 @@
-import { useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+
+import {
+  AlertTriangle,
+  Building2,
+  CalendarDays,
+  CheckCircle2,
+  Eye,
+  GraduationCap,
+  Route,
+  Save,
+  Search,
+  UserRoundCheck,
+  Users,
+  X,
+} from "lucide-react";
 
 import Header from "../../components/admin/Header";
 import Sidebar from "../../components/admin/Sidebar";
 
+/* =========================================================
+   TRAINING PERIODS
+========================================================= */
+
+const trainingPeriods = [
+  {
+    id: 1,
+    name: "فترة التدريب الميداني - الفصل الأول",
+    code: "TP-2026-01",
+    semester: "الفصل الأول",
+    academicYear: "2026/2027",
+    status: "مفتوحة",
+  },
+
+  {
+    id: 2,
+    name: "فترة التدريب السريري - الفصل الأول",
+    code: "TP-2026-02",
+    semester: "الفصل الأول",
+    academicYear: "2026/2027",
+    status: "جارية",
+  },
+
+  {
+    id: 3,
+    name: "فترة التدريب الصيفي",
+    code: "TP-2026-03",
+    semester: "الفصل الصيفي",
+    academicYear: "2025/2026",
+    status: "مغلقة",
+  },
+];
+
+/* =========================================================
+   ORGANIZATIONS
+========================================================= */
+
+const organizations = [
+  {
+    id: 1,
+    name: "شركة التقنية المتقدمة",
+    specialization: "هندسة البرمجيات",
+    capacity: 10,
+    assigned: 6,
+
+    opportunities: [
+      "مطور برمجيات متدرب",
+      "تطوير تطبيقات الويب",
+    ],
+
+    fieldSupervisor: "م. محمد حمدي",
+  },
+
+  {
+    id: 2,
+    name: "شركة الاتصالات الفلسطينية",
+    specialization: "نظم المعلومات",
+    capacity: 8,
+    assigned: 5,
+
+    opportunities: [
+      "دعم الأنظمة والشبكات",
+      "تحليل نظم",
+    ],
+
+    fieldSupervisor: "م. خالد يوسف",
+  },
+
+  {
+    id: 3,
+    name: "بنك فلسطين",
+    specialization: "إدارة الأعمال",
+    capacity: 12,
+    assigned: 8,
+
+    opportunities: [
+      "تدريب إداري ومالي",
+      "خدمة العملاء",
+    ],
+
+    fieldSupervisor: "أ. رامي حسن",
+  },
+
+  {
+    id: 4,
+    name: "مدرسة الأزهر النموذجية",
+    specialization: "تعليم أساسي",
+    capacity: 15,
+    assigned: 10,
+
+    opportunities: [
+      "التربية العملية",
+    ],
+
+    fieldSupervisor: "أ. خالد النجار",
+  },
+
+  {
+    id: 5,
+    name: "مستشفى الشفاء",
+    specialization: "التمريض",
+    capacity: 20,
+    assigned: 14,
+
+    opportunities: [
+      "التدريب السريري",
+    ],
+
+    fieldSupervisor: "أ. محمود حسن",
+  },
+
+  {
+    id: 6,
+    name: "مركز المختبرات الطبية",
+    specialization: "المختبرات الطبية",
+    capacity: 12,
+    assigned: 7,
+
+    opportunities: [
+      "التدريب السريري في المختبرات",
+    ],
+
+    fieldSupervisor: "أ. خالد إبراهيم",
+  },
+
+  {
+    id: 7,
+    name: "مؤسسة الإبداع الرقمي",
+    specialization: "الإعلام",
+    capacity: 8,
+    assigned: 4,
+
+    opportunities: [
+      "إنتاج المحتوى الرقمي",
+      "الإعلام الرقمي",
+    ],
+
+    fieldSupervisor: "م. سارة محمود",
+  },
+];
+
+/* =========================================================
+   ACADEMIC SUPERVISORS
+========================================================= */
+
+const academicSupervisors = [
+  {
+    id: 1,
+    name: "د. سامر يوسف",
+    specialization: "هندسة البرمجيات",
+  },
+
+  {
+    id: 2,
+    name: "د. أحمد نصار",
+    specialization: "نظم المعلومات",
+  },
+
+  {
+    id: 3,
+    name: "د. ليلى أحمد",
+    specialization: "إدارة الأعمال",
+  },
+
+  {
+    id: 4,
+    name: "د. منى عبد الرحمن",
+    specialization: "تعليم أساسي",
+  },
+
+  {
+    id: 5,
+    name: "د. سارة خليل",
+    specialization: "التمريض",
+  },
+
+  {
+    id: 6,
+    name: "د. خالد يوسف",
+    specialization: "المختبرات الطبية",
+  },
+
+  {
+    id: 7,
+    name: "د. خالد حسن",
+    specialization: "الإعلام",
+  },
+];
+
+/* =========================================================
+   STUDENTS
+========================================================= */
+
+const initialStudents = [
+  {
+    id: 1,
+    studentId: "20231045",
+    name: "أحمد خالد محمد",
+
+    college: "كلية الهندسة وتكنولوجيا المعلومات",
+    major: "هندسة البرمجيات",
+
+    eligibility: "مؤهل",
+
+    requiredHours: 120,
+
+    status: "موزع",
+
+    trainingPeriodId: 1,
+
+    organizationId: 1,
+    organization: "شركة التقنية المتقدمة",
+
+    opportunity: "مطور برمجيات متدرب",
+
+    academicSupervisor:
+      "د. سامر يوسف",
+
+    fieldSupervisor:
+      "م. محمد حمدي",
+  },
+
+  {
+    id: 2,
+    studentId: "20230876",
+    name: "سارة محمود علي",
+
+    college: "كلية الاقتصاد والعلوم الإدارية",
+    major: "إدارة الأعمال",
+
+    eligibility: "مؤهل",
+
+    requiredHours: 120,
+
+    status: "بانتظار التوزيع",
+
+    trainingPeriodId: 1,
+
+    organizationId: null,
+    organization: "—",
+
+    opportunity: "—",
+
+    academicSupervisor:
+      "د. ليلى أحمد",
+
+    fieldSupervisor: "—",
+  },
+
+  {
+    id: 3,
+    studentId: "20231234",
+    name: "محمد سامي حسن",
+
+    college: "كلية الهندسة وتكنولوجيا المعلومات",
+    major: "نظم المعلومات",
+
+    eligibility: "مؤهل",
+
+    requiredHours: 120,
+
+    status: "موزع",
+
+    trainingPeriodId: 1,
+
+    organizationId: 2,
+    organization:
+      "شركة الاتصالات الفلسطينية",
+
+    opportunity:
+      "دعم الأنظمة والشبكات",
+
+    academicSupervisor:
+      "د. أحمد نصار",
+
+    fieldSupervisor:
+      "م. خالد يوسف",
+  },
+
+  {
+    id: 4,
+    studentId: "20230987",
+    name: "ريم أحمد يوسف",
+
+    college: "كلية التربية",
+    major: "تعليم أساسي",
+
+    eligibility: "غير مؤهل",
+
+    requiredHours: 150,
+
+    status: "غير قابل للتوزيع",
+
+    trainingPeriodId: 1,
+
+    organizationId: null,
+    organization: "—",
+
+    opportunity: "—",
+
+    academicSupervisor:
+      "د. منى عبد الرحمن",
+
+    fieldSupervisor: "—",
+  },
+
+  {
+    id: 5,
+    studentId: "20230765",
+    name: "مريم أحمد علي",
+
+    college: "كلية العلوم الطبية التطبيقية",
+    major: "التمريض",
+
+    eligibility: "مكتمل التدريب",
+
+    requiredHours: 160,
+
+    status: "مكتمل",
+
+    trainingPeriodId: 2,
+
+    organizationId: 5,
+    organization: "مستشفى الشفاء",
+
+    opportunity:
+      "التدريب السريري",
+
+    academicSupervisor:
+      "د. سارة خليل",
+
+    fieldSupervisor:
+      "أ. محمود حسن",
+  },
+
+  {
+    id: 6,
+    studentId: "20231356",
+    name: "لينا محمود حسن",
+
+    college: "كلية العلوم الطبية التطبيقية",
+    major: "المختبرات الطبية",
+
+    eligibility: "يحتاج مراجعة",
+
+    requiredHours: 140,
+
+    status: "غير قابل للتوزيع",
+
+    trainingPeriodId: 2,
+
+    organizationId: null,
+    organization: "—",
+
+    opportunity: "—",
+
+    academicSupervisor:
+      "د. خالد يوسف",
+
+    fieldSupervisor: "—",
+  },
+
+  {
+    id: 7,
+    studentId: "20231587",
+    name: "عمر يوسف سليمان",
+
+    college: "كلية الآداب والعلوم الإنسانية",
+    major: "الإعلام",
+
+    eligibility: "غير مؤهل",
+
+    requiredHours: 100,
+
+    status: "غير قابل للتوزيع",
+
+    trainingPeriodId: 1,
+
+    organizationId: null,
+    organization: "—",
+
+    opportunity: "—",
+
+    academicSupervisor:
+      "د. خالد حسن",
+
+    fieldSupervisor: "—",
+  },
+];
+
+/* =========================================================
+   PAGE
+========================================================= */
+
 export default function StudentDistribution() {
-  const navigate = useNavigate();
+  const [students, setStudents] =
+    useState(initialStudents);
 
-  const stats = [
-    { title: "جهات التدريب", value: "6", icon: "▦" },
-    { title: "الفرص المتاحة", value: "12", icon: "▣" },
-    { title: "الطلبة المتبقين", value: "38", icon: "♙" },
-    { title: "الطلبة الموزعين", value: "142", icon: "♟" },
-  ];
+  const [searchTerm, setSearchTerm] =
+    useState("");
 
-  const students = [
-    {
-      id: 1,
-      name: "أحمد خالد",
-      studentId: "20231045",
-      specialization: "هندسة البرمجيات",
-      opportunity: "مطور برمجيات متدرب",
-      organization: "شركة التقنية",
-      status: "تم التوزيع",
-      date: "2025/04/20",
-    },
-    {
-      id: 2,
-      name: "سارة علي",
-      studentId: "20230876",
-      specialization: "إدارة الأعمال",
-      opportunity: "مساعد إداري",
-      organization: "مؤسسة الإبداع",
-      status: "تم التوزيع",
-      date: "2025/04/18",
-    },
-    {
-      id: 3,
-      name: "محمد علي",
-      studentId: "20231234",
-      specialization: "هندسة الشبكات",
-      opportunity: "مهندس شبكات",
-      organization: "شركة الحلول",
-      status: "قيد التوزيع",
-      date: "-",
-    },
-    {
-      id: 4,
-      name: "ليلى حسن",
-      studentId: "20230987",
-      specialization: "التصميم الجرافيكي",
-      opportunity: "مصمم جرافيك",
-      organization: "مؤسسة الإبداع",
-      status: "قيد التوزيع",
-      date: "-",
-    },
-    {
-      id: 5,
-      name: "عمر يوسف",
-      studentId: "20231109",
-      specialization: "إدارة الموارد",
-      opportunity: "مساعد موارد بشرية",
-      organization: "شركة المستقبل",
-      status: "لم يتم التوزيع",
-      date: "-",
-    },
-  ];
+  const [collegeFilter, setCollegeFilter] =
+    useState("الكل");
 
-  const getStatusStyle = (status) => {
-    if (status === "تم التوزيع") {
-      return "bg-[#dff1e6] text-[#236a45]";
+  const [majorFilter, setMajorFilter] =
+    useState("الكل");
+
+  const [statusFilter, setStatusFilter] =
+    useState("الكل");
+
+  const [periodFilter, setPeriodFilter] =
+    useState("الكل");
+
+  const [
+    selectedStudent,
+    setSelectedStudent,
+  ] = useState(null);
+
+  const [showDetails, setShowDetails] =
+    useState(false);
+
+  const [
+    showDistributionModal,
+    setShowDistributionModal,
+  ] = useState(false);
+
+  const [
+    selectedPeriodId,
+    setSelectedPeriodId,
+  ] = useState("");
+
+  const [
+    selectedOrganizationId,
+    setSelectedOrganizationId,
+  ] = useState("");
+
+  const [
+    selectedOpportunity,
+    setSelectedOpportunity,
+  ] = useState("");
+
+  const [
+    selectedAcademicSupervisor,
+    setSelectedAcademicSupervisor,
+  ] = useState("");
+
+  /* =========================================================
+     OPTIONS
+  ========================================================= */
+
+  const colleges = useMemo(
+    () => [
+      ...new Set(
+        students.map(
+          (student) => student.college
+        )
+      ),
+    ],
+    [students]
+  );
+
+  const majors = useMemo(
+    () => [
+      ...new Set(
+        students.map(
+          (student) => student.major
+        )
+      ),
+    ],
+    [students]
+  );
+
+  /* =========================================================
+     STATS
+  ========================================================= */
+
+  const statistics = useMemo(() => {
+    const total =
+      students.length;
+
+    const waiting =
+      students.filter(
+        (student) =>
+          student.status ===
+          "بانتظار التوزيع"
+      ).length;
+
+    const distributed =
+      students.filter(
+        (student) =>
+          student.status ===
+          "موزع"
+      ).length;
+
+    const unavailable =
+      students.filter(
+        (student) =>
+          student.status ===
+          "غير قابل للتوزيع"
+      ).length;
+
+    return [
+      {
+        title: "إجمالي الطلبة",
+        value: total,
+        description:
+          "ضمن فترات التدريب",
+        icon: Users,
+        bg: "bg-[#EEF3FF]",
+        color: "text-[#09379A]",
+      },
+
+      {
+        title: "بانتظار التوزيع",
+        value: waiting,
+        description:
+          "مؤهلون ولم يتم توزيعهم",
+        icon: Route,
+        bg: "bg-[#FFF7ED]",
+        color: "text-[#C2410C]",
+      },
+
+      {
+        title: "تم توزيعهم",
+        value: distributed,
+        description:
+          "لديهم جهة تدريب",
+        icon: CheckCircle2,
+        bg: "bg-[#ECFDF3]",
+        color: "text-[#15803D]",
+      },
+
+      {
+        title: "غير قابلين للتوزيع",
+        value: unavailable,
+        description:
+          "الأهلية غير مكتملة",
+        icon: AlertTriangle,
+        bg: "bg-[#FFF1F2]",
+        color: "text-[#BE123C]",
+      },
+    ];
+  }, [students]);
+
+  /* =========================================================
+     FILTER
+  ========================================================= */
+
+  const filteredStudents =
+    useMemo(() => {
+      const query =
+        searchTerm
+          .trim()
+          .toLowerCase();
+
+      return students.filter(
+        (student) => {
+          const matchesSearch =
+            !query ||
+            student.name
+              .toLowerCase()
+              .includes(query) ||
+            student.studentId
+              .toLowerCase()
+              .includes(query) ||
+            student.major
+              .toLowerCase()
+              .includes(query);
+
+          const matchesCollege =
+            collegeFilter ===
+              "الكل" ||
+            student.college ===
+              collegeFilter;
+
+          const matchesMajor =
+            majorFilter ===
+              "الكل" ||
+            student.major ===
+              majorFilter;
+
+          const matchesStatus =
+            statusFilter ===
+              "الكل" ||
+            student.status ===
+              statusFilter;
+
+          const matchesPeriod =
+            periodFilter ===
+              "الكل" ||
+            Number(periodFilter) ===
+              student.trainingPeriodId;
+
+          return (
+            matchesSearch &&
+            matchesCollege &&
+            matchesMajor &&
+            matchesStatus &&
+            matchesPeriod
+          );
+        }
+      );
+    }, [
+      students,
+      searchTerm,
+      collegeFilter,
+      majorFilter,
+      statusFilter,
+      periodFilter,
+    ]);
+
+  /* =========================================================
+     DETAILS
+  ========================================================= */
+
+  const openDetails = (student) => {
+    setSelectedStudent(student);
+    setShowDetails(true);
+  };
+
+  /* =========================================================
+     DISTRIBUTION MODAL
+  ========================================================= */
+
+  const openDistribution = (
+    student
+  ) => {
+    if (
+      student.eligibility !==
+      "مؤهل"
+    ) {
+      return;
     }
 
-    if (status === "قيد التوزيع") {
-      return "bg-[#fff1cc] text-[#8a6515]";
+    setSelectedStudent(student);
+
+    setSelectedPeriodId(
+      student.trainingPeriodId
+        ? String(
+            student.trainingPeriodId
+          )
+        : ""
+    );
+
+    setSelectedOrganizationId(
+      student.organizationId
+        ? String(
+            student.organizationId
+          )
+        : ""
+    );
+
+    setSelectedOpportunity(
+      student.opportunity !== "—"
+        ? student.opportunity
+        : ""
+    );
+
+    setSelectedAcademicSupervisor(
+      student.academicSupervisor !==
+        "—"
+        ? student.academicSupervisor
+        : ""
+    );
+
+    setShowDetails(false);
+
+    setShowDistributionModal(true);
+  };
+
+  /* =========================================================
+     COMPATIBLE ORGANIZATIONS
+  ========================================================= */
+
+  const compatibleOrganizations =
+    useMemo(() => {
+      if (!selectedStudent) {
+        return [];
+      }
+
+      return organizations.filter(
+        (organization) =>
+          organization.specialization ===
+          selectedStudent.major
+      );
+    }, [selectedStudent]);
+
+  const selectedOrganization =
+    useMemo(
+      () =>
+        organizations.find(
+          (organization) =>
+            organization.id ===
+            Number(
+              selectedOrganizationId
+            )
+        ) || null,
+      [selectedOrganizationId]
+    );
+
+  const compatibleAcademicSupervisors =
+    useMemo(() => {
+      if (!selectedStudent) {
+        return [];
+      }
+
+      return academicSupervisors.filter(
+        (supervisor) =>
+          supervisor.specialization ===
+          selectedStudent.major
+      );
+    }, [selectedStudent]);
+
+  /* =========================================================
+     SAVE DISTRIBUTION
+  ========================================================= */
+
+  const saveDistribution = () => {
+    if (
+      !selectedStudent ||
+      !selectedPeriodId ||
+      !selectedOrganization ||
+      !selectedOpportunity ||
+      !selectedAcademicSupervisor
+    ) {
+      return;
     }
 
-    return "bg-[#eceff4] text-[#596273]";
+    if (
+      selectedStudent.eligibility !==
+      "مؤهل"
+    ) {
+      return;
+    }
+
+    if (
+      selectedOrganization.assigned >=
+      selectedOrganization.capacity
+    ) {
+      return;
+    }
+
+    setStudents((previous) =>
+      previous.map((student) =>
+        student.id ===
+        selectedStudent.id
+          ? {
+              ...student,
+
+              trainingPeriodId:
+                Number(
+                  selectedPeriodId
+                ),
+
+              organizationId:
+                selectedOrganization.id,
+
+              organization:
+                selectedOrganization.name,
+
+              opportunity:
+                selectedOpportunity,
+
+              academicSupervisor:
+                selectedAcademicSupervisor,
+
+              fieldSupervisor:
+                selectedOrganization.fieldSupervisor,
+
+              status: "موزع",
+            }
+          : student
+      )
+    );
+
+    setShowDistributionModal(
+      false
+    );
+
+    setSelectedStudent(null);
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-white">
-      <Header />
+    <div
+      dir="rtl"
+      className="
+        flex
+        h-dvh
+        w-full
+        overflow-hidden
 
-      <div className="flex">
-        <Sidebar />
+        bg-[#F8FAFC]
 
-        <main className="flex-1 min-w-0 px-[24px] pt-[14px] pb-[20px]">
-          {/* ================= PAGE HEADER ================= */}
-          <div className="flex items-start justify-between mb-[10px]">
-            <div>
-              <div className="flex items-center gap-[6px] text-[11px] text-[#7a8393] mb-[2px]">
-                <span>الرئيسية</span>
-                <span>›</span>
-                <span>توزيع الطلبة</span>
-              </div>
+        font-['Cairo']
+        text-[#1E293B]
+      "
+    >
+      <Sidebar />
 
-              <h1 className="text-[23px] font-bold text-[#1b2430]">
-                توزيع الطلبة
-              </h1>
-            </div>
+      <div
+        className="
+          flex
+          h-dvh
+          min-w-0
+          flex-1
+          flex-col
+          overflow-hidden
+        "
+      >
+        <Header />
 
-            <div className="flex items-center gap-[8px]">
-              <button
-                type="button"
-                onClick={() => navigate("/admin/student-distribution/process")}
-                className="
-                  h-[34px]
-                  px-[14px]
-                  rounded-[7px]
-                  border
-                  border-[#b9c0cc]
-                  bg-white
-                  text-[11px]
-                  text-[#3b4454]
-                  hover:bg-[#eef0f4]
-                "
-              >
-                ⚙ توزيع تلقائي
-              </button>
+        <main
+          className="
+            min-h-0
+            flex-1
 
-              <button
-                type="button"
-                onClick={() => navigate("/admin/student-distribution/process")}
-                className="
-                  h-[34px]
-                  px-[14px]
-                  rounded-[7px]
-                  border
-                  border-[#b9c0cc]
-                  bg-white
-                  text-[11px]
-                  text-[#3b4454]
-                  hover:bg-[#eef0f4]
-                "
-              >
-                توزيع يدوي
-              </button>
-            </div>
-          </div>
+            overflow-x-hidden
+            overflow-y-auto
 
-          {/* ================= SEARCH + FILTERS ================= */}
-          <section
-            className="
-              border
-              border-[#dfe3ea]
-              rounded-[10px]
-              bg-white
-              px-[14px]
-              py-[12px]
-              mb-[12px]
-            "
-          >
+            px-4
+            pb-8
+            pt-5
+
+            sm:px-5
+            md:px-6
+
+            xl:px-[40px]
+            xl:pb-[40px]
+            xl:pt-[26px]
+          "
+        >
+          <div className="mx-auto w-full max-w-[1180px]">
+            {/* BREADCRUMB */}
+
             <div
               className="
-                h-[38px]
-                border
-                border-[#c9cfd9]
-                rounded-[8px]
                 flex
+                flex-wrap
                 items-center
-                px-[12px]
-                gap-[8px]
+                gap-[7px]
+
+                text-[11px]
+                font-medium
+                text-[#64748B]
               "
             >
-              <input
-                type="text"
-                placeholder="ابحث عن طالب أو فرصة تدريب أو جهة ..."
+              <span>
+                الرئيسية
+              </span>
+
+              <span className="text-[#94A3B8]">
+                ›
+              </span>
+
+              <span>
+                التدريب الميداني
+              </span>
+
+              <span className="text-[#94A3B8]">
+                ›
+              </span>
+
+              <span
                 className="
-                  flex-1
-                  h-full
-                  outline-none
-                  bg-transparent
-                  text-[12px]
-                  text-[#2b3340]
-                  placeholder:text-[#8a93a3]
+                  font-bold
+                  text-[#09379A]
                 "
-              />
-
-              <span className="text-[#8a93a3]">⌕</span>
+              >
+                توزيع الطلبة
+              </span>
             </div>
 
-            <div className="grid grid-cols-5 gap-[12px] mt-[10px]">
-              <Filter label="الجهة التدريبية">
-                <option>الكل</option>
-                <option>شركة التقنية</option>
-                <option>مؤسسة الإبداع</option>
-                <option>شركة الحلول</option>
-              </Filter>
+            {/* HEADER */}
 
-              <Filter label="فرصة التدريب">
-                <option>الكل</option>
-                <option>مطور برمجيات متدرب</option>
-                <option>مساعد إداري</option>
-                <option>مهندس شبكات</option>
-              </Filter>
-
-              <Filter label="التخصص">
-                <option>الكل</option>
-                <option>هندسة البرمجيات</option>
-                <option>إدارة الأعمال</option>
-                <option>هندسة الشبكات</option>
-              </Filter>
-
-              <Filter label="المستوى الدراسي">
-                <option>الكل</option>
-                <option>الثاني</option>
-                <option>الثالث</option>
-                <option>الرابع</option>
-              </Filter>
-
-              <Filter label="الحالة">
-                <option>الكل</option>
-                <option>تم التوزيع</option>
-                <option>قيد التوزيع</option>
-                <option>لم يتم التوزيع</option>
-              </Filter>
-            </div>
-          </section>
-
-          {/* ================= STATS ================= */}
-          <section className="grid grid-cols-4 gap-[12px] mb-[12px]">
-            {stats.map((stat) => (
-              <div
-                key={stat.title}
+            <section className="mt-[5px]">
+              <h1
                 className="
-                  border
-                  border-[#dfe3ea]
-                  rounded-[10px]
-                  bg-white
-                  px-[14px]
-                  py-[10px]
-                  flex
-                  items-center
-                  justify-between
+                  m-0
+
+                  text-[25px]
+                  font-bold
+                  leading-[38px]
+                  text-[#14213D]
+
+                  sm:text-[27px]
+                "
+              >
+                توزيع الطلبة
+              </h1>
+
+              <p
+                className="
+                  m-0
+                  mt-[3px]
+
+                  max-w-[850px]
+
+                  text-[11px]
+                  leading-[21px]
+                  text-[#64748B]
+
+                  sm:text-[12px]
+                "
+              >
+                توزيع الطلبة المؤهلين
+                على جهات وفرص التدريب
+                المناسبة ضمن الفترة التدريبية
+                الحالية، مع تعيين المشرف
+                الأكاديمي ومشرف جهة التدريب.
+              </p>
+            </section>
+
+            {/* STATS */}
+
+            <section
+              className="
+                mt-[22px]
+
+                grid
+                grid-cols-1
+                gap-[12px]
+
+                sm:grid-cols-2
+                xl:grid-cols-4
+              "
+            >
+              {statistics.map(
+                (item) => {
+                  const Icon =
+                    item.icon;
+
+                  return (
+                    <article
+                      key={item.title}
+                      className="
+                        min-h-[128px]
+
+                        rounded-[14px]
+
+                        border
+                        border-[#DDE5EF]
+
+                        bg-white
+
+                        p-[17px]
+                      "
+                    >
+                      <div
+                        className="
+                          flex
+                          items-start
+                          justify-between
+                          gap-4
+                        "
+                      >
+                        <div>
+                          <p
+                            className="
+                              m-0
+
+                              text-[10px]
+                              text-[#64748B]
+                            "
+                          >
+                            {item.title}
+                          </p>
+
+                          <strong
+                            className="
+                              mt-[8px]
+                              block
+
+                              text-[27px]
+                              text-[#14213D]
+                            "
+                          >
+                            {item.value}
+                          </strong>
+
+                          <p
+                            className="
+                              m-0
+                              mt-[5px]
+
+                              text-[9px]
+                              text-[#94A3B8]
+                            "
+                          >
+                            {
+                              item.description
+                            }
+                          </p>
+                        </div>
+
+                        <div
+                          className={`
+                            flex
+                            h-[42px]
+                            w-[42px]
+                            items-center
+                            justify-center
+
+                            rounded-[10px]
+
+                            ${item.bg}
+                            ${item.color}
+                          `}
+                        >
+                          <Icon
+                            size={20}
+                          />
+                        </div>
+                      </div>
+                    </article>
+                  );
+                }
+              )}
+            </section>
+
+            {/* FILTERS */}
+
+            <section
+              className="
+                mt-[18px]
+
+                rounded-[14px]
+
+                border
+                border-[#DDE5EF]
+
+                bg-white
+
+                p-[15px]
+              "
+            >
+              <div
+                className="
+                  grid
+                  grid-cols-1
+                  gap-[10px]
+
+                  md:grid-cols-2
+
+                  xl:grid-cols-5
                 "
               >
                 <div>
-                  <p className="text-[10px] text-[#667085] mb-[2px]">
-                    {stat.title}
-                  </p>
+                  <Label>
+                    البحث
+                  </Label>
 
-                  <p className="text-[22px] font-bold text-[#1f2733]">
-                    {stat.value}
-                  </p>
-                </div>
-
-                <div
-                  className="
-                    w-[38px]
-                    h-[38px]
-                    rounded-[10px]
-                    bg-[#eceff4]
-                    flex
-                    items-center
-                    justify-center
-                    text-[#667085]
-                  "
-                >
-                  {stat.icon}
-                </div>
-              </div>
-            ))}
-          </section>
-
-          {/* ================= MAIN CONTENT ================= */}
-          <div className="flex gap-[14px]">
-            {/* ================= DISTRIBUTION CONTROL ================= */}
-            <aside className="w-[290px] shrink-0 grid gap-[10px] content-start">
-              <section
-                className="
-                  border
-                  border-[#dfe3ea]
-                  rounded-[10px]
-                  bg-white
-                  px-[14px]
-                  py-[12px]
-                "
-              >
-                <h2 className="text-[15px] font-bold text-[#1f2733] mb-[10px]">
-                  توزيع الطلبة
-                </h2>
-
-                <div className="grid gap-[10px]">
-                  <SelectBox
-                    label="اختر الفرصة التدريبية"
-                    value="مطور برمجيات متدرب"
-                  />
-
-                  <SelectBox
-                    label="اختر الجهة التدريبية"
-                    value="شركة التقنية"
-                  />
-
-                  <SelectBox
-                    label="اختر عدد الطلبة"
-                    value="5"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      navigate("/admin/student-distribution/process")
-                    }
+                  <div
                     className="
-                      w-full
-                      h-[34px]
-                      rounded-[7px]
-                      bg-[#4b5568]
-                      text-white
-                      text-[11px]
-                      font-semibold
-                      hover:bg-[#3f4858]
+                      flex
+                      h-[42px]
+                      items-center
+                      gap-[8px]
+
+                      rounded-[9px]
+
+                      border
+                      border-[#D9E2EC]
+
+                      px-[11px]
                     "
                   >
-                    توزيع الطلبة
-                  </button>
-                </div>
-              </section>
+                    <Search
+                      size={16}
+                      className="text-[#94A3B8]"
+                    />
 
-              {/* Extra Actions */}
-              <section
-                className="
-                  border
-                  border-[#dfe3ea]
-                  rounded-[10px]
-                  bg-white
-                  px-[14px]
-                  py-[12px]
-                "
-              >
-                <h2 className="text-[15px] font-bold text-[#1f2733] mb-[8px]">
-                  إجراءات إضافية
-                </h2>
-
-                <div className="grid gap-[6px]">
-                  <ActionButton text="✎ تعديل التوزيع" />
-                  <ActionButton text="↻ إعادة التوزيع" />
-                  <ActionButton text="🗑 إلغاء التوزيع" />
-                </div>
-              </section>
-            </aside>
-
-            {/* ================= STUDENTS COLUMN ================= */}
-            <div className="flex-1 min-w-0 grid gap-[10px] content-start">
-              {/* Students Table */}
-              <section
-                className="
-                  border
-                  border-[#dfe3ea]
-                  rounded-[10px]
-                  bg-white
-                  overflow-hidden
-                "
-              >
-                <div className="flex items-center justify-between px-[14px] py-[10px]">
-                  <h2 className="text-[15px] font-bold text-[#1f2733]">
-                    قائمة الطلبة
-                  </h2>
-
-                  <div className="flex items-center gap-[8px]">
-                    <span className="text-[10px] text-[#667085]">
-                      عدد الصفوف: 10
-                    </span>
-
-                    <button
-                      type="button"
+                    <input
+                      value={
+                        searchTerm
+                      }
+                      onChange={(
+                        event
+                      ) =>
+                        setSearchTerm(
+                          event.target
+                            .value
+                        )
+                      }
+                      placeholder="الاسم أو الرقم الجامعي..."
                       className="
-                        h-[28px]
-                        px-[11px]
-                        rounded-[6px]
-                        border
-                        border-[#b9c0cc]
-                        bg-white
+                        min-w-0
+                        flex-1
+
+                        border-0
+                        bg-transparent
+
+                        font-['Cairo']
+
                         text-[10px]
-                        text-[#3b4454]
-                        hover:bg-[#eef0f4]
+
+                        outline-none
                       "
-                    >
-                      ↓ تصدير
-                    </button>
+                    />
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                  <table className="w-full text-right">
-                    <thead className="bg-[#f1f3f7]">
-                      <tr>
-                        {[
-                          "#",
-                          "اسم الطالب",
-                          "الرقم الجامعي",
-                          "التخصص",
-                          "الفرصة التدريبية",
-                          "الجهة التدريبية",
-                          "الحالة",
-                          "تاريخ التوزيع",
-                          "إجراءات",
-                        ].map((heading) => (
-                          <th
-                            key={heading}
+                <FilterSelect
+                  label="الكلية"
+                  value={
+                    collegeFilter
+                  }
+                  onChange={
+                    setCollegeFilter
+                  }
+                >
+                  <option value="الكل">
+                    كل الكليات
+                  </option>
+
+                  {colleges.map(
+                    (college) => (
+                      <option
+                        key={
+                          college
+                        }
+                        value={
+                          college
+                        }
+                      >
+                        {college}
+                      </option>
+                    )
+                  )}
+                </FilterSelect>
+
+                <FilterSelect
+                  label="التخصص"
+                  value={
+                    majorFilter
+                  }
+                  onChange={
+                    setMajorFilter
+                  }
+                >
+                  <option value="الكل">
+                    كل التخصصات
+                  </option>
+
+                  {majors.map(
+                    (major) => (
+                      <option
+                        key={major}
+                        value={major}
+                      >
+                        {major}
+                      </option>
+                    )
+                  )}
+                </FilterSelect>
+
+                <FilterSelect
+                  label="الفترة التدريبية"
+                  value={
+                    periodFilter
+                  }
+                  onChange={
+                    setPeriodFilter
+                  }
+                >
+                  <option value="الكل">
+                    كل الفترات
+                  </option>
+
+                  {trainingPeriods.map(
+                    (period) => (
+                      <option
+                        key={period.id}
+                        value={
+                          period.id
+                        }
+                      >
+                        {period.name}
+                      </option>
+                    )
+                  )}
+                </FilterSelect>
+
+                <FilterSelect
+                  label="حالة التوزيع"
+                  value={
+                    statusFilter
+                  }
+                  onChange={
+                    setStatusFilter
+                  }
+                >
+                  <option value="الكل">
+                    كل الحالات
+                  </option>
+
+                  <option value="بانتظار التوزيع">
+                    بانتظار التوزيع
+                  </option>
+
+                  <option value="موزع">
+                    موزع
+                  </option>
+
+                  <option value="غير قابل للتوزيع">
+                    غير قابل للتوزيع
+                  </option>
+
+                  <option value="مكتمل">
+                    مكتمل
+                  </option>
+                </FilterSelect>
+              </div>
+            </section>
+
+            {/* TABLE */}
+
+            <section
+              className="
+                mt-[16px]
+
+                overflow-hidden
+
+                rounded-[14px]
+
+                border
+                border-[#DDE5EF]
+
+                bg-white
+              "
+            >
+              <div
+                className="
+                  flex
+                  items-center
+                  justify-between
+
+                  border-b
+                  border-[#EEF2F7]
+
+                  px-[18px]
+                  py-[15px]
+                "
+              >
+                <div>
+                  <h2
+                    className="
+                      m-0
+
+                      text-[14px]
+                      font-bold
+                      text-[#1E293B]
+                    "
+                  >
+                    طلبة التدريب
+                  </h2>
+
+                  <p
+                    className="
+                      m-0
+                      mt-[2px]
+
+                      text-[9px]
+                      text-[#94A3B8]
+                    "
+                  >
+                    التوزيع متاح فقط
+                    للطلبة المؤهلين
+                  </p>
+                </div>
+
+                <span
+                  className="
+                    rounded-[8px]
+
+                    bg-[#F8FAFC]
+
+                    px-[10px]
+                    py-[7px]
+
+                    text-[9px]
+                    font-bold
+                    text-[#64748B]
+                  "
+                >
+                  {
+                    filteredStudents.length
+                  }{" "}
+                  طالب
+                </span>
+              </div>
+
+              {/* DESKTOP */}
+
+              <div
+                className="
+                  hidden
+                  overflow-x-auto
+
+                  md:block
+                "
+              >
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-[#F8FAFC]">
+                      <TableHead>
+                        الطالب
+                      </TableHead>
+
+                      <TableHead>
+                        التخصص
+                      </TableHead>
+
+                      <TableHead>
+                        الأهلية
+                      </TableHead>
+
+                      <TableHead>
+                        الفترة
+                      </TableHead>
+
+                      <TableHead>
+                        الجهة / الفرصة
+                      </TableHead>
+
+                      <TableHead>
+                        المشرف الأكاديمي
+                      </TableHead>
+
+                      <TableHead>
+                        الحالة
+                      </TableHead>
+
+                      <TableHead>
+                        الإجراء
+                      </TableHead>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {filteredStudents.map(
+                      (student) => {
+                        const period =
+                          trainingPeriods.find(
+                            (item) =>
+                              item.id ===
+                              student.trainingPeriodId
+                          );
+
+                        return (
+                          <tr
+                            key={
+                              student.id
+                            }
                             className="
-                              px-[9px]
-                              py-[8px]
-                              text-[10px]
-                              font-semibold
-                              text-[#3b4454]
-                              border-b
-                              border-[#dfe3ea]
-                              whitespace-nowrap
+                              border-t
+                              border-[#EEF2F7]
+
+                              hover:bg-[#FBFCFE]
                             "
                           >
-                            {heading}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
+                            <TableCell>
+                              <div className="min-w-[150px]">
+                                <p
+                                  className="
+                                    m-0
 
-                    <tbody>
-                      {students.map((student) => (
-                        <tr
-                          key={student.id}
-                          className="border-b border-[#eceff4] last:border-b-0"
+                                    text-[10px]
+                                    font-bold
+                                    text-[#334155]
+                                  "
+                                >
+                                  {
+                                    student.name
+                                  }
+                                </p>
+
+                                <span
+                                  className="
+                                    mt-[2px]
+                                    block
+
+                                    text-[8px]
+                                    text-[#94A3B8]
+                                  "
+                                >
+                                  {
+                                    student.studentId
+                                  }
+                                </span>
+                              </div>
+                            </TableCell>
+
+                            <TableCell>
+                              <div className="min-w-[130px]">
+                                <p
+                                  className="
+                                    m-0
+
+                                    text-[9px]
+                                    font-medium
+                                    text-[#475569]
+                                  "
+                                >
+                                  {
+                                    student.major
+                                  }
+                                </p>
+
+                                <span
+                                  className="
+                                    mt-[2px]
+                                    block
+
+                                    text-[8px]
+                                    text-[#94A3B8]
+                                  "
+                                >
+                                  {
+                                    student.requiredHours
+                                  }{" "}
+                                  ساعة
+                                </span>
+                              </div>
+                            </TableCell>
+
+                            <TableCell>
+                              <EligibilityBadge
+                                status={
+                                  student.eligibility
+                                }
+                              />
+                            </TableCell>
+
+                            <TableCell>
+                              <div className="min-w-[150px]">
+                                <p
+                                  className="
+                                    m-0
+
+                                    text-[9px]
+                                    text-[#475569]
+                                  "
+                                >
+                                  {period
+                                    ?.semester ||
+                                    "—"}
+                                </p>
+
+                                <span
+                                  className="
+                                    mt-[2px]
+                                    block
+
+                                    text-[8px]
+                                    text-[#94A3B8]
+                                  "
+                                >
+                                  {period
+                                    ?.academicYear ||
+                                    "—"}
+                                </span>
+                              </div>
+                            </TableCell>
+
+                            <TableCell>
+                              <div className="min-w-[160px]">
+                                <p
+                                  className="
+                                    m-0
+
+                                    text-[9px]
+                                    font-medium
+                                    text-[#475569]
+                                  "
+                                >
+                                  {
+                                    student.organization
+                                  }
+                                </p>
+
+                                <span
+                                  className="
+                                    mt-[2px]
+                                    block
+
+                                    text-[8px]
+                                    text-[#94A3B8]
+                                  "
+                                >
+                                  {
+                                    student.opportunity
+                                  }
+                                </span>
+                              </div>
+                            </TableCell>
+
+                            <TableCell>
+                              <span
+                                className="
+                                  text-[9px]
+                                  text-[#475569]
+                                "
+                              >
+                                {
+                                  student.academicSupervisor
+                                }
+                              </span>
+                            </TableCell>
+
+                            <TableCell>
+                              <DistributionBadge
+                                status={
+                                  student.status
+                                }
+                              />
+                            </TableCell>
+
+                            <TableCell>
+                              <div
+                                className="
+                                  flex
+                                  gap-[6px]
+                                "
+                              >
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    openDetails(
+                                      student
+                                    )
+                                  }
+                                  className="
+                                    flex
+                                    h-[32px]
+                                    items-center
+                                    gap-[5px]
+
+                                    rounded-[7px]
+
+                                    border
+                                    border-[#DCE5F0]
+
+                                    bg-white
+
+                                    px-[8px]
+
+                                    text-[9px]
+                                    font-bold
+                                    text-[#09379A]
+                                  "
+                                >
+                                  <Eye
+                                    size={
+                                      14
+                                    }
+                                  />
+
+                                  عرض
+                                </button>
+
+                                {student.eligibility ===
+                                  "مؤهل" &&
+                                  student.status !==
+                                    "مكتمل" && (
+                                    <button
+                                      type="button"
+                                      onClick={() =>
+                                        openDistribution(
+                                          student
+                                        )
+                                      }
+                                      className="
+                                        flex
+                                        h-[32px]
+                                        items-center
+
+                                        rounded-[7px]
+
+                                        border-0
+
+                                        bg-[#09379A]
+
+                                        px-[9px]
+
+                                        text-[9px]
+                                        font-bold
+                                        text-white
+                                      "
+                                    >
+                                      {student.status ===
+                                      "موزع"
+                                        ? "تعديل"
+                                        : "توزيع"}
+                                    </button>
+                                  )}
+                              </div>
+                            </TableCell>
+                          </tr>
+                        );
+                      }
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* MOBILE */}
+
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-[9px]
+
+                  p-[12px]
+
+                  md:hidden
+                "
+              >
+                {filteredStudents.map(
+                  (student) => (
+                    <article
+                      key={student.id}
+                      className="
+                        rounded-[11px]
+
+                        border
+                        border-[#E7ECF2]
+
+                        bg-[#FAFBFC]
+
+                        p-[12px]
+                      "
+                    >
+                      <div
+                        className="
+                          flex
+                          items-start
+                          justify-between
+                          gap-3
+                        "
+                      >
+                        <div>
+                          <p
+                            className="
+                              m-0
+
+                              text-[11px]
+                              font-bold
+                              text-[#334155]
+                            "
+                          >
+                            {
+                              student.name
+                            }
+                          </p>
+
+                          <span
+                            className="
+                              mt-[2px]
+                              block
+
+                              text-[8px]
+                              text-[#94A3B8]
+                            "
+                          >
+                            {
+                              student.studentId
+                            }
+                            {" · "}
+                            {
+                              student.major
+                            }
+                          </span>
+                        </div>
+
+                        <DistributionBadge
+                          status={
+                            student.status
+                          }
+                        />
+                      </div>
+
+                      <div
+                        className="
+                          mt-[10px]
+
+                          grid
+                          grid-cols-2
+                          gap-[9px]
+
+                          border-t
+                          border-[#E7ECF2]
+
+                          pt-[10px]
+                        "
+                      >
+                        <MobileInfo
+                          label="الأهلية"
+                          value={
+                            student.eligibility
+                          }
+                        />
+
+                        <MobileInfo
+                          label="جهة التدريب"
+                          value={
+                            student.organization
+                          }
+                        />
+
+                        <MobileInfo
+                          label="الفرصة"
+                          value={
+                            student.opportunity
+                          }
+                        />
+
+                        <MobileInfo
+                          label="المشرف"
+                          value={
+                            student.academicSupervisor
+                          }
+                        />
+                      </div>
+
+                      <div
+                        className="
+                          mt-[11px]
+
+                          flex
+                          gap-[7px]
+                        "
+                      >
+                        <button
+                          type="button"
+                          onClick={() =>
+                            openDetails(
+                              student
+                            )
+                          }
+                          className="
+                            flex
+                            h-[35px]
+                            flex-1
+                            items-center
+                            justify-center
+                            gap-[5px]
+
+                            rounded-[8px]
+
+                            border
+                            border-[#D7E5FF]
+
+                            bg-[#F6F9FF]
+
+                            text-[9px]
+                            font-bold
+                            text-[#09379A]
+                          "
                         >
-                          <td className="px-[9px] py-[9px] text-[10px] text-[#667085]">
-                            {student.id}
-                          </td>
+                          <Eye
+                            size={14}
+                          />
 
-                          <td className="px-[9px] py-[9px] text-[10px] font-semibold text-[#2b3340]">
-                            {student.name}
-                          </td>
+                          التفاصيل
+                        </button>
 
-                          <td className="px-[9px] py-[9px] text-[10px] text-[#4a5465]">
-                            {student.studentId}
-                          </td>
-
-                          <td className="px-[9px] py-[9px] text-[10px] text-[#4a5465]">
-                            {student.specialization}
-                          </td>
-
-                          <td className="px-[9px] py-[9px] text-[10px] text-[#4a5465]">
-                            {student.opportunity}
-                          </td>
-
-                          <td className="px-[9px] py-[9px] text-[10px] text-[#4a5465]">
-                            {student.organization}
-                          </td>
-
-                          <td className="px-[9px] py-[9px]">
-                            <span
-                              className={`
-                                inline-flex
-                                px-[9px]
-                                py-[3px]
-                                rounded-full
-                                text-[9px]
-                                font-medium
-                                ${getStatusStyle(student.status)}
-                              `}
-                            >
-                              {student.status}
-                            </span>
-                          </td>
-
-                          <td className="px-[9px] py-[9px] text-[10px] text-[#667085]">
-                            {student.date}
-                          </td>
-
-                          <td className="px-[9px] py-[9px]">
+                        {student.eligibility ===
+                          "مؤهل" &&
+                          student.status !==
+                            "مكتمل" && (
                             <button
                               type="button"
                               onClick={() =>
-                                navigate(
-                                  "/admin/student-distribution/process"
+                                openDistribution(
+                                  student
                                 )
                               }
                               className="
-                                h-[28px]
-                                px-[10px]
-                                rounded-[6px]
-                                border
-                                border-[#b9c0cc]
-                                bg-white
+                                h-[35px]
+
+                                rounded-[8px]
+
+                                border-0
+
+                                bg-[#09379A]
+
+                                px-[14px]
+
                                 text-[9px]
-                                text-[#3b4454]
-                                hover:bg-[#eef0f4]
+                                font-bold
+                                text-white
                               "
                             >
-                              عرض
+                              {student.status ===
+                              "موزع"
+                                ? "تعديل"
+                                : "توزيع"}
                             </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                          )}
+                      </div>
+                    </article>
+                  )
+                )}
+              </div>
+            </section>
 
-                {/* Pagination */}
-                <div className="flex justify-end gap-[5px] px-[14px] py-[10px]">
-                  {["‹", "1", "2", "3", "4", "5", "›"].map((page) => (
-                    <button
-                      key={page}
-                      type="button"
-                      className={`
-                        min-w-[30px]
-                        h-[28px]
-                        px-[7px]
-                        rounded-[6px]
-                        border
-                        text-[10px]
-                        ${
-                          page === "1"
-                            ? "bg-[#4b5568] border-[#4b5568] text-white"
-                            : "bg-white border-[#c9cfd9] text-[#4a5465]"
-                        }
-                      `}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                </div>
-              </section>
+            {/* CAPACITY */}
 
-              {/* ================= RECENT DISTRIBUTION LOG ================= */}
-              <section
+            <section
+              className="
+                mt-[16px]
+
+                rounded-[14px]
+
+                border
+                border-[#DDE5EF]
+
+                bg-white
+
+                p-[16px]
+              "
+            >
+              <h2
                 className="
-                  border
-                  border-[#dfe3ea]
-                  rounded-[10px]
-                  bg-white
-                  px-[14px]
-                  py-[12px]
+                  m-0
+
+                  text-[14px]
+                  font-bold
+                  text-[#1E293B]
                 "
               >
-                <div className="flex items-center justify-between mb-[6px]">
-                  <h2 className="text-[15px] font-bold text-[#1f2733]">
-                    سجل التوزيعات الأخيرة
-                  </h2>
+                الطاقة الاستيعابية
+                لجهات التدريب
+              </h2>
 
-                  <button
-                    type="button"
-                    className="
-                      h-[27px]
-                      px-[10px]
-                      rounded-[6px]
-                      border
-                      border-[#b9c0cc]
-                      bg-white
-                      text-[9px]
-                      text-[#3b4454]
-                    "
-                  >
-                    عرض الكل
-                  </button>
-                </div>
+              <p
+                className="
+                  m-0
+                  mt-[2px]
 
-                <div className="text-[11px] leading-[2] text-[#4a5465]">
-                  <p>
-                    تم توزيع 5 طلبة على شركة التقنية - تخصص هندسة البرمجيات
-                    <span className="text-[#7a8393]">
-                      {" "}
-                      · 2025/04/20 10:30
-                    </span>
-                  </p>
+                  text-[9px]
+                  text-[#94A3B8]
+                "
+              >
+                متابعة المقاعد المتاحة
+                قبل تنفيذ عمليات التوزيع
+              </p>
 
-                  <p>
-                    تم توزيع 3 طلبة على مؤسسة الإبداع - تخصص إدارة الأعمال
-                    <span className="text-[#7a8393]">
-                      {" "}
-                      · 2025/04/16 14:20
-                    </span>
-                  </p>
+              <div
+                className="
+                  mt-[14px]
 
-                  <p>
-                    تم توزيع طالب واحد على شركة الحلول - تخصص إدارة الأعمال
-                    <span className="text-[#7a8393]">
-                      {" "}
-                      · 2025/04/16 09:15
-                    </span>
-                  </p>
-                </div>
-              </section>
-            </div>
+                  grid
+                  grid-cols-1
+                  gap-[10px]
+
+                  sm:grid-cols-2
+                  xl:grid-cols-3
+                "
+              >
+                {organizations.map(
+                  (organization) => {
+                    const percentage =
+                      Math.round(
+                        (organization.assigned /
+                          organization.capacity) *
+                          100
+                      );
+
+                    return (
+                      <article
+                        key={
+                          organization.id
+                        }
+                        className="
+                          rounded-[10px]
+
+                          border
+                          border-[#E7ECF2]
+
+                          bg-[#FAFBFC]
+
+                          p-[11px]
+                        "
+                      >
+                        <div
+                          className="
+                            flex
+                            items-start
+                            justify-between
+                            gap-3
+                          "
+                        >
+                          <div>
+                            <p
+                              className="
+                                m-0
+
+                                text-[10px]
+                                font-bold
+                                text-[#334155]
+                              "
+                            >
+                              {
+                                organization.name
+                              }
+                            </p>
+
+                            <span
+                              className="
+                                mt-[2px]
+                                block
+
+                                text-[8px]
+                                text-[#94A3B8]
+                              "
+                            >
+                              {
+                                organization.specialization
+                              }
+                            </span>
+                          </div>
+
+                          <span
+                            className="
+                              text-[9px]
+                              font-bold
+                              text-[#09379A]
+                            "
+                          >
+                            {
+                              organization.assigned
+                            }
+                            /
+                            {
+                              organization.capacity
+                            }
+                          </span>
+                        </div>
+
+                        <div
+                          className="
+                            mt-[9px]
+
+                            h-[6px]
+
+                            overflow-hidden
+
+                            rounded-full
+
+                            bg-[#E2E8F0]
+                          "
+                        >
+                          <div
+                            className={`
+                              h-full
+                              rounded-full
+
+                              ${
+                                percentage >=
+                                90
+                                  ? "bg-[#EA580C]"
+                                  : "bg-[#09379A]"
+                              }
+                            `}
+                            style={{
+                              width: `${Math.min(
+                                percentage,
+                                100
+                              )}%`,
+                            }}
+                          />
+                        </div>
+
+                        <p
+                          className="
+                            m-0
+                            mt-[6px]
+
+                            text-[8px]
+                            text-[#64748B]
+                          "
+                        >
+                          متاح{" "}
+                          {Math.max(
+                            organization.capacity -
+                              organization.assigned,
+                            0
+                          )}{" "}
+                          مقاعد
+                        </p>
+                      </article>
+                    );
+                  }
+                )}
+              </div>
+            </section>
           </div>
         </main>
       </div>
+
+      {/* DETAILS */}
+
+      {showDetails &&
+        selectedStudent && (
+          <>
+            <div
+              onClick={() =>
+                setShowDetails(false)
+              }
+              className="
+                fixed
+                inset-0
+                z-[90]
+
+                bg-[#0F172A]/35
+              "
+            />
+
+            <aside
+              dir="rtl"
+              className="
+                fixed
+                bottom-0
+                right-0
+                top-0
+                z-[100]
+
+                flex
+                w-full
+                max-w-[600px]
+                flex-col
+
+                bg-white
+              "
+            >
+              <div
+                className="
+                  flex
+                  items-center
+                  justify-between
+
+                  border-b
+                  border-[#E2E8F0]
+
+                  px-5
+                  py-[17px]
+                "
+              >
+                <div>
+                  <h2
+                    className="
+                      m-0
+
+                      text-[17px]
+                      font-bold
+                    "
+                  >
+                    تفاصيل التوزيع
+                  </h2>
+
+                  <p
+                    className="
+                      m-0
+                      mt-[2px]
+
+                      text-[9px]
+                      text-[#94A3B8]
+                    "
+                  >
+                    {
+                      selectedStudent.studentId
+                    }
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowDetails(
+                      false
+                    )
+                  }
+                  className="
+                    flex
+                    h-[34px]
+                    w-[34px]
+                    items-center
+                    justify-center
+
+                    rounded-[8px]
+
+                    border-0
+
+                    bg-[#F8FAFC]
+                  "
+                >
+                  <X size={17} />
+                </button>
+              </div>
+
+              <div
+                className="
+                  min-h-0
+                  flex-1
+                  overflow-y-auto
+
+                  px-5
+                  py-5
+                "
+              >
+                <div
+                  className="
+                    flex
+                    items-start
+                    justify-between
+                    gap-4
+                  "
+                >
+                  <div
+                    className="
+                      flex
+                      items-center
+                      gap-[10px]
+                    "
+                  >
+                    <div
+                      className="
+                        flex
+                        h-[44px]
+                        w-[44px]
+                        items-center
+                        justify-center
+
+                        rounded-[10px]
+
+                        bg-[#EEF3FF]
+
+                        text-[#09379A]
+                      "
+                    >
+                      <GraduationCap
+                        size={21}
+                      />
+                    </div>
+
+                    <div>
+                      <h3
+                        className="
+                          m-0
+
+                          text-[14px]
+                          font-bold
+                          text-[#334155]
+                        "
+                      >
+                        {
+                          selectedStudent.name
+                        }
+                      </h3>
+
+                      <p
+                        className="
+                          m-0
+                          mt-[2px]
+
+                          text-[9px]
+                          text-[#94A3B8]
+                        "
+                      >
+                        {
+                          selectedStudent.major
+                        }
+                      </p>
+                    </div>
+                  </div>
+
+                  <EligibilityBadge
+                    status={
+                      selectedStudent.eligibility
+                    }
+                  />
+                </div>
+
+                <SectionTitle>
+                  البيانات الأكاديمية
+                </SectionTitle>
+
+                <div
+                  className="
+                    grid
+                    grid-cols-2
+                    gap-[8px]
+                  "
+                >
+                  <InfoBox
+                    label="الكلية"
+                    value={
+                      selectedStudent.college
+                    }
+                  />
+
+                  <InfoBox
+                    label="ساعات التدريب"
+                    value={`${selectedStudent.requiredHours} ساعة`}
+                  />
+                </div>
+
+                <SectionTitle>
+                  الفترة التدريبية
+                </SectionTitle>
+
+                {trainingPeriods
+                  .filter(
+                    (period) =>
+                      period.id ===
+                      selectedStudent.trainingPeriodId
+                  )
+                  .map(
+                    (period) => (
+                      <div
+                        key={
+                          period.id
+                        }
+                        className="
+                          rounded-[10px]
+
+                          border
+                          border-[#D7E5FF]
+
+                          bg-[#F6F9FF]
+
+                          p-[12px]
+                        "
+                      >
+                        <div
+                          className="
+                            flex
+                            items-start
+                            gap-[8px]
+                          "
+                        >
+                          <CalendarDays
+                            size={17}
+                            className="
+                              mt-[1px]
+                              text-[#09379A]
+                            "
+                          />
+
+                          <div>
+                            <p
+                              className="
+                                m-0
+
+                                text-[10px]
+                                font-bold
+                                text-[#334155]
+                              "
+                            >
+                              {
+                                period.name
+                              }
+                            </p>
+
+                            <p
+                              className="
+                                m-0
+                                mt-[2px]
+
+                                text-[8px]
+                                text-[#64748B]
+                              "
+                            >
+                              {
+                                period.semester
+                              }
+                              {" · "}
+                              {
+                                period.academicYear
+                              }
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  )}
+
+                <SectionTitle>
+                  بيانات التوزيع
+                </SectionTitle>
+
+                <div
+                  className="
+                    grid
+                    grid-cols-2
+                    gap-[8px]
+                  "
+                >
+                  <InfoBox
+                    label="جهة التدريب"
+                    value={
+                      selectedStudent.organization
+                    }
+                  />
+
+                  <InfoBox
+                    label="الفرصة"
+                    value={
+                      selectedStudent.opportunity
+                    }
+                  />
+
+                  <InfoBox
+                    label="المشرف الأكاديمي"
+                    value={
+                      selectedStudent.academicSupervisor
+                    }
+                  />
+
+                  <InfoBox
+                    label="مشرف الجهة"
+                    value={
+                      selectedStudent.fieldSupervisor
+                    }
+                  />
+                </div>
+
+                {selectedStudent.eligibility !==
+                  "مؤهل" &&
+                  selectedStudent.status !==
+                    "مكتمل" && (
+                    <div
+                      className="
+                        mt-[18px]
+
+                        flex
+                        items-start
+                        gap-[8px]
+
+                        rounded-[10px]
+
+                        border
+                        border-[#FED7AA]
+
+                        bg-[#FFF7ED]
+
+                        p-[12px]
+                      "
+                    >
+                      <AlertTriangle
+                        size={17}
+                        className="
+                          mt-[1px]
+                          shrink-0
+                          text-[#C2410C]
+                        "
+                      />
+
+                      <p
+                        className="
+                          m-0
+
+                          text-[9px]
+                          leading-[18px]
+                          text-[#9A3412]
+                        "
+                      >
+                        لا يمكن توزيع هذا
+                        الطالب حتى تصبح
+                        حالة الأهلية
+                        "مؤهل".
+                      </p>
+                    </div>
+                  )}
+              </div>
+
+              {selectedStudent.eligibility ===
+                "مؤهل" &&
+                selectedStudent.status !==
+                  "مكتمل" && (
+                  <div
+                    className="
+                      border-t
+                      border-[#E2E8F0]
+
+                      px-5
+                      py-[14px]
+                    "
+                  >
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openDistribution(
+                          selectedStudent
+                        )
+                      }
+                      className="
+                        flex
+                        min-h-[40px]
+                        w-full
+                        items-center
+                        justify-center
+                        gap-[6px]
+
+                        rounded-[8px]
+
+                        border-0
+
+                        bg-[#09379A]
+
+                        text-[10px]
+                        font-bold
+                        text-white
+                      "
+                    >
+                      <Route
+                        size={14}
+                      />
+
+                      {selectedStudent.status ===
+                      "موزع"
+                        ? "تعديل التوزيع"
+                        : "توزيع الطالب"}
+                    </button>
+                  </div>
+                )}
+            </aside>
+          </>
+        )}
+
+      {/* DISTRIBUTION MODAL */}
+
+      {showDistributionModal &&
+        selectedStudent && (
+          <div
+            onClick={() =>
+              setShowDistributionModal(
+                false
+              )
+            }
+            className="
+              fixed
+              inset-0
+              z-[120]
+
+              flex
+              items-center
+              justify-center
+
+              overflow-y-auto
+
+              bg-[#0F172A]/45
+
+              px-4
+              py-6
+            "
+          >
+            <div
+              dir="rtl"
+              onClick={(event) =>
+                event.stopPropagation()
+              }
+              className="
+                max-h-[92dvh]
+                w-full
+                max-w-[700px]
+                overflow-y-auto
+
+                rounded-[16px]
+
+                bg-white
+              "
+            >
+              <div
+                className="
+                  flex
+                  items-center
+                  justify-between
+
+                  border-b
+                  border-[#E2E8F0]
+
+                  px-5
+                  py-[16px]
+                "
+              >
+                <div>
+                  <h2
+                    className="
+                      m-0
+
+                      text-[16px]
+                      font-bold
+                    "
+                  >
+                    {selectedStudent.status ===
+                    "موزع"
+                      ? "تعديل توزيع الطالب"
+                      : "توزيع الطالب"}
+                  </h2>
+
+                  <p
+                    className="
+                      m-0
+                      mt-[2px]
+
+                      text-[9px]
+                      text-[#94A3B8]
+                    "
+                  >
+                    {
+                      selectedStudent.name
+                    }
+                    {" · "}
+                    {
+                      selectedStudent.major
+                    }
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowDistributionModal(
+                      false
+                    )
+                  }
+                  className="
+                    flex
+                    h-[32px]
+                    w-[32px]
+                    items-center
+                    justify-center
+
+                    rounded-[8px]
+
+                    border-0
+
+                    bg-[#F8FAFC]
+                  "
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div
+                className="
+                  grid
+                  grid-cols-1
+                  gap-[14px]
+
+                  px-5
+                  py-5
+
+                  sm:grid-cols-2
+                "
+              >
+                <FormSelect
+                  label="الفترة التدريبية"
+                  value={
+                    selectedPeriodId
+                  }
+                  onChange={
+                    setSelectedPeriodId
+                  }
+                >
+                  <option value="">
+                    اختر الفترة
+                  </option>
+
+                  {trainingPeriods
+                    .filter(
+                      (period) =>
+                        period.status !==
+                        "مغلقة"
+                    )
+                    .map(
+                      (period) => (
+                        <option
+                          key={
+                            period.id
+                          }
+                          value={
+                            period.id
+                          }
+                        >
+                          {
+                            period.name
+                          }
+                        </option>
+                      )
+                    )}
+                </FormSelect>
+
+                <FormSelect
+                  label="جهة التدريب"
+                  value={
+                    selectedOrganizationId
+                  }
+                  onChange={(value) => {
+                    setSelectedOrganizationId(
+                      value
+                    );
+
+                    setSelectedOpportunity(
+                      ""
+                    );
+                  }}
+                >
+                  <option value="">
+                    اختر الجهة
+                  </option>
+
+                  {compatibleOrganizations.map(
+                    (organization) => (
+                      <option
+                        key={
+                          organization.id
+                        }
+                        value={
+                          organization.id
+                        }
+                        disabled={
+                          organization.assigned >=
+                          organization.capacity
+                        }
+                      >
+                        {
+                          organization.name
+                        }
+                        {" - "}
+                        {
+                          organization.assigned
+                        }
+                        /
+                        {
+                          organization.capacity
+                        }
+                      </option>
+                    )
+                  )}
+                </FormSelect>
+
+                <FormSelect
+                  label="فرصة التدريب"
+                  value={
+                    selectedOpportunity
+                  }
+                  onChange={
+                    setSelectedOpportunity
+                  }
+                  disabled={
+                    !selectedOrganization
+                  }
+                >
+                  <option value="">
+                    اختر الفرصة
+                  </option>
+
+                  {selectedOrganization?.opportunities.map(
+                    (opportunity) => (
+                      <option
+                        key={
+                          opportunity
+                        }
+                        value={
+                          opportunity
+                        }
+                      >
+                        {
+                          opportunity
+                        }
+                      </option>
+                    )
+                  )}
+                </FormSelect>
+
+                <FormSelect
+                  label="المشرف الأكاديمي"
+                  value={
+                    selectedAcademicSupervisor
+                  }
+                  onChange={
+                    setSelectedAcademicSupervisor
+                  }
+                >
+                  <option value="">
+                    اختر المشرف
+                  </option>
+
+                  {compatibleAcademicSupervisors.map(
+                    (supervisor) => (
+                      <option
+                        key={
+                          supervisor.id
+                        }
+                        value={
+                          supervisor.name
+                        }
+                      >
+                        {
+                          supervisor.name
+                        }
+                      </option>
+                    )
+                  )}
+                </FormSelect>
+
+                <div className="sm:col-span-2">
+                  <Label>
+                    مشرف جهة التدريب
+                  </Label>
+
+                  <div
+                    className="
+                      flex
+                      h-[42px]
+                      items-center
+                      gap-[8px]
+
+                      rounded-[9px]
+
+                      border
+                      border-[#D9E2EC]
+
+                      bg-[#F8FAFC]
+
+                      px-[11px]
+                    "
+                  >
+                    <UserRoundCheck
+                      size={15}
+                      className="text-[#64748B]"
+                    />
+
+                    <span
+                      className="
+                        text-[10px]
+                        font-medium
+                        text-[#475569]
+                      "
+                    >
+                      {selectedOrganization
+                        ?.fieldSupervisor ||
+                        "يتم تحديده حسب جهة التدريب"}
+                    </span>
+                  </div>
+                </div>
+
+                {selectedOrganization && (
+                  <div className="sm:col-span-2">
+                    <div
+                      className="
+                        rounded-[10px]
+
+                        border
+                        border-[#D7E5FF]
+
+                        bg-[#F6F9FF]
+
+                        p-[12px]
+                      "
+                    >
+                      <div
+                        className="
+                          flex
+                          items-center
+                          justify-between
+                          gap-4
+                        "
+                      >
+                        <div
+                          className="
+                            flex
+                            items-center
+                            gap-[8px]
+                          "
+                        >
+                          <Building2
+                            size={17}
+                            className="text-[#09379A]"
+                          />
+
+                          <div>
+                            <p
+                              className="
+                                m-0
+
+                                text-[9px]
+                                font-bold
+                                text-[#334155]
+                              "
+                            >
+                              الطاقة الاستيعابية
+                            </p>
+
+                            <p
+                              className="
+                                m-0
+                                mt-[2px]
+
+                                text-[8px]
+                                text-[#64748B]
+                              "
+                            >
+                              تم توزيع{" "}
+                              {
+                                selectedOrganization.assigned
+                              }{" "}
+                              من أصل{" "}
+                              {
+                                selectedOrganization.capacity
+                              }
+                            </p>
+                          </div>
+                        </div>
+
+                        <strong
+                          className="
+                            text-[11px]
+                            text-[#09379A]
+                          "
+                        >
+                          {Math.max(
+                            selectedOrganization.capacity -
+                              selectedOrganization.assigned,
+                            0
+                          )}{" "}
+                          متاح
+                        </strong>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div
+                className="
+                  flex
+                  flex-col-reverse
+                  gap-[8px]
+
+                  border-t
+                  border-[#E2E8F0]
+
+                  px-5
+                  py-[14px]
+
+                  sm:flex-row
+                  sm:justify-end
+                "
+              >
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowDistributionModal(
+                      false
+                    )
+                  }
+                  className="
+                    min-h-[40px]
+
+                    rounded-[8px]
+
+                    border
+                    border-[#D9E2EC]
+
+                    bg-white
+
+                    px-[15px]
+
+                    text-[9px]
+                    font-bold
+                  "
+                >
+                  إلغاء
+                </button>
+
+                <button
+                  type="button"
+                  onClick={
+                    saveDistribution
+                  }
+                  className="
+                    flex
+                    min-h-[40px]
+                    items-center
+                    justify-center
+                    gap-[6px]
+
+                    rounded-[8px]
+
+                    border-0
+
+                    bg-[#09379A]
+
+                    px-[17px]
+
+                    text-[9px]
+                    font-bold
+                    text-white
+                  "
+                >
+                  <Save
+                    size={14}
+                  />
+
+                  حفظ التوزيع
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
     </div>
   );
 }
 
-function Filter({ label, children }) {
+/* =========================================================
+   COMPONENTS
+========================================================= */
+
+const inputStyle = `
+  h-[42px]
+  w-full
+
+  rounded-[9px]
+
+  border
+  border-[#D9E2EC]
+
+  bg-white
+
+  px-[11px]
+
+  font-['Cairo']
+
+  text-[10px]
+  text-[#334155]
+
+  outline-none
+
+  focus:border-[#09379A]
+  focus:ring-2
+  focus:ring-[#09379A]/10
+`;
+
+function EligibilityBadge({
+  status,
+}) {
+  const styles = {
+    مؤهل:
+      "bg-[#ECFDF3] text-[#15803D] border-[#BBF7D0]",
+
+    "غير مؤهل":
+      "bg-[#FFF1F2] text-[#BE123C] border-[#FECDD3]",
+
+    "يحتاج مراجعة":
+      "bg-[#FFF7ED] text-[#C2410C] border-[#FED7AA]",
+
+    "مكتمل التدريب":
+      "bg-[#EEF3FF] text-[#09379A] border-[#D7E5FF]",
+  };
+
+  return (
+    <span
+      className={`
+        inline-flex
+        min-h-[23px]
+        items-center
+
+        whitespace-nowrap
+
+        rounded-full
+
+        border
+
+        px-[8px]
+
+        text-[8px]
+        font-bold
+
+        ${
+          styles[status] ||
+          "border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B]"
+        }
+      `}
+    >
+      {status}
+    </span>
+  );
+}
+
+function DistributionBadge({
+  status,
+}) {
+  const styles = {
+    موزع:
+      "bg-[#ECFDF3] text-[#15803D]",
+
+    "بانتظار التوزيع":
+      "bg-[#FFF7ED] text-[#C2410C]",
+
+    "غير قابل للتوزيع":
+      "bg-[#FFF1F2] text-[#BE123C]",
+
+    مكتمل:
+      "bg-[#EEF3FF] text-[#09379A]",
+  };
+
+  return (
+    <span
+      className={`
+        inline-flex
+        min-h-[23px]
+        items-center
+
+        whitespace-nowrap
+
+        rounded-full
+
+        px-[8px]
+
+        text-[8px]
+        font-bold
+
+        ${
+          styles[status] ||
+          "bg-[#F8FAFC] text-[#64748B]"
+        }
+      `}
+    >
+      {status}
+    </span>
+  );
+}
+
+function Label({ children }) {
+  return (
+    <label
+      className="
+        mb-[6px]
+        block
+
+        text-[10px]
+        font-bold
+        text-[#475569]
+      "
+    >
+      {children}
+    </label>
+  );
+}
+
+function FilterSelect({
+  label,
+  value,
+  onChange,
+  children,
+}) {
   return (
     <div>
-      <label className="block text-[11px] font-semibold text-[#3b4454] mb-[4px]">
-        {label}
-      </label>
+      <Label>{label}</Label>
 
       <select
-        className="
-          w-full
-          h-[38px]
-          border
-          border-[#c9cfd9]
-          rounded-[8px]
-          px-[10px]
-          bg-white
-          outline-none
-          text-[11px]
-          text-[#4a5465]
-        "
+        value={value}
+        onChange={(event) =>
+          onChange(
+            event.target.value
+          )
+        }
+        className={inputStyle}
       >
         {children}
       </select>
@@ -615,51 +3098,175 @@ function Filter({ label, children }) {
   );
 }
 
-function SelectBox({ label, value }) {
+function FormSelect({
+  label,
+  value,
+  onChange,
+  children,
+  disabled = false,
+}) {
   return (
     <div>
-      <label className="block text-[10px] font-semibold text-[#3b4454] mb-[4px]">
-        {label}
-      </label>
+      <Label>{label}</Label>
 
       <select
-        defaultValue={value}
-        className="
-          w-full
-          h-[36px]
-          rounded-[7px]
-          border
-          border-[#c9cfd9]
-          bg-white
-          px-[10px]
-          text-[10px]
-          text-[#4a5465]
-          outline-none
-        "
+        value={value}
+        disabled={disabled}
+        onChange={(event) =>
+          onChange(
+            event.target.value
+          )
+        }
+        className={`
+          ${inputStyle}
+
+          ${
+            disabled
+              ? "cursor-not-allowed bg-[#F8FAFC] text-[#94A3B8]"
+              : ""
+          }
+        `}
       >
-        <option>{value}</option>
+        {children}
       </select>
     </div>
   );
 }
 
-function ActionButton({ text }) {
+function TableHead({
+  children,
+}) {
   return (
-    <button
-      type="button"
+    <th
       className="
-        w-full
-        h-[32px]
-        rounded-[7px]
-        border
-        border-[#b9c0cc]
-        bg-white
-        text-[10px]
-        text-[#3b4454]
-        hover:bg-[#eef0f4]
+        whitespace-nowrap
+
+        px-[13px]
+        py-[11px]
+
+        text-right
+        text-[9px]
+        font-bold
+        text-[#64748B]
       "
     >
-      {text}
-    </button>
+      {children}
+    </th>
+  );
+}
+
+function TableCell({
+  children,
+}) {
+  return (
+    <td
+      className="
+        px-[13px]
+        py-[12px]
+
+        align-middle
+      "
+    >
+      {children}
+    </td>
+  );
+}
+
+function InfoBox({
+  label,
+  value,
+}) {
+  return (
+    <div
+      className="
+        rounded-[9px]
+
+        border
+        border-[#E7ECF2]
+
+        bg-[#FAFBFC]
+
+        px-[10px]
+        py-[9px]
+      "
+    >
+      <p
+        className="
+          m-0
+
+          text-[8px]
+          text-[#94A3B8]
+        "
+      >
+        {label}
+      </p>
+
+      <p
+        className="
+          m-0
+          mt-[3px]
+
+          text-[9px]
+          font-bold
+          leading-[18px]
+          text-[#475569]
+        "
+      >
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function MobileInfo({
+  label,
+  value,
+}) {
+  return (
+    <div>
+      <p
+        className="
+          m-0
+
+          text-[8px]
+          text-[#94A3B8]
+        "
+      >
+        {label}
+      </p>
+
+      <p
+        className="
+          m-0
+          mt-[2px]
+
+          text-[9px]
+          font-medium
+          text-[#475569]
+        "
+      >
+        {value}
+      </p>
+    </div>
+  );
+}
+
+function SectionTitle({
+  children,
+}) {
+  return (
+    <h4
+      className="
+        m-0
+        mb-[9px]
+        mt-[20px]
+
+        text-[11px]
+        font-bold
+        text-[#334155]
+      "
+    >
+      {children}
+    </h4>
   );
 }

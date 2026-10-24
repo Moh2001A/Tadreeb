@@ -1,162 +1,264 @@
+import { useEffect, useState } from "react";
+
 import {
   Link,
   matchPath,
   useLocation,
+  useNavigate,
 } from "react-router-dom";
 
+import {
+  LayoutDashboard,
+  ClipboardCheck,
+  Megaphone,
+  BookOpen,
+  ClipboardList,
+  Users,
+  CalendarDays,
+  UserRoundCog,
+  GraduationCap,
+  Award,
+  BriefcaseBusiness,
+  Building2,
+  MapPinned,
+  UserRoundCheck,
+  Route,
+  ShieldCheck,
+  Star,
+  BarChart3,
+  FileCheck2,
+  TriangleAlert,
+  FolderArchive,
+  Search,
+  Settings,
+  LogOut,
+  X,
+  BookOpenCheck,
+} from "lucide-react";
+
 export default function Sidebar() {
+  const navigate = useNavigate();
   const location = useLocation();
 
+  const [isMobileOpen, setIsMobileOpen] =
+    useState(false);
+
+  /* =========================================================
+     MENU GROUPS
+  ========================================================= */
+
   const menuGroups = [
+    /* =====================================================
+       MAIN
+    ===================================================== */
+
     {
       title: "الرئيسية",
+
       items: [
         {
           name: "لوحة التحكم",
-          icon: "⌂",
+
+          icon: LayoutDashboard,
+
           path: "/admin/dashboard",
+
           activePath: "/admin/dashboard",
+
           exactHash: "",
         },
+
         {
           name: "المهام التي تحتاج إجراء",
-          icon: "♧",
+
+          icon: ClipboardCheck,
+
           path: "/admin/dashboard#tasks",
+
           activePath: "/admin/dashboard",
+
           exactHash: "#tasks",
+        },
+
+        {
+          name: "الإعلانات والإشعارات",
+
+          icon: Megaphone,
+
+          path: "/admin/announcements",
+
+          activePatterns: [
+            "/admin/announcements",
+          ],
         },
       ],
     },
 
+    /* =====================================================
+       ACADEMIC SETUP
+    ===================================================== */
+
     {
-      title: "الدورات التدريبية",
+      title: "الإعداد الأكاديمي",
+
       items: [
         {
-          name: "قائمة الدورات",
-          icon: "♙",
+          name: "الكليات والتخصصات",
+
+          icon: Building2,
+
+          path: "/admin/academic-structure",
+
+          activePatterns: [
+            "/admin/academic-structure",
+          ],
+        },
+
+        {
+          name: "الفصول والفترات التدريبية",
+
+          icon: CalendarDays,
+
+          path: "/admin/training-periods",
+
+          activePatterns: [
+            "/admin/training-periods",
+          ],
+        },
+
+        {
+          name: "متطلبات التدريب",
+
+          icon: BookOpenCheck,
+
+          path: "/admin/training-requirements",
+
+          activePatterns: [
+            "/admin/training-requirements",
+          ],
+        },
+      ],
+    },
+
+    /* =====================================================
+       TRAINING COURSES
+    ===================================================== */
+
+    {
+      title: "الدورات التدريبية",
+
+      items: [
+        {
+          name: "إدارة الدورات",
+
+          icon: BookOpen,
+
           path: "/admin/courses",
-          activePath: "/admin/courses",
+
+          activePatterns: [
+            "/admin/courses",
+          ],
         },
 
         {
           name: "طلبات التسجيل",
-          icon: "▤",
 
-          // تحتاج اختيار دورة أولاً
-          path: "/admin/courses",
+          icon: ClipboardList,
+
+          path: "/admin/courses/1/registration-requests",
 
           activePatterns: [
             "/admin/courses/:id/registration-requests",
-            "/admin/courses/:id/registration-requests/:requestId",
-            "/admin/courses/:id/registration-requests/:requestId/decision",
           ],
         },
 
         {
-          name: "قائمة الانتظار",
-          icon: "◷",
+          name: "المتدربون والحضور",
 
-          // تحتاج اختيار دورة أولاً
-          path: "/admin/courses",
+          icon: Users,
 
-          activePatterns: [
-            "/admin/courses/:id/waiting-list",
-            "/admin/courses/:id/waiting-list/:studentId/review-seat",
-          ],
-        },
-
-        {
-          name: "المتدربون",
-          icon: "♟",
-
-          // تحتاج اختيار دورة أولاً
-          path: "/admin/courses",
+          path: "/admin/courses/1/trainees",
 
           activePatterns: [
             "/admin/courses/:id/trainees",
-            "/admin/courses/:id/trainees/:studentId",
-          ],
-        },
-
-        {
-          name: "الحضور والغياب",
-          icon: "▣",
-
-          // تحتاج اختيار دورة أولاً
-          path: "/admin/courses",
-
-          activePatterns: [
-            "/admin/courses/:id/attendance",
           ],
         },
 
         {
           name: "مدربو الدورات",
-          icon: "♙",
+
+          icon: UserRoundCog,
+
           path: "/admin/course-trainers",
 
           activePatterns: [
             "/admin/course-trainers",
-            "/admin/course-trainers/add",
-            "/admin/course-trainers/:trainerId",
-            "/admin/course-trainers/:trainerId/edit",
           ],
         },
 
         {
           name: "التقييم والنتائج",
-          icon: "☆",
 
-          // تحتاج اختيار دورة أولاً
-          path: "/admin/courses",
+          icon: Star,
+
+          path: "/admin/courses/1/evaluations",
 
           activePatterns: [
             "/admin/courses/:id/evaluations",
-            "/admin/courses/:id/evaluations/results",
           ],
         },
 
         {
           name: "شهادات الدورات",
-          icon: "♕",
+
+          icon: Award,
+
           path: "/admin/course-certificates",
 
           activePatterns: [
             "/admin/course-certificates",
-            "/admin/course-certificates/:certificateId/preview",
-            "/admin/course-certificates/verify",
           ],
         },
 
         {
-          name: "تقارير الدورات",
-          icon: "▥",
-          path: "/admin/course-reports",
+          name: "التحقق من الشهادة",
+
+          icon: ShieldCheck,
+
+          path: "/admin/course-certificates/verify",
 
           activePatterns: [
-            "/admin/course-reports",
+            "/admin/course-certificates/verify",
           ],
         },
       ],
     },
 
+    /* =====================================================
+       FIELD TRAINING
+    ===================================================== */
+
     {
       title: "التدريب الميداني",
+
       items: [
         {
           name: "طلبات التدريب",
-          icon: "▤",
+
+          icon: ClipboardList,
+
           path: "/admin/training-requests",
 
           activePatterns: [
             "/admin/training-requests",
-            "/admin/training-requests/:id",
           ],
         },
 
         {
           name: "الطلبة",
-          icon: "♙",
+
+          icon: GraduationCap,
+
           path: "/admin/students",
 
           activePatterns: [
@@ -165,112 +267,106 @@ export default function Sidebar() {
         },
 
         {
+          name: "الأهلية للتدريب",
+
+          icon: BookOpenCheck,
+
+          path: "/admin/students/eligibility",
+
+          activePatterns: [
+            "/admin/students/eligibility",
+          ],
+        },
+
+        {
           name: "جهات التدريب",
-          icon: "▦",
+
+          icon: Building2,
+
           path: "/admin/training-organizations",
 
           activePatterns: [
             "/admin/training-organizations",
-            "/admin/training-organizations/add",
-            "/admin/training-organizations/:id",
           ],
         },
 
         {
           name: "فرص التدريب",
-          icon: "▣",
+
+          icon: BriefcaseBusiness,
+
           path: "/admin/training-opportunities",
 
           activePatterns: [
             "/admin/training-opportunities",
-            "/admin/training-opportunities/add",
-            "/admin/training-opportunities/:id",
           ],
         },
 
         {
           name: "توزيع الطلبة",
-          icon: "♟",
+
+          icon: Route,
+
           path: "/admin/student-distribution",
 
           activePatterns: [
             "/admin/student-distribution",
-            "/admin/student-distribution/process",
           ],
         },
 
         {
           name: "الموافقات",
-          icon: "✓",
+
+          icon: ShieldCheck,
+
           path: "/admin/approvals",
 
           activePatterns: [
             "/admin/approvals",
-            "/admin/approvals/:id",
           ],
         },
 
         {
           name: "المشرفون",
-          icon: "♙",
+
+          icon: UserRoundCheck,
+
           path: "/admin/supervisors",
 
           activePatterns: [
             "/admin/supervisors",
-            "/admin/supervisors/add",
-            "/admin/supervisors/:id",
           ],
         },
 
         {
           name: "الزيارات والمتابعة",
-          icon: "⌖",
+
+          icon: MapPinned,
+
           path: "/admin/visits",
 
           activePatterns: [
             "/admin/visits",
-            "/admin/visits/add",
           ],
         },
 
         {
           name: "التقييمات",
-          icon: "☆",
+
+          icon: Star,
+
           path: "/admin/evaluations",
 
           activePatterns: [
             "/admin/evaluations",
-            "/admin/evaluations/add",
-            "/admin/evaluations/:id",
-          ],
-        },
-
-        {
-          name: "التقارير والإحصائيات",
-          icon: "▥",
-          path: "/admin/reports",
-
-          activePatterns: [
-            "/admin/reports",
-            "/admin/reports/custom",
-          ],
-        },
-
-        {
-          name: "الشهادات",
-          icon: "♕",
-          path: "/admin/certificates",
-
-          activePatterns: [
-            "/admin/certificates",
-            "/admin/certificates/issue",
-            "/admin/certificates/:id",
           ],
         },
 
         {
           name: "التقرير النهائي والإتمام",
-          icon: "□",
+
+          icon: FileCheck2,
+
           path: "/admin/final-reports",
 
           activePatterns: [
@@ -279,8 +375,22 @@ export default function Sidebar() {
         },
 
         {
+          name: "الشهادات",
+
+          icon: Award,
+
+          path: "/admin/certificates",
+
+          activePatterns: [
+            "/admin/certificates",
+          ],
+        },
+
+        {
           name: "الحالات الاستثنائية",
-          icon: "⚠",
+
+          icon: TriangleAlert,
+
           path: "/admin/exceptions",
 
           activePatterns: [
@@ -290,12 +400,41 @@ export default function Sidebar() {
       ],
     },
 
+    /* =====================================================
+       REPORTS
+    ===================================================== */
+
+    {
+      title: "التقارير",
+
+      items: [
+        {
+          name: "التقارير والإحصائيات",
+
+          icon: BarChart3,
+
+          path: "/admin/reports",
+
+          activePatterns: [
+            "/admin/reports",
+          ],
+        },
+      ],
+    },
+
+    /* =====================================================
+       GENERAL MANAGEMENT
+    ===================================================== */
+
     {
       title: "الإدارة العامة",
+
       items: [
         {
           name: "الملفات والأرشفة",
-          icon: "▱",
+
+          icon: FolderArchive,
+
           path: "/admin/files",
 
           activePatterns: [
@@ -304,18 +443,10 @@ export default function Sidebar() {
         },
 
         {
-          name: "الإعلانات والإشعارات",
-          icon: "◁",
-          path: "/admin/announcements",
-
-          activePatterns: [
-            "/admin/announcements",
-          ],
-        },
-
-        {
           name: "البحث المتقدم",
-          icon: "⌕",
+
+          icon: Search,
+
           path: "/admin/advanced-search",
 
           activePatterns: [
@@ -325,7 +456,9 @@ export default function Sidebar() {
 
         {
           name: "المستخدمون والصلاحيات",
-          icon: "⚙",
+
+          icon: Settings,
+
           path: "/admin/users",
 
           activePatterns: [
@@ -337,120 +470,655 @@ export default function Sidebar() {
     },
   ];
 
+  /* =========================================================
+     MOBILE SIDEBAR EVENT
+  ========================================================= */
+
+  useEffect(() => {
+    const handleToggleSidebar = () => {
+      setIsMobileOpen(
+        (previous) => !previous
+      );
+    };
+
+    window.addEventListener(
+      "toggle-admin-sidebar",
+      handleToggleSidebar
+    );
+
+    return () => {
+      window.removeEventListener(
+        "toggle-admin-sidebar",
+        handleToggleSidebar
+      );
+    };
+  }, []);
+
+  /* =========================================================
+     CLOSE SIDEBAR WHEN ROUTE CHANGES
+  ========================================================= */
+
+  useEffect(() => {
+    setIsMobileOpen(false);
+  }, [
+    location.pathname,
+    location.hash,
+  ]);
+
+  /* =========================================================
+     ESCAPE + BODY SCROLL LOCK
+  ========================================================= */
+
+  useEffect(() => {
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setIsMobileOpen(false);
+      }
+    };
+
+    if (isMobileOpen) {
+      document.addEventListener(
+        "keydown",
+        handleEscape
+      );
+
+      document.body.style.overflow =
+        "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.removeEventListener(
+        "keydown",
+        handleEscape
+      );
+
+      document.body.style.overflow = "";
+    };
+  }, [isMobileOpen]);
+
+  /* =========================================================
+     ACTIVE ITEM
+  ========================================================= */
+
   const isItemActive = (item) => {
-    // المهام التي تحتاج إجراء
-    if (item.exactHash !== undefined) {
+    if (
+      item.exactHash !== undefined
+    ) {
       return (
-        location.pathname === item.activePath &&
+        location.pathname ===
+          item.activePath &&
         location.hash === item.exactHash
       );
     }
 
-    // مسار مفرد
     if (item.activePath) {
       return (
-        location.pathname === item.activePath &&
+        location.pathname ===
+          item.activePath &&
         location.hash === ""
       );
     }
 
-    // مجموعة مسارات
     if (item.activePatterns) {
-      return item.activePatterns.some((pattern) =>
-        matchPath(
-          {
-            path: pattern,
-            end: true,
-          },
-          location.pathname
-        )
+      return item.activePatterns.some(
+        (pattern) =>
+          Boolean(
+            matchPath(
+              {
+                path: pattern,
+                end: true,
+              },
+
+              location.pathname
+            )
+          )
       );
     }
 
     return false;
   };
 
+  const closeMobileSidebar = () => {
+    setIsMobileOpen(false);
+  };
+
+  const handleLogout = () => {
+    setIsMobileOpen(false);
+
+    navigate("/");
+  };
+
   return (
-    <aside
-      dir="rtl"
-      className="
-        w-[256px]
-        min-h-[calc(100vh-64px)]
-        bg-[#fafbfc]
-        border-l
-        border-[#dfe3ea]
-        shrink-0
-        px-[10px]
-        py-[6px]
-        overflow-y-auto
-      "
-    >
-      <nav>
-        {menuGroups.map((group) => (
+    <>
+      {/* =====================================================
+          MOBILE OVERLAY
+      ====================================================== */}
+
+      <div
+        aria-hidden="true"
+        onClick={closeMobileSidebar}
+        className={`
+          fixed
+          inset-0
+          z-40
+
+          bg-[#0F172A]/45
+
+          backdrop-blur-[1px]
+
+          transition-opacity
+          duration-300
+
+          lg:hidden
+
+          ${
+            isMobileOpen
+              ? `
+                  pointer-events-auto
+                  opacity-100
+                `
+              : `
+                  pointer-events-none
+                  opacity-0
+                `
+          }
+        `}
+      />
+
+      {/* =====================================================
+          SIDEBAR
+      ====================================================== */}
+
+      <aside
+        dir="rtl"
+        aria-label="القائمة الرئيسية للإدارة"
+        className={`
+          fixed
+          right-0
+          top-0
+          z-50
+
+          flex
+          h-dvh
+          w-[280px]
+          shrink-0
+          flex-col
+
+          overflow-hidden
+
+          bg-[#09379A]
+
+          font-['Cairo']
+          text-white
+
+          shadow-[-8px_0_30px_rgba(15,23,42,0.08)]
+
+          transition-transform
+          duration-300
+          ease-out
+
+          lg:static
+          lg:z-auto
+          lg:translate-x-0
+          lg:shadow-none
+          lg:transition-none
+
+          ${
+            isMobileOpen
+              ? "translate-x-0"
+              : "translate-x-full"
+          }
+        `}
+      >
+        {/* =================================================
+            BRAND
+        ================================================== */}
+
+        <div
+          className="
+            relative
+
+            flex
+            h-[112px]
+            shrink-0
+            items-center
+
+            px-[18px]
+            pt-[26px]
+
+            lg:h-[96px]
+            lg:pt-0
+          "
+        >
+          <img
+            src="/logo.svg"
+            alt="شعار بوابة التدريب"
+            className="
+              h-[48px]
+              w-[48px]
+              shrink-0
+
+              object-contain
+            "
+          />
+
           <div
-            key={group.title}
-            className="mb-[8px]"
+            className="
+              mr-[10px]
+              min-w-0
+              text-right
+            "
           >
-            {/* ================= GROUP TITLE ================= */}
-            <div
+            <h2
               className="
-                px-[12px]
-                py-[7px]
-                text-[11px]
+                m-0
+
+                whitespace-nowrap
+
+                text-[16px]
                 font-bold
-                text-[#7a8393]
+                leading-[20px]
+                tracking-[2px]
+
+                text-white
               "
             >
-              {group.title}
-            </div>
+              بــوابة التدريــب
+            </h2>
 
-            {/* ================= GROUP ITEMS ================= */}
-            <div>
-              {group.items.map((item) => {
-                const active = isItemActive(item);
+            <p
+              className="
+                m-0
+                mt-[2px]
 
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    className={`
-                      min-h-[31px]
-                      px-[12px]
-                      mb-[1px]
-                      rounded-[8px]
-                      flex
-                      items-center
-                      gap-[11px]
-                      text-[12px]
-                      transition
-                      ${
-                        active
-                          ? "bg-[#e1e6ee] text-[#1b2430] font-bold"
-                          : "text-[#4a5465] hover:bg-[#eef0f4]"
-                      }
-                    `}
+                whitespace-nowrap
+
+                text-[11px]
+                font-medium
+                leading-[17px]
+
+                text-white/80
+              "
+            >
+              لوحة إدارة النظام
+            </p>
+          </div>
+
+          <button
+            type="button"
+            aria-label="إغلاق القائمة"
+            onClick={
+              closeMobileSidebar
+            }
+            className="
+              absolute
+              left-[14px]
+              top-[14px]
+
+              hidden
+              h-[32px]
+              w-[32px]
+
+              items-center
+              justify-center
+
+              rounded-[8px]
+
+              border
+              border-white/15
+
+              bg-white/10
+
+              text-white
+
+              transition-all
+              duration-200
+
+              hover:bg-white/20
+
+              active:scale-[0.96]
+
+              max-lg:flex
+            "
+          >
+            <X
+              size={18}
+              strokeWidth={1.9}
+            />
+          </button>
+        </div>
+
+        {/* =================================================
+            NAVIGATION
+        ================================================== */}
+
+        <div
+          className="
+            admin-sidebar-scroll
+
+            min-h-0
+            flex-1
+
+            overflow-x-hidden
+            overflow-y-auto
+
+            overscroll-contain
+          "
+        >
+          <nav
+            className="
+              px-[9px]
+              pb-[20px]
+              pt-[8px]
+            "
+          >
+            {menuGroups.map(
+              (
+                group,
+                groupIndex
+              ) => (
+                <div
+                  key={group.title}
+                  className={
+                    groupIndex === 0
+                      ? ""
+                      : "mt-[18px]"
+                  }
+                >
+                  <div
+                    className="
+                      mb-[6px]
+                      px-[16px]
+
+                      text-[11px]
+                      font-bold
+                      leading-[20px]
+
+                      text-white/55
+                    "
                   >
-                    <span
-                      className="
-                        w-[18px]
-                        text-center
-                        text-[14px]
-                        shrink-0
-                      "
-                    >
-                      {item.icon}
-                    </span>
+                    {group.title}
+                  </div>
 
-                    <span>
-                      {item.name}
-                    </span>
-                  </Link>
-                );
-              })}
+                  <div
+                    className="
+                      flex
+                      flex-col
+                      gap-[4px]
+                    "
+                  >
+                    {group.items.map(
+                      (item) => {
+                        const active =
+                          isItemActive(
+                            item
+                          );
+
+                        const Icon =
+                          item.icon;
+
+                        return (
+                          <Link
+                            key={
+                              item.name
+                            }
+                            to={item.path}
+                            onClick={
+                              closeMobileSidebar
+                            }
+                            className={`
+                              flex
+                              min-h-[44px]
+                              w-full
+                              items-center
+
+                              gap-[12px]
+
+                              rounded-[10px]
+
+                              px-[16px]
+                              py-[10px]
+
+                              text-[13px]
+                              leading-[20px]
+
+                              transition-all
+                              duration-200
+
+                              ${
+                                active
+                                  ? `
+                                      bg-white
+
+                                      font-bold
+                                      text-[#09379A]
+
+                                      shadow-[0_1px_2px_rgba(0,0,0,0.05)]
+                                    `
+                                  : `
+                                      bg-transparent
+
+                                      font-medium
+                                      text-white/90
+
+                                      hover:bg-white/10
+                                      hover:text-white
+                                    `
+                              }
+                            `}
+                          >
+                            <Icon
+                              size={19}
+                              strokeWidth={
+                                1.8
+                              }
+                              className="shrink-0"
+                            />
+
+                            <span
+                              className="
+                                min-w-0
+                                flex-1
+
+                                whitespace-nowrap
+                              "
+                            >
+                              {item.name}
+                            </span>
+                          </Link>
+                        );
+                      }
+                    )}
+                  </div>
+                </div>
+              )
+            )}
+          </nav>
+        </div>
+
+        {/* =================================================
+            BOTTOM
+        ================================================== */}
+
+        <div
+          className="
+            shrink-0
+
+            border-t
+            border-white/10
+
+            bg-[#09379A]
+
+            pt-[8px]
+          "
+        >
+          <div
+            className="
+              px-[12px]
+              pb-[8px]
+            "
+          >
+            <div
+              className="
+                rounded-[10px]
+
+                border
+                border-white/10
+
+                bg-white/[0.07]
+
+                px-[14px]
+                py-[11px]
+              "
+            >
+              <p
+                className="
+                  m-0
+
+                  text-[10px]
+                  font-medium
+                  leading-[18px]
+
+                  text-white/60
+                "
+              >
+                نوع الحساب
+              </p>
+
+              <div
+                className="
+                  mt-[3px]
+
+                  flex
+                  items-center
+                  gap-[7px]
+                "
+              >
+                <span
+                  className="
+                    h-[7px]
+                    w-[7px]
+
+                    rounded-full
+
+                    bg-[#34D399]
+                  "
+                />
+
+                <p
+                  className="
+                    m-0
+
+                    text-[12px]
+                    font-bold
+                    leading-[19px]
+
+                    text-white
+                  "
+                >
+                  مدير النظام
+                </p>
+              </div>
             </div>
           </div>
-        ))}
-      </nav>
-    </aside>
+
+          <div
+            className="
+              px-[12px]
+              pb-[14px]
+            "
+          >
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="
+                flex
+                h-[44px]
+                w-full
+                items-center
+
+                gap-[12px]
+
+                rounded-[10px]
+
+                border-0
+
+                bg-transparent
+
+                px-[16px]
+
+                text-[13px]
+                font-medium
+                leading-[20px]
+
+                text-white/90
+
+                transition-all
+                duration-200
+
+                hover:bg-white/10
+                hover:text-white
+              "
+            >
+              <LogOut
+                size={20}
+                strokeWidth={1.8}
+                className="shrink-0"
+              />
+
+              <span>
+                تسجيل الخروج
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* =================================================
+            SCROLLBAR
+        ================================================== */}
+
+        <style>{`
+          .admin-sidebar-scroll {
+            scrollbar-width: thin;
+            scrollbar-color:
+              rgba(255, 255, 255, 0.22)
+              transparent;
+          }
+
+          .admin-sidebar-scroll::-webkit-scrollbar {
+            width: 5px;
+          }
+
+          .admin-sidebar-scroll::-webkit-scrollbar-track {
+            background: transparent;
+            margin-top: 4px;
+            margin-bottom: 4px;
+          }
+
+          .admin-sidebar-scroll::-webkit-scrollbar-thumb {
+            background-color:
+              rgba(255, 255, 255, 0.22);
+
+            border-radius: 999px;
+
+            border: 1px solid transparent;
+
+            background-clip: padding-box;
+          }
+
+          .admin-sidebar-scroll::-webkit-scrollbar-thumb:hover {
+            background-color:
+              rgba(255, 255, 255, 0.38);
+          }
+
+          .admin-sidebar-scroll::-webkit-scrollbar-thumb:active {
+            background-color:
+              rgba(255, 255, 255, 0.48);
+          }
+        `}</style>
+      </aside>
+    </>
   );
 }

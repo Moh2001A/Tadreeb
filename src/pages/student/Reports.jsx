@@ -694,15 +694,15 @@ export default function Reports() {
                     gap-[8px]
                     rounded-[8px]
                     border-0
-                    bg-[#FF6B35]
+                    bg-[#09379A]
                     px-[19px]
                     text-[12px]
                     font-bold
                     text-white
-                    shadow-[0_3px_7px_rgba(255,107,53,0.18)]
+                    shadow-[0_3px_7px_rgba(9,55,154,0.18)]
                     transition
 
-                    hover:bg-[#EA5A28]
+                    hover:bg-[#072E81]
                   "
                 >
                   <Download

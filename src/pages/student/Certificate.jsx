@@ -860,15 +860,15 @@ export default function Certificate() {
                   gap-[8px]
                   rounded-[8px]
                   border-0
-                  bg-[#FF6B35]
+                  bg-[#09379A]
                   px-[20px]
                   text-[11px]
                   font-bold
                   text-white
-                  shadow-[0_3px_8px_rgba(255,107,53,0.16)]
+                  shadow-[0_3px_7px_rgba(9,55,154,0.18)]
                   transition
 
-                  hover:bg-[#EA5A28]
+                  hover:bg-[#072E81]
 
                   sm:w-auto
                   sm:min-w-[195px]
