@@ -1,377 +1,139 @@
+
 import { useEffect, useState } from "react";
 
 import {
-  Link,
-  matchPath,
+  NavLink,
   useLocation,
   useNavigate,
 } from "react-router-dom";
 
 import {
   LayoutDashboard,
-  Megaphone,
-  BookOpen,
-  ClipboardList,
-  UserRoundCog,
-  GraduationCap,
-  Award,
-  BriefcaseBusiness,
+  Users,
+  FileCheck,
   Building2,
-  MapPinned,
-  UserRoundCheck,
-  Route,
-  ShieldCheck,
+  BadgeCheck,
+  Activity,
+  FileText,
   Star,
-  BarChart3,
-  FileCheck2,
-  TriangleAlert,
-  FolderArchive,
-  Search,
+  Bell,
+  UserRound,
   Settings,
   LogOut,
   X,
-  BookOpenCheck,
 } from "lucide-react";
+
+// =====================================================
+// ADMIN SIDEBAR
+// =====================================================
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [isMobileOpen, setIsMobileOpen] =
-    useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  /* =========================================================
-     MENU GROUPS
-  ========================================================= */
+  // =====================================================
+  // MENU ITEMS
+  // =====================================================
 
-  const menuGroups = [
-    /* =====================================================
-       MAIN
-    ===================================================== */
-
+  const menuItems = [
     {
-      title: "الرئيسية",
-
-      items: [
-        {
-          name: "لوحة التحكم",
-
-          icon: LayoutDashboard,
-
-          path: "/admin/dashboard",
-
-          activePath: "/admin/dashboard",
-
-          exactHash: "",
-        },
-
-        {
-          name: "الإعلانات والإشعارات",
-
-          icon: Megaphone,
-
-          path: "/admin/announcements",
-
-          activePatterns: [
-            "/admin/announcements",
-          ],
-        },
-      ],
+      name: "لوحة التحكم",
+      icon: LayoutDashboard,
+      path: "/admin/dashboard",
     },
-
-    /* =====================================================
-       TRAINING COURSES
-    ===================================================== */
-
     {
-      title: "الدورات التدريبية",
-
-      items: [
-        {
-          name: "إدارة الدورات",
-
-          icon: BookOpen,
-
-          path: "/admin/courses",
-
-          activePatterns: [
-            "/admin/courses",
-          ],
-        },
-
-        {
-          name: "مدربو الدورات",
-
-          icon: UserRoundCog,
-
-          path: "/admin/course-trainers",
-
-          activePatterns: [
-            "/admin/course-trainers",
-          ],
-        },
-
-        {
-          name: "شهادات الدورات",
-
-          icon: Award,
-
-          path: "/admin/course-certificates",
-
-          activePatterns: [
-            "/admin/course-certificates",
-            "/admin/course-certificates/verify",
-          ],
-        },
-      ],
+      name: "الطلاب",
+      icon: Users,
+      path: "/admin/students",
     },
-
-    /* =====================================================
-       FIELD TRAINING
-    ===================================================== */
-
     {
-      title: "التدريب الميداني",
-
-      items: [
-        {
-          name: "طلبات التدريب",
-
-          icon: ClipboardList,
-
-          path: "/admin/training-requests",
-
-          activePatterns: [
-            "/admin/training-requests",
-          ],
-        },
-
-        {
-          name: "الطلبة",
-
-          icon: GraduationCap,
-
-          path: "/admin/students",
-
-          activePatterns: [
-            "/admin/students",
-          ],
-        },
-
-        {
-          name: "الأهلية للتدريب",
-
-          icon: BookOpenCheck,
-
-          path: "/admin/students/eligibility",
-
-          activePatterns: [
-            "/admin/students/eligibility",
-          ],
-        },
-
-        {
-          name: "جهات التدريب",
-
-          icon: Building2,
-
-          path: "/admin/training-organizations",
-
-          activePatterns: [
-            "/admin/training-organizations",
-          ],
-        },
-
-        {
-          name: "فرص التدريب",
-
-          icon: BriefcaseBusiness,
-
-          path: "/admin/training-opportunities",
-
-          activePatterns: [
-            "/admin/training-opportunities",
-          ],
-        },
-
-        {
-          name: "توزيع الطلبة",
-
-          icon: Route,
-
-          path: "/admin/student-distribution",
-
-          activePatterns: [
-            "/admin/student-distribution",
-          ],
-        },
-
-        {
-          name: "الموافقات",
-
-          icon: ShieldCheck,
-
-          path: "/admin/approvals",
-
-          activePatterns: [
-            "/admin/approvals",
-          ],
-        },
-
-        {
-          name: "المشرفون",
-
-          icon: UserRoundCheck,
-
-          path: "/admin/supervisors",
-
-          activePatterns: [
-            "/admin/supervisors",
-          ],
-        },
-
-        {
-          name: "الزيارات والمتابعة",
-
-          icon: MapPinned,
-
-          path: "/admin/visits",
-
-          activePatterns: [
-            "/admin/visits",
-          ],
-        },
-
-        {
-          name: "التقييمات",
-
-          icon: Star,
-
-          path: "/admin/evaluations",
-
-          activePatterns: [
-            "/admin/evaluations",
-          ],
-        },
-
-        {
-          name: "التقرير النهائي والإتمام",
-
-          icon: FileCheck2,
-
-          path: "/admin/final-reports",
-
-          activePatterns: [
-            "/admin/final-reports",
-          ],
-        },
-
-        {
-          name: "الشهادات",
-
-          icon: Award,
-
-          path: "/admin/certificates",
-
-          activePatterns: [
-            "/admin/certificates",
-          ],
-        },
-
-        {
-          name: "الحالات الاستثنائية",
-
-          icon: TriangleAlert,
-
-          path: "/admin/exceptions",
-
-          activePatterns: [
-            "/admin/exceptions",
-          ],
-        },
-      ],
+      name: "طلبات التدريب",
+      icon: FileCheck,
+      path: "/admin/training-requests",
     },
-
-    /* =====================================================
-       REPORTS
-    ===================================================== */
-
     {
-      title: "التقارير",
-
-      items: [
-        {
-          name: "التقارير والإحصائيات",
-
-          icon: BarChart3,
-
-          path: "/admin/reports",
-
-          activePatterns: [
-            "/admin/reports",
-            "/admin/reports/custom",
-          ],
-        },
-      ],
+      name: "جهات التدريب",
+      icon: Building2,
+      path: "/admin/training-organizations",
     },
-
-    /* =====================================================
-       GENERAL MANAGEMENT
-    ===================================================== */
-
     {
-      title: "الإدارة العامة",
-
-      items: [
-        {
-          name: "الملفات والأرشفة",
-
-          icon: FolderArchive,
-
-          path: "/admin/files",
-
-          activePatterns: [
-            "/admin/files",
-          ],
-        },
-
-        {
-          name: "البحث المتقدم",
-
-          icon: Search,
-
-          path: "/admin/advanced-search",
-
-          activePatterns: [
-            "/admin/advanced-search",
-          ],
-        },
-
-        {
-          name: "المستخدمون والصلاحيات",
-
-          icon: Settings,
-
-          path: "/admin/users",
-
-          activePatterns: [
-            "/admin/users",
-            "/admin/users/permissions",
-          ],
-        },
-      ],
+      name: "اعتماد التدريب",
+      icon: BadgeCheck,
+      path: "/admin/approvals",
+    },
+    {
+      name: "متابعة التدريب",
+      icon: Activity,
+      path: "/admin/visits",
+    },
+    {
+      name: "التقارير",
+      icon: FileText,
+      path: "/admin/reports",
+    },
+    {
+      name: "التقييمات",
+      icon: Star,
+      path: "/admin/evaluations",
+    },
+    {
+      name: "الإشعارات",
+      icon: Bell,
+      path: "/admin/announcements",
+    },
+    {
+      name: "الملف الشخصي",
+      icon: UserRound,
+      path: "/admin/profile",
+    },
+    {
+      name: "الإعدادات",
+      icon: Settings,
+      path: "/admin/settings",
     },
   ];
 
-  /* =========================================================
-     MOBILE SIDEBAR EVENT
-  ========================================================= */
+  // =====================================================
+  // ACTIVE SIDEBAR SECTION
+  // =====================================================
+
+  const pathname = location.pathname.replace(/\/+$/, "") || "/";
+
+  const isTrainingOrganizationsSection =
+    pathname === "/admin/training-organizations" ||
+    pathname.startsWith("/admin/training-organizations/") ||
+    pathname === "/admin/approvals/training-providers" ||
+    pathname.startsWith("/admin/approvals/training-providers/");
+
+  // تحديد العنصر النشط لكل الصفحات التابعة له
+  const isMenuItemActive = (path) => {
+    if (path === "/admin/training-organizations") {
+      return isTrainingOrganizationsSection;
+    }
+
+    if (path === "/admin/approvals") {
+      return (
+        !isTrainingOrganizationsSection &&
+        (pathname === "/admin/approvals" ||
+          pathname.startsWith("/admin/approvals/"))
+      );
+    }
+
+    return (
+      pathname === path ||
+      pathname.startsWith(`${path}/`)
+    );
+  };
+
+  // =====================================================
+  // MOBILE SIDEBAR EVENT
+  // =====================================================
 
   useEffect(() => {
     const handleToggleSidebar = () => {
-      setIsMobileOpen(
-        (previous) => !previous
-      );
+      setIsMobileOpen((previous) => !previous);
     };
 
     window.addEventListener(
@@ -387,20 +149,17 @@ export default function Sidebar() {
     };
   }, []);
 
-  /* =========================================================
-     CLOSE SIDEBAR WHEN ROUTE CHANGES
-  ========================================================= */
+  // =====================================================
+  // CLOSE SIDEBAR AFTER ROUTE CHANGE
+  // =====================================================
 
   useEffect(() => {
     setIsMobileOpen(false);
-  }, [
-    location.pathname,
-    location.hash,
-  ]);
+  }, [location.pathname]);
 
-  /* =========================================================
-     ESCAPE + BODY SCROLL LOCK
-  ========================================================= */
+  // =====================================================
+  // CLOSE ON ESCAPE
+  // =====================================================
 
   useEffect(() => {
     const handleEscape = (event) => {
@@ -410,13 +169,8 @@ export default function Sidebar() {
     };
 
     if (isMobileOpen) {
-      document.addEventListener(
-        "keydown",
-        handleEscape
-      );
-
-      document.body.style.overflow =
-        "hidden";
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
@@ -431,71 +185,28 @@ export default function Sidebar() {
     };
   }, [isMobileOpen]);
 
-  /* =========================================================
-     ACTIVE ITEM
-  ========================================================= */
-
-  const isItemActive = (item) => {
-    if (
-      item.exactHash !== undefined
-    ) {
-      return (
-        location.pathname ===
-          item.activePath &&
-        location.hash === item.exactHash
-      );
-    }
-
-    if (item.activePath) {
-      return (
-        location.pathname ===
-          item.activePath &&
-        location.hash === ""
-      );
-    }
-
-    if (item.activePatterns) {
-      return item.activePatterns.some(
-        (pattern) =>
-          Boolean(
-            matchPath(
-              {
-                path: pattern,
-                end: true,
-              },
-
-              location.pathname
-            )
-          )
-      );
-    }
-
-    return false;
-  };
-
-  /* =========================================================
-     CLOSE MOBILE
-  ========================================================= */
+  // =====================================================
+  // ACTIONS
+  // =====================================================
 
   const closeMobileSidebar = () => {
     setIsMobileOpen(false);
   };
 
-  /* =========================================================
-     LOGOUT
-  ========================================================= */
-
   const handleLogout = () => {
     setIsMobileOpen(false);
-
     navigate("/");
   };
+
+  // =====================================================
+  // JSX
+  // =====================================================
 
   return (
     <>
       {/* =====================================================
           MOBILE OVERLAY
-      ====================================================== */}
+      ===================================================== */}
 
       <div
         aria-hidden="true"
@@ -516,54 +227,47 @@ export default function Sidebar() {
 
           ${
             isMobileOpen
-              ? `
-                  pointer-events-auto
-                  opacity-100
-                `
-              : `
-                  pointer-events-none
-                  opacity-0
-                `
+              ? "opacity-100 pointer-events-auto"
+              : "opacity-0 pointer-events-none"
           }
         `}
       />
 
       {/* =====================================================
           SIDEBAR
-      ====================================================== */}
+      ===================================================== */}
 
       <aside
         dir="rtl"
-        aria-label="القائمة الرئيسية للإدارة"
+        aria-label="القائمة الرئيسية"
         className={`
-          fixed
-          right-0
-          top-0
-          z-50
+          w-[280px]
+          h-screen
+          shrink-0
 
           flex
-          h-dvh
-          w-[280px]
-          shrink-0
           flex-col
 
           overflow-hidden
 
           bg-[#09379A]
-
-          font-['Cairo']
           text-white
+          font-['Cairo']
 
-          shadow-[-8px_0_30px_rgba(15,23,42,0.08)]
+          fixed
+          top-0
+          right-0
+          z-50
 
           transition-transform
           duration-300
           ease-out
 
-          lg:static
-          lg:z-auto
+          lg:sticky
+          lg:top-0
+          lg:h-screen
           lg:translate-x-0
-          lg:shadow-none
+          lg:z-auto
           lg:transition-none
 
           ${
@@ -573,34 +277,33 @@ export default function Sidebar() {
           }
         `}
       >
-        {/* =================================================
+        {/* =====================================================
             BRAND
-        ================================================== */}
+        ===================================================== */}
 
         <div
           className="
             relative
+            h-[112px]
+            lg:h-[96px]
+            shrink-0
 
             flex
-            h-[112px]
-            shrink-0
             items-center
 
             px-[18px]
             pt-[26px]
-
-            lg:h-[96px]
             lg:pt-0
           "
         >
           <img
             src="/logo.svg"
-            alt="شعار بوابة التدريب"
+            alt="شعار بوابة التدريب الميداني"
             className="
-              h-[48px]
               w-[48px]
-              shrink-0
+              h-[48px]
 
+              shrink-0
               object-contain
             "
           />
@@ -609,61 +312,59 @@ export default function Sidebar() {
             className="
               mr-[10px]
               min-w-0
+
               text-right
+              font-['Cairo']
             "
           >
             <h2
               className="
                 m-0
 
-                whitespace-nowrap
-
                 text-[16px]
-                font-bold
                 leading-[20px]
-                tracking-[2px]
 
+                font-bold
                 text-white
+
+                whitespace-nowrap
+                tracking-[3px]
               "
             >
-              بــوابة التدريــب
+              بــوابة التدريــب الميدانــي
             </h2>
 
             <p
               className="
                 m-0
-                mt-[2px]
+                mt-[1px]
 
-                whitespace-nowrap
-
-                text-[11px]
-                font-medium
+                text-[12px]
                 leading-[17px]
 
-                text-white/80
+                font-medium
+                text-white
+
+                whitespace-nowrap
               "
             >
-              لوحة إدارة النظام
+              كليــة الدراســات المتوسطــة - الأزهــر
             </p>
           </div>
+
+          {/* CLOSE BUTTON - MOBILE ONLY */}
 
           <button
             type="button"
             aria-label="إغلاق القائمة"
-            onClick={
-              closeMobileSidebar
-            }
+            onClick={closeMobileSidebar}
             className="
               absolute
-              left-[14px]
               top-[14px]
+              left-[14px]
 
-              hidden
-              h-[32px]
               w-[32px]
-
-              items-center
-              justify-center
+              h-[32px]
 
               rounded-[8px]
 
@@ -671,17 +372,21 @@ export default function Sidebar() {
               border-white/15
 
               bg-white/10
-
               text-white
+
+              hidden
+              max-lg:flex
+
+              items-center
+              justify-center
+
+              cursor-pointer
 
               transition-all
               duration-200
 
               hover:bg-white/20
-
               active:scale-[0.96]
-
-              max-lg:flex
             "
           >
             <X
@@ -691,270 +396,141 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* =================================================
+        {/* =====================================================
             NAVIGATION
-        ================================================== */}
+        ===================================================== */}
 
         <div
           className="
-            admin-sidebar-scroll
+            sidebar-scroll
 
-            min-h-0
             flex-1
+            min-h-0
 
-            overflow-x-hidden
             overflow-y-auto
-
-            overscroll-contain
+            overflow-x-hidden
           "
         >
           <nav
             className="
               px-[9px]
-              pb-[20px]
-              pt-[8px]
-            "
-          >
-            {menuGroups.map(
-              (
-                group,
-                groupIndex
-              ) => (
-                <div
-                  key={group.title}
-                  className={
-                    groupIndex === 0
-                      ? ""
-                      : "mt-[18px]"
-                  }
-                >
-                  <div
-                    className="
-                      mb-[6px]
-                      px-[16px]
-
-                      text-[11px]
-                      font-bold
-                      leading-[20px]
-
-                      text-white/55
-                    "
-                  >
-                    {group.title}
-                  </div>
-
-                  <div
-                    className="
-                      flex
-                      flex-col
-                      gap-[4px]
-                    "
-                  >
-                    {group.items.map(
-                      (item) => {
-                        const active =
-                          isItemActive(
-                            item
-                          );
-
-                        const Icon =
-                          item.icon;
-
-                        return (
-                          <Link
-                            key={
-                              item.name
-                            }
-                            to={item.path}
-                            onClick={
-                              closeMobileSidebar
-                            }
-                            className={`
-                              flex
-                              min-h-[44px]
-                              w-full
-                              items-center
-
-                              gap-[12px]
-
-                              rounded-[10px]
-
-                              px-[16px]
-                              py-[10px]
-
-                              text-[13px]
-                              leading-[20px]
-
-                              transition-all
-                              duration-200
-
-                              ${
-                                active
-                                  ? `
-                                      bg-white
-
-                                      font-bold
-                                      text-[#09379A]
-
-                                      shadow-[0_1px_2px_rgba(0,0,0,0.05)]
-                                    `
-                                  : `
-                                      bg-transparent
-
-                                      font-medium
-                                      text-white/90
-
-                                      hover:bg-white/10
-                                      hover:text-white
-                                    `
-                              }
-                            `}
-                          >
-                            <Icon
-                              size={19}
-                              strokeWidth={
-                                1.8
-                              }
-                              className="shrink-0"
-                            />
-
-                            <span
-                              className="
-                                min-w-0
-                                flex-1
-
-                                whitespace-nowrap
-                              "
-                            >
-                              {item.name}
-                            </span>
-                          </Link>
-                        );
-                      }
-                    )}
-                  </div>
-                </div>
-              )
-            )}
-          </nav>
-        </div>
-
-        {/* =================================================
-            BOTTOM
-        ================================================== */}
-
-        <div
-          className="
-            shrink-0
-
-            border-t
-            border-white/10
-
-            bg-[#09379A]
-
-            pt-[8px]
-          "
-        >
-          <div
-            className="
-              px-[12px]
-              pb-[8px]
+              pt-[20px]
+              pb-[16px]
             "
           >
             <div
               className="
-                rounded-[10px]
-
-                border
-                border-white/10
-
-                bg-white/[0.07]
-
-                px-[14px]
-                py-[11px]
+                flex
+                flex-col
+                gap-[4px]
               "
             >
-              <p
-                className="
-                  m-0
+              {menuItems.map((item) => {
+                const Icon = item.icon;
 
-                  text-[10px]
-                  font-medium
-                  leading-[18px]
+                const active = isMenuItemActive(item.path);
 
-                  text-white/60
-                "
-              >
-                نوع الحساب
-              </p>
+                return (
+                  <NavLink
+                    key={item.name}
+                    to={item.path}
+                    onClick={closeMobileSidebar}
+                    aria-current={active ? "page" : undefined}
+                    className={`
+                      w-full
+                      h-[44px]
 
-              <div
-                className="
-                  mt-[3px]
+                      px-[16px]
 
-                  flex
-                  items-center
-                  gap-[7px]
-                "
-              >
-                <span
-                  className="
-                    h-[7px]
-                    w-[7px]
+                      rounded-[10px]
 
-                    rounded-full
+                      flex
+                      items-center
+                      gap-[12px]
 
-                    bg-[#34D399]
-                  "
-                />
+                      text-[14px]
+                      leading-[20px]
 
-                <p
-                  className="
-                    m-0
+                      transition-all
+                      duration-200
 
-                    text-[12px]
-                    font-bold
-                    leading-[19px]
+                      ${
+                        active
+                          ? `
+                            bg-white
+                            text-[#09379A]
+                            font-bold
+                            shadow-[0_1px_2px_rgba(0,0,0,0.05)]
+                          `
+                          : `
+                            bg-transparent
+                            text-white/90
+                            font-medium
+                            hover:bg-white/10
+                            hover:text-white
+                          `
+                      }
+                    `}
+                  >
+                    <Icon
+                      size={20}
+                      strokeWidth={1.8}
+                      className="shrink-0"
+                    />
 
-                    text-white
-                  "
-                >
-                  مدير النظام
-                </p>
-              </div>
+                    <span className="whitespace-nowrap">
+                      {item.name}
+                    </span>
+                  </NavLink>
+                );
+              })}
             </div>
-          </div>
+          </nav>
+        </div>
+
+        {/* =====================================================
+            FIXED BOTTOM
+        ===================================================== */}
+
+        <div
+          className="
+            shrink-0
+            bg-[#09379A]
+            pt-[8px]
+          "
+        >
+          {/* LOGOUT */}
 
           <div
             className="
-              px-[12px]
-              pb-[14px]
+              px-[25px]
+              pb-[12px]
             "
           >
             <button
               type="button"
               onClick={handleLogout}
               className="
-                flex
-                h-[44px]
                 w-full
-                items-center
-
-                gap-[12px]
+                h-[44px]
 
                 rounded-[10px]
+                px-[8px]
+
+                flex
+                items-center
+                gap-[12px]
 
                 border-0
-
                 bg-transparent
 
-                px-[16px]
-
-                text-[13px]
-                font-medium
+                text-[14px]
                 leading-[20px]
 
+                font-medium
                 text-white/90
+
+                cursor-pointer
 
                 transition-all
                 duration-200
@@ -964,59 +540,117 @@ export default function Sidebar() {
               "
             >
               <LogOut
-                size={20}
+                size={21}
                 strokeWidth={1.8}
                 className="shrink-0"
               />
 
-              <span>
+              <span className="whitespace-nowrap">
                 تسجيل الخروج
               </span>
             </button>
           </div>
+
+          {/* =====================================================
+              SEMESTER INFO
+          ===================================================== */}
+
+          <div
+            className="
+              px-[12px]
+              pb-[16px]
+            "
+          >
+            <div
+              className="
+                w-full
+                min-h-[68px]
+
+                rounded-[10px]
+
+                border
+                border-white/10
+
+                bg-white/[0.05]
+
+                px-[15px]
+                py-[12px]
+
+                flex
+                flex-col
+
+                items-center
+                justify-center
+
+                text-center
+              "
+            >
+              <p
+                className="
+                  m-0
+
+                  text-[11px]
+                  leading-[16px]
+
+                  font-normal
+                  text-white/70
+
+                  whitespace-nowrap
+                "
+              >
+                الفصل الدراسي الثاني 2024 / 2025
+              </p>
+
+              <p
+                className="
+                  m-0
+                  mt-[2px]
+
+                  text-[11px]
+                  leading-[16px]
+
+                  font-bold
+                  text-[#00B4D8]
+
+                  whitespace-nowrap
+                "
+              >
+                الدبلوم المتوسط - تكنولوجيا المعلومات
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* =================================================
-            SCROLLBAR
-        ================================================== */}
+        {/* =====================================================
+            SCROLLBAR STYLE
+        ===================================================== */}
 
         <style>{`
-          .admin-sidebar-scroll {
+          .sidebar-scroll {
             scrollbar-width: thin;
             scrollbar-color:
-              rgba(255, 255, 255, 0.22)
+              rgba(255, 255, 255, 0.24)
               transparent;
           }
 
-          .admin-sidebar-scroll::-webkit-scrollbar {
+          .sidebar-scroll::-webkit-scrollbar {
             width: 5px;
           }
 
-          .admin-sidebar-scroll::-webkit-scrollbar-track {
+          .sidebar-scroll::-webkit-scrollbar-track {
             background: transparent;
-            margin-top: 4px;
-            margin-bottom: 4px;
           }
 
-          .admin-sidebar-scroll::-webkit-scrollbar-thumb {
-            background-color:
-              rgba(255, 255, 255, 0.22);
+          .sidebar-scroll::-webkit-scrollbar-thumb {
+            background:
+              rgba(255, 255, 255, 0.24);
 
             border-radius: 999px;
-
-            border: 1px solid transparent;
-
-            background-clip: padding-box;
           }
 
-          .admin-sidebar-scroll::-webkit-scrollbar-thumb:hover {
-            background-color:
-              rgba(255, 255, 255, 0.38);
-          }
-
-          .admin-sidebar-scroll::-webkit-scrollbar-thumb:active {
-            background-color:
-              rgba(255, 255, 255, 0.48);
+          .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+            background:
+              rgba(255, 255, 255, 0.4);
           }
         `}</style>
       </aside>

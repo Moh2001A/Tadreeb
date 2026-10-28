@@ -1,2654 +1,677 @@
-import { useMemo, useState } from "react";
 
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
-  Building2,
-  CheckCircle2,
-  ChevronLeft,
-  CircleAlert,
-  Download,
-  Edit3,
-  Eye,
-  Mail,
-  MapPin,
-  MoreHorizontal,
-  Phone,
-  Plus,
-  Search,
-  Star,
-  Users,
-  X,
+  Bell, Menu, Search, SlidersHorizontal, ArrowDownUp,
+  Eye, Plus, BadgeCheck, ChevronLeft, ChevronRight,
+  X, RotateCcw, CheckCircle2, Clock3, Users,
+  Building2, Code2, Cog, Wrench, Palette,
 } from "lucide-react";
 
-import Header from "../../components/admin/Header";
 import Sidebar from "../../components/admin/Sidebar";
 
-const initialOrganizations = [
-  {
-    id: 1,
-    name: "شركة التقنية المتقدمة",
-    type: "شركة خاصة",
-    field: "تكنولوجيا المعلومات",
-    specializations: [
-      "هندسة البرمجيات",
-      "نظم المعلومات",
-      "الأمن السيبراني",
-    ],
-    city: "غزة",
-    address: "شارع الوحدة - غزة",
-    contactPerson: "م. أحمد صالح",
-    phone: "0599123456",
-    email: "info@advancedtech.ps",
-    capacity: 20,
-    currentStudents: 14,
-    rating: 4.6,
-    agreements: 1,
-    status: "نشطة",
-  },
-  {
-    id: 2,
-    name: "مستشفى الشفاء",
-    type: "مؤسسة صحية",
-    field: "الصحة",
-    specializations: [
-      "التمريض",
-      "المختبرات الطبية",
-      "العلاج الطبيعي",
-    ],
-    city: "غزة",
-    address: "مدينة غزة",
-    contactPerson: "أ. محمد خليل",
-    phone: "082865000",
-    email: "training@hospital.ps",
-    capacity: 35,
-    currentStudents: 28,
-    rating: 4.8,
-    agreements: 2,
-    status: "نشطة",
-  },
-  {
-    id: 3,
-    name: "بنك فلسطين",
-    type: "مؤسسة مالية",
-    field: "المال والأعمال",
-    specializations: [
-      "المحاسبة",
-      "إدارة الأعمال",
-      "التسويق",
-    ],
-    city: "غزة",
-    address: "شارع عمر المختار",
-    contactPerson: "أ. رامي حسن",
-    phone: "082822222",
-    email: "training@bankofpalestine.ps",
-    capacity: 15,
-    currentStudents: 11,
-    rating: 4.4,
-    agreements: 1,
-    status: "نشطة",
-  },
-  {
-    id: 4,
-    name: "مدرسة الأزهر النموذجية",
-    type: "مؤسسة تعليمية",
-    field: "التعليم",
-    specializations: [
-      "تعليم أساسي",
-      "اللغة العربية",
-      "اللغة الإنجليزية",
-    ],
-    city: "غزة",
-    address: "حي الرمال",
-    contactPerson: "أ. خالد النجار",
-    phone: "0598554455",
-    email: "school@alazhar.ps",
-    capacity: 25,
-    currentStudents: 17,
-    rating: 4.3,
-    agreements: 1,
-    status: "نشطة",
-  },
-  {
-    id: 5,
-    name: "مركز الإبداع الرقمي",
-    type: "مركز تدريبي",
-    field: "التقنية والإعلام",
-    specializations: [
-      "التصميم الجرافيكي",
-      "الإعلام الرقمي",
-    ],
-    city: "غزة",
-    address: "تل الهوى",
-    contactPerson: "م. سارة محمود",
-    phone: "0597663322",
-    email: "info@digital.ps",
-    capacity: 10,
-    currentStudents: 0,
-    rating: 3.9,
-    agreements: 0,
-    status: "غير نشطة",
-  },
+const STORAGE_KEY = "cis-training-organizations-v1";
+const APPROVALS_PATH = "/admin/approvals/training-providers";
+const PAGE_SIZE = 4;
+
+const INITIAL_ORGANIZATIONS = [
+  { id: 1, name: "شركة القدس للاتصالات", type: "تقنية معلومات", location: "غزة - الرمال", students: 42, status: "approved", phone: "0599 000 111" },
+  { id: 2, name: "شركة الأمل للأنظمة الصناعية", type: "صناعي", location: "غزة - المنطقة الصناعية", students: 14, status: "approved", phone: "08 282 3000" },
+  { id: 3, name: "مركز الصيانة الفنية المتقدم", type: "صيانة", location: "خان يونس", students: 25, status: "renewal", phone: "08 205 4400", requestDate: "2025/12/02" },
+  { id: 4, name: "استوديو بيكسل للتصميم", type: "تصميم", location: "غزة - الرمال", students: 8, status: "pending", phone: "08 288 9122", requestDate: "2025/11/28" },
+  { id: 5, name: "شركة المشرق الرقمية", type: "تقنية معلومات", location: "غزة - النصر", students: 21, status: "approved", phone: "0598 440 220" },
+  { id: 6, name: "شركة الشرق للصناعات", type: "صناعي", location: "دير البلح", students: 11, status: "renewal", phone: "08 255 1190" },
+  { id: 7, name: "مركز المستقبل للصيانة", type: "صيانة", location: "غزة", students: 18, status: "approved", phone: "0597 881 120" },
+  { id: 8, name: "استوديو رؤية", type: "تصميم", location: "رفح", students: 6, status: "approved", phone: "0599 761 550" },
+  { id: 9, name: "شركة الهيدروليك الحديثة", type: "صناعي", location: "غزة", students: 0, status: "pending", phone: "—", requestDate: "2025/11/20" },
+  { id: 10, name: "شركة التقنية الحديثة", type: "تقنية معلومات", location: "غزة", students: 0, status: "pending", phone: "—", requestDate: "2025/11/17" },
+  { id: 11, name: "مركز الأمل للتدريب", type: "صيانة", location: "خان يونس", students: 0, status: "pending", phone: "—", requestDate: "2025/11/12" },
+  { id: 12, name: "مؤسسة المستقبل", type: "تصميم", location: "غزة", students: 0, status: "pending", phone: "—", requestDate: "2025/11/08" },
 ];
 
-const emptyForm = {
-  name: "",
-  type: "شركة خاصة",
-  field: "",
-  specializations: "",
-  city: "غزة",
-  address: "",
-  contactPerson: "",
-  phone: "",
-  email: "",
-  capacity: "10",
-  status: "نشطة",
+function readOrganizations() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    if (!Array.isArray(stored)) return INITIAL_ORGANIZATIONS;
+
+    const saved = new Map(
+      stored.filter((item) => item?.id != null)
+        .map((item) => [String(item.id), item])
+    );
+
+    const initialIds = new Set(
+      INITIAL_ORGANIZATIONS.map((item) => String(item.id))
+    );
+
+    const initial = INITIAL_ORGANIZATIONS.map((item) => ({
+      ...item,
+      ...(saved.get(String(item.id)) || {}),
+    }));
+
+    const additional = stored.filter(
+      (item) => item?.id != null && !initialIds.has(String(item.id))
+    );
+
+    return [...additional, ...initial];
+  } catch {
+    return INITIAL_ORGANIZATIONS;
+  }
+}
+
+const STATUS_CONFIG = {
+  approved: { label: "معتمدة", style: "bg-[#DCFCE7] text-[#15803D]" },
+  pending: { label: "بانتظار الاعتماد", style: "bg-[#FFE5D9] text-[#B54708]" },
+  review: { label: "قيد المراجعة", style: "bg-[#DDF6FF] text-[#08759B]" },
+  renewal: { label: "قيد التجديد", style: "bg-[#FFF0D9] text-[#B54708]" },
+  rejected: { label: "مرفوضة", style: "bg-[#FEE2E2] text-[#DC2626]" },
 };
 
+function getOrganizationIcon(type = "") {
+  const text = String(type).toLowerCase();
+
+  if (text.includes("صناعي") || text.includes("تحكم"))
+    return { Icon: Cog, style: "bg-[#FFE5D9] text-[#B54708]" };
+
+  if (text.includes("صيانة"))
+    return { Icon: Wrench, style: "bg-[#DCFCE7] text-[#15803D]" };
+
+  if (text.includes("تصميم"))
+    return { Icon: Palette, style: "bg-[#DDF6FF] text-[#08759B]" };
+
+  if (text.includes("تقنية") || text.includes("معلومات"))
+    return { Icon: Code2, style: "bg-[#E8EEF9] text-[#09379A]" };
+
+  return { Icon: Building2, style: "bg-[#E8EEF9] text-[#09379A]" };
+}
+
 export default function TrainingOrganizations() {
-  const [organizations, setOrganizations] = useState(
-    initialOrganizations
-  );
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [fieldFilter, setFieldFilter] = useState("الكل");
-  const [typeFilter, setTypeFilter] = useState("الكل");
-  const [statusFilter, setStatusFilter] = useState("الكل");
+  const [organizations, setOrganizations] = useState(readOrganizations);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [sortOrder, setSortOrder] = useState("name");
+  const [showFilters, setShowFilters] = useState(false);
+  const [showSort, setShowSort] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [selectedOrganization, setSelectedOrganization] =
-    useState(null);
+  const successMessage = location.state?.successMessage;
 
-  const [showDetails, setShowDetails] = useState(false);
-  const [showForm, setShowForm] = useState(false);
-  const [editingOrganization, setEditingOrganization] =
-    useState(null);
+  useEffect(() => {
+    setOrganizations(readOrganizations());
+  }, [location.key]);
 
-  const [formData, setFormData] = useState(emptyForm);
+  useEffect(() => {
+    const refresh = () => setOrganizations(readOrganizations());
+    window.addEventListener("storage", refresh);
+    window.addEventListener("focus", refresh);
 
-  /* =========================================================
-     STATISTICS
-  ========================================================= */
-
-  const statistics = useMemo(() => {
-    const total = organizations.length;
-
-    const active = organizations.filter(
-      (item) => item.status === "نشطة"
-    ).length;
-
-    const students = organizations.reduce(
-      (totalStudents, item) =>
-        totalStudents + item.currentStudents,
-      0
-    );
-
-    const capacity = organizations.reduce(
-      (totalCapacity, item) =>
-        totalCapacity + item.capacity,
-      0
-    );
-
-    return [
-      {
-        title: "إجمالي الجهات",
-        value: total,
-        description: "جهات التدريب المسجلة",
-        icon: Building2,
-        iconBg: "bg-[#EEF3FF]",
-        iconColor: "text-[#09379A]",
-      },
-      {
-        title: "الجهات النشطة",
-        value: active,
-        description: "متاحة لاستقبال الطلبة",
-        icon: CheckCircle2,
-        iconBg: "bg-[#ECFDF3]",
-        iconColor: "text-[#15803D]",
-      },
-      {
-        title: "الطلبة المتدربون",
-        value: students,
-        description: "ضمن الجهات الحالية",
-        icon: Users,
-        iconBg: "bg-[#FFF3EB]",
-        iconColor: "text-[#EA580C]",
-      },
-      {
-        title: "الطاقة الاستيعابية",
-        value: capacity,
-        description: "إجمالي المقاعد المتاحة",
-        icon: Users,
-        iconBg: "bg-[#F3E8FF]",
-        iconColor: "text-[#7E22CE]",
-      },
-    ];
-  }, [organizations]);
-
-  const fields = useMemo(
-    () => [
-      ...new Set(
-        organizations.map((item) => item.field)
-      ),
-    ],
-    [organizations]
-  );
+    return () => {
+      window.removeEventListener("storage", refresh);
+      window.removeEventListener("focus", refresh);
+    };
+  }, []);
 
   const types = useMemo(
-    () => [
-      ...new Set(
-        organizations.map((item) => item.type)
-      ),
-    ],
+    () => [...new Set(organizations.map((item) => item.type).filter(Boolean))],
     [organizations]
   );
 
+  const stats = useMemo(() => ({
+    total: organizations.length,
+    approved: organizations.filter((item) => item.status === "approved").length,
+    pending: organizations.filter((item) =>
+      ["pending", "review", "renewal"].includes(item.status)
+    ).length,
+    students: organizations.reduce(
+      (sum, item) => sum + Number(item.students ?? item.activeStudents ?? 0),
+      0
+    ),
+  }), [organizations]);
+
   const filteredOrganizations = useMemo(() => {
-    const query = searchTerm.trim().toLowerCase();
+    const query = search.trim().toLowerCase();
 
-    return organizations.filter((organization) => {
-      const matchesSearch =
-        !query ||
-        organization.name
-          .toLowerCase()
-          .includes(query) ||
-        organization.field
-          .toLowerCase()
-          .includes(query) ||
-        organization.city
-          .toLowerCase()
-          .includes(query) ||
-        organization.specializations.some((item) =>
-          item.toLowerCase().includes(query)
+    return organizations
+      .filter((item) => {
+        const matchesSearch = !query ||
+          [item.name, item.type, item.location, item.phone]
+            .some((value) => String(value || "").toLowerCase().includes(query));
+
+        return (
+          matchesSearch &&
+          (statusFilter === "all" || item.status === statusFilter) &&
+          (typeFilter === "all" || item.type === typeFilter)
         );
+      })
+      .sort((a, b) => {
+        if (sortOrder === "students")
+          return Number(b.students ?? b.activeStudents ?? 0) -
+                 Number(a.students ?? a.activeStudents ?? 0);
 
-      const matchesField =
-        fieldFilter === "الكل" ||
-        organization.field === fieldFilter;
+        if (sortOrder === "location")
+          return String(a.location || "").localeCompare(String(b.location || ""), "ar");
 
-      const matchesType =
-        typeFilter === "الكل" ||
-        organization.type === typeFilter;
+        return String(a.name || "").localeCompare(String(b.name || ""), "ar");
+      });
+  }, [organizations, search, statusFilter, typeFilter, sortOrder]);
 
-      const matchesStatus =
-        statusFilter === "الكل" ||
-        organization.status === statusFilter;
-
-      return (
-        matchesSearch &&
-        matchesField &&
-        matchesType &&
-        matchesStatus
-      );
-    });
-  }, [
-    organizations,
-    searchTerm,
-    fieldFilter,
-    typeFilter,
-    statusFilter,
-  ]);
-
-  /* =========================================================
-     FORM
-  ========================================================= */
-
-  const openAddForm = () => {
-    setEditingOrganization(null);
-    setFormData(emptyForm);
-    setShowForm(true);
-  };
-
-  const openEditForm = (organization) => {
-    setEditingOrganization(organization);
-
-    setFormData({
-      name: organization.name,
-      type: organization.type,
-      field: organization.field,
-      specializations:
-        organization.specializations.join("، "),
-      city: organization.city,
-      address: organization.address,
-      contactPerson: organization.contactPerson,
-      phone: organization.phone,
-      email: organization.email,
-      capacity: String(organization.capacity),
-      status: organization.status,
-    });
-
-    setShowDetails(false);
-    setShowForm(true);
-  };
-
-  const handleFormChange = (event) => {
-    const { name, value } = event.target;
-
-    setFormData((previous) => ({
-      ...previous,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    const normalizedSpecializations =
-      formData.specializations
-        .split(/[،,]/)
-        .map((item) => item.trim())
-        .filter(Boolean);
-
-    if (editingOrganization) {
-      setOrganizations((previous) =>
-        previous.map((item) =>
-          item.id === editingOrganization.id
-            ? {
-                ...item,
-                ...formData,
-                capacity: Number(formData.capacity) || 0,
-                specializations:
-                  normalizedSpecializations,
-              }
-            : item
-        )
-      );
-    } else {
-      const newOrganization = {
-        id:
-          Math.max(
-            ...organizations.map((item) => item.id),
-            0
-          ) + 1,
-
-        ...formData,
-
-        capacity: Number(formData.capacity) || 0,
-        currentStudents: 0,
-        rating: 0,
-        agreements: 0,
-        specializations:
-          normalizedSpecializations,
-      };
-
-      setOrganizations((previous) => [
-        newOrganization,
-        ...previous,
-      ]);
-    }
-
-    setShowForm(false);
-    setEditingOrganization(null);
-    setFormData(emptyForm);
-  };
-
-  const openDetails = (organization) => {
-    setSelectedOrganization(organization);
-    setShowDetails(true);
-  };
-
-  const toggleStatus = (id) => {
-    setOrganizations((previous) =>
-      previous.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              status:
-                item.status === "نشطة"
-                  ? "غير نشطة"
-                  : "نشطة",
-            }
-          : item
-      )
-    );
-
-    setSelectedOrganization((previous) => {
-      if (!previous || previous.id !== id) {
-        return previous;
-      }
-
-      return {
-        ...previous,
-        status:
-          previous.status === "نشطة"
-            ? "غير نشطة"
-            : "نشطة",
-      };
-    });
-  };
+  const totalPages = Math.max(1, Math.ceil(filteredOrganizations.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const visibleOrganizations = filteredOrganizations.slice(
+    (safePage - 1) * PAGE_SIZE,
+    safePage * PAGE_SIZE
+  );
 
   const resetFilters = () => {
-    setSearchTerm("");
-    setFieldFilter("الكل");
-    setTypeFilter("الكل");
-    setStatusFilter("الكل");
+    setSearch("");
+    setStatusFilter("all");
+    setTypeFilter("all");
+    setSortOrder("name");
+    setCurrentPage(1);
+    setShowFilters(false);
+    setShowSort(false);
   };
 
-  const hasFilters =
-    searchTerm ||
-    fieldFilter !== "الكل" ||
-    typeFilter !== "الكل" ||
-    statusFilter !== "الكل";
+  const viewOrganization = (organization) => {
+    navigate(
+      `/admin/training-organizations/${encodeURIComponent(organization.id)}`,
+      { state: { organization } }
+    );
+  };
+
+  const selectClass =
+    "h-[40px] w-full rounded-[8px] border border-[#E0E7F2] bg-white px-3 text-[12px] outline-none focus:border-[#09379A]";
 
   return (
     <div
       dir="rtl"
-      className="
-        flex
-        h-dvh
-        w-full
-        overflow-hidden
-        bg-[#F8FAFC]
-        font-['Cairo']
-        text-[#1E293B]
-      "
+      className="flex h-screen w-full overflow-hidden bg-[#F8FAFC] font-['Cairo'] text-[#111C2D]"
     >
       <Sidebar />
 
-      <div
-        className="
-          flex
-          h-dvh
-          min-w-0
-          flex-1
-          flex-col
-          overflow-hidden
-        "
-      >
-        <Header />
+      <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
+        <Header navigate={navigate} />
 
-        <main
-          className="
-            min-h-0
-            flex-1
-            overflow-x-hidden
-            overflow-y-auto
-
-            px-4
-            pb-8
-            pt-5
-
-            sm:px-5
-            md:px-6
-            xl:px-[40px]
-            xl:pb-[40px]
-            xl:pt-[26px]
-          "
-        >
-          <div className="mx-auto w-full max-w-[1180px]">
+        <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-5 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-[1450px]">
 
             {/* BREADCRUMB */}
-
-            <div
-              className="
-                flex
-                flex-wrap
-                items-center
-                gap-[7px]
-                text-[11px]
-                font-medium
-                text-[#64748B]
-              "
-            >
-              <span>الرئيسية</span>
-              <span className="text-[#94A3B8]">
-                ›
-              </span>
-              <span>التدريب الميداني</span>
-              <span className="text-[#94A3B8]">
-                ›
-              </span>
-              <span className="font-bold text-[#09379A]">
-                جهات التدريب
-              </span>
+            <div className="mb-3 flex items-center gap-2 text-[12px] text-[#64748B]">
+              <button
+                type="button"
+                onClick={() => navigate("/admin/dashboard")}
+                className="hover:text-[#09379A]"
+              >
+                الرئيسية
+              </button>
+              <ChevronLeft size={15} />
+              <span className="font-semibold text-[#111C2D]">جهات التدريب</span>
             </div>
 
-            {/* PAGE HEADER */}
-
-            <section
-              className="
-                mt-[5px]
-                flex
-                flex-col
-                gap-4
-
-                md:flex-row
-                md:items-end
-                md:justify-between
-              "
-            >
+            {/* TITLE AND ACTIONS */}
+            <section className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <h1
-                  className="
-                    m-0
-                    text-[25px]
-                    font-bold
-                    leading-[38px]
-                    text-[#14213D]
-
-                    sm:text-[27px]
-                  "
-                >
-                  جهات التدريب
-                </h1>
-
-                <p
-                  className="
-                    m-0
-                    mt-[3px]
-                    max-w-[720px]
-                    text-[11px]
-                    leading-[21px]
-                    text-[#64748B]
-
-                    sm:text-[12px]
-                  "
-                >
-                  إدارة المؤسسات والشركات والمستشفيات
-                  والمدارس والجهات المعتمدة لاستقبال طلبة
-                  التدريب في مختلف كليات الجامعة.
+                <h1 className="m-0 text-[26px] font-bold">جهات التدريب</h1>
+                <p className="m-0 mt-1 text-[13px] text-[#64748B]">
+                  المؤسسات والشركات والمراكز التي تستقبل الطلاب
                 </p>
               </div>
 
-              <div
-                className="
-                  flex
-                  w-full
-                  flex-col
-                  gap-[8px]
-
-                  sm:w-auto
-                  sm:flex-row
-                "
-              >
+              <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => window.print()}
-                  className="
-                    flex
-                    min-h-[42px]
-                    items-center
-                    justify-center
-                    gap-[7px]
-                    rounded-[9px]
-                    border
-                    border-[#D9E2EC]
-                    bg-white
-                    px-[14px]
-                    text-[11px]
-                    font-bold
-                    text-[#475569]
-                    transition
-
-                    hover:bg-[#F8FAFC]
-                  "
+                  onClick={() => navigate(APPROVALS_PATH)}
+                  className="inline-flex h-[44px] items-center gap-2 rounded-[9px] border border-[#09379A] bg-white px-5 text-[12px] font-bold text-[#09379A] hover:bg-[#EEF4FF]"
                 >
-                  <Download size={16} />
-                  تصدير البيانات
+                  <BadgeCheck size={18} />
+                  طلبات الاعتماد
+                  {stats.pending > 0 && (
+                    <span className="rounded-full bg-[#E8EEF9] px-2 py-0.5 text-[10px]">
+                      {stats.pending}
+                    </span>
+                  )}
                 </button>
 
                 <button
                   type="button"
-                  onClick={openAddForm}
-                  className="
-                    flex
-                    min-h-[42px]
-                    items-center
-                    justify-center
-                    gap-[7px]
-                    rounded-[9px]
-                    border-0
-                    bg-[#09379A]
-                    px-[16px]
-                    text-[11px]
-                    font-bold
-                    text-white
-                    shadow-[0_4px_12px_rgba(9,55,154,0.16)]
-                    transition
-
-                    hover:bg-[#072E81]
-                  "
+                  onClick={() => navigate("/admin/training-organizations/add")}
+                  className="inline-flex h-[44px] items-center gap-2 rounded-[9px] bg-[#FF6534] px-5 text-[12px] font-bold text-white hover:bg-[#E95526]"
                 >
-                  <Plus size={16} strokeWidth={2} />
-                  إضافة جهة تدريب
+                  <Plus size={17} />
+                  إضافة جهة
                 </button>
               </div>
             </section>
+
+            {/* SUCCESS MESSAGE */}
+            {successMessage && (
+              <div
+                role="status"
+                className="mb-5 flex items-center justify-between gap-3 rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-[12px] text-[#15803D]"
+              >
+                <span>{successMessage}</span>
+                <button
+                  type="button"
+                  aria-label="إغلاق التنبيه"
+                  onClick={() => navigate(location.pathname, {
+                    replace: true,
+                    state: null,
+                  })}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            )}
 
             {/* STATISTICS */}
+            <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+              <StatCard
+                label="إجمالي الجهات"
+                value={stats.total}
+                unit="جهة"
+                icon={Building2}
+                color="blue"
+              />
+              <StatCard
+                label="الجهات المعتمدة"
+                value={stats.approved}
+                unit="جهة"
+                icon={CheckCircle2}
+                color="green"
+              />
+              <StatCard
+                label="طلبات تحتاج مراجعة"
+                value={stats.pending}
+                unit="جهة"
+                icon={Clock3}
+                color="orange"
+              />
+              <StatCard
+                label="إجمالي المتدربين"
+                value={stats.students}
+                unit="طالب"
+                icon={Users}
+                color="cyan"
+              />
+            </div>
 
-            <section
-              className="
-                mt-[22px]
-                grid
-                grid-cols-1
-                gap-[12px]
-
-                sm:grid-cols-2
-                xl:grid-cols-4
-              "
-            >
-              {statistics.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <article
-                    key={item.title}
-                    className="
-                      min-h-[130px]
-                      rounded-[14px]
-                      border
-                      border-[#DDE5EF]
-                      bg-white
-                      p-[17px]
-                      shadow-[0_1px_2px_rgba(15,23,42,0.03)]
-                    "
-                  >
-                    <div
-                      className="
-                        flex
-                        items-start
-                        justify-between
-                        gap-4
-                      "
-                    >
-                      <div>
-                        <p className="m-0 text-[11px] font-medium text-[#64748B]">
-                          {item.title}
-                        </p>
-
-                        <strong
-                          className="
-                            mt-[8px]
-                            block
-                            text-[27px]
-                            font-bold
-                            leading-[32px]
-                            text-[#14213D]
-                          "
-                        >
-                          {item.value}
-                        </strong>
-
-                        <p
-                          className="
-                            m-0
-                            mt-[5px]
-                            text-[10px]
-                            leading-[18px]
-                            text-[#94A3B8]
-                          "
-                        >
-                          {item.description}
-                        </p>
-                      </div>
-
-                      <div
-                        className={`
-                          flex
-                          h-[42px]
-                          w-[42px]
-                          shrink-0
-                          items-center
-                          justify-center
-                          rounded-[10px]
-
-                          ${item.iconBg}
-                          ${item.iconColor}
-                        `}
-                      >
-                        <Icon size={20} strokeWidth={1.8} />
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </section>
-
-            {/* FILTERS */}
-
-            <section
-              className="
-                mt-[18px]
-                rounded-[14px]
-                border
-                border-[#DDE5EF]
-                bg-white
-                p-[14px]
-                shadow-[0_1px_2px_rgba(15,23,42,0.03)]
-
-                sm:p-[16px]
-              "
-            >
-              <div
-                className="
-                  grid
-                  grid-cols-1
-                  gap-[10px]
-
-                  md:grid-cols-2
-                  xl:grid-cols-[minmax(0,1fr)_180px_180px_160px]
-                "
-              >
-                <div>
-                  <FilterLabel>
-                    البحث
-                  </FilterLabel>
-
-                  <div
-                    className="
-                      flex
-                      h-[42px]
-                      items-center
-                      gap-[9px]
-                      rounded-[9px]
-                      border
-                      border-[#D9E2EC]
-                      bg-white
-                      px-[12px]
-
-                      focus-within:border-[#09379A]
-                      focus-within:ring-2
-                      focus-within:ring-[#09379A]/10
-                    "
-                  >
-                    <Search
-                      size={17}
-                      className="shrink-0 text-[#94A3B8]"
-                    />
-
-                    <input
-                      value={searchTerm}
-                      onChange={(event) =>
-                        setSearchTerm(event.target.value)
-                      }
-                      placeholder="اسم الجهة، المجال، المدينة أو التخصص..."
-                      className="
-                        h-full
-                        min-w-0
-                        flex-1
-                        border-0
-                        bg-transparent
-                        font-['Cairo']
-                        text-[11px]
-                        text-[#334155]
-                        outline-none
-
-                        placeholder:text-[#94A3B8]
-                      "
-                    />
-                  </div>
-                </div>
-
-                <FilterSelect
-                  label="المجال"
-                  value={fieldFilter}
-                  onChange={setFieldFilter}
-                >
-                  <option value="الكل">
-                    كل المجالات
-                  </option>
-
-                  {fields.map((field) => (
-                    <option
-                      key={field}
-                      value={field}
-                    >
-                      {field}
-                    </option>
-                  ))}
-                </FilterSelect>
-
-                <FilterSelect
-                  label="نوع الجهة"
-                  value={typeFilter}
-                  onChange={setTypeFilter}
-                >
-                  <option value="الكل">
-                    كل الأنواع
-                  </option>
-
-                  {types.map((type) => (
-                    <option
-                      key={type}
-                      value={type}
-                    >
-                      {type}
-                    </option>
-                  ))}
-                </FilterSelect>
-
-                <FilterSelect
-                  label="الحالة"
-                  value={statusFilter}
-                  onChange={setStatusFilter}
-                >
-                  <option value="الكل">
-                    كل الحالات
-                  </option>
-                  <option value="نشطة">
-                    نشطة
-                  </option>
-                  <option value="غير نشطة">
-                    غير نشطة
-                  </option>
-                </FilterSelect>
+            {/* SEARCH AND FILTERS */}
+            <section className="mb-5 flex flex-col gap-3 xl:flex-row xl:items-center">
+              <div className="relative min-w-0 flex-1">
+                <Search
+                  size={18}
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#64748B]"
+                />
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setCurrentPage(1);
+                  }}
+                  placeholder="ابحث باسم الجهة..."
+                  className="h-[44px] w-full rounded-[8px] border border-[#E0E7F2] bg-white pl-4 pr-11 text-[13px] outline-none focus:border-[#09379A]"
+                />
               </div>
 
-              <div
-                className="
-                  mt-[12px]
-                  flex
-                  flex-col
-                  gap-2
-                  border-t
-                  border-[#EEF2F7]
-                  pt-[11px]
-
-                  sm:flex-row
-                  sm:items-center
-                  sm:justify-between
-                "
-              >
-                <span className="text-[10px] text-[#64748B]">
-                  تم العثور على{" "}
-                  <strong className="text-[#1E293B]">
-                    {filteredOrganizations.length}
-                  </strong>{" "}
-                  جهة تدريب
-                </span>
-
-                {hasFilters && (
+              <div className="flex flex-wrap gap-3">
+                <div className="relative">
                   <button
                     type="button"
-                    onClick={resetFilters}
-                    className="
-                      w-fit
-                      border-0
-                      bg-transparent
-                      text-[10px]
-                      font-bold
-                      text-[#09379A]
-                    "
+                    onClick={() => {
+                      setShowFilters((value) => !value);
+                      setShowSort(false);
+                    }}
+                    className="flex h-[44px] items-center gap-2 rounded-[8px] border border-[#E0E7F2] bg-white px-4 text-[12px]"
                   >
-                    إعادة تعيين الفلاتر
+                    <SlidersHorizontal size={17} />
+                    تصفية
                   </button>
-                )}
+
+                  {showFilters && (
+                    <div className="absolute right-0 top-[50px] z-20 w-[270px] rounded-[12px] border border-[#E0E7F2] bg-white p-4 shadow-lg">
+                      <div className="mb-4 flex items-center justify-between">
+                        <h3 className="m-0 text-[13px] font-bold">تصفية الجهات</h3>
+                        <button type="button" onClick={() => setShowFilters(false)}>
+                          <X size={16} />
+                        </button>
+                      </div>
+
+                      <label className="mb-2 block text-[11px] font-semibold">
+                        حالة الاعتماد
+                      </label>
+                      <select
+                        value={statusFilter}
+                        onChange={(event) => {
+                          setStatusFilter(event.target.value);
+                          setCurrentPage(1);
+                        }}
+                        className={`${selectClass} mb-4`}
+                      >
+                        <option value="all">كل الحالات</option>
+                        <option value="approved">معتمدة</option>
+                        <option value="pending">بانتظار الاعتماد</option>
+                        <option value="review">قيد المراجعة</option>
+                        <option value="renewal">قيد التجديد</option>
+                        <option value="rejected">مرفوضة</option>
+                      </select>
+
+                      <label className="mb-2 block text-[11px] font-semibold">
+                        نوع الجهة
+                      </label>
+                      <select
+                        value={typeFilter}
+                        onChange={(event) => {
+                          setTypeFilter(event.target.value);
+                          setCurrentPage(1);
+                        }}
+                        className={`${selectClass} mb-4`}
+                      >
+                        <option value="all">كل الأنواع</option>
+                        {types.map((type) => (
+                          <option key={type} value={type}>{type}</option>
+                        ))}
+                      </select>
+
+                      <button
+                        type="button"
+                        onClick={resetFilters}
+                        className="flex w-full items-center justify-center gap-2 rounded-[7px] border border-[#E0E7F2] py-2 text-[11px]"
+                      >
+                        <RotateCcw size={14} />
+                        إعادة ضبط
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSort((value) => !value);
+                      setShowFilters(false);
+                    }}
+                    className="flex h-[44px] items-center gap-2 rounded-[8px] border border-[#E0E7F2] bg-white px-4 text-[12px]"
+                  >
+                    <ArrowDownUp size={17} />
+                    ترتيب
+                  </button>
+
+                  {showSort && (
+                    <div className="absolute left-0 top-[50px] z-20 w-[200px] rounded-[10px] border border-[#E0E7F2] bg-white p-2 shadow-lg">
+                      {[
+                        ["name", "حسب اسم الجهة"],
+                        ["students", "حسب عدد المتدربين"],
+                        ["location", "حسب الموقع"],
+                      ].map(([value, label]) => (
+                        <button
+                          key={value}
+                          type="button"
+                          onClick={() => {
+                            setSortOrder(value);
+                            setShowSort(false);
+                          }}
+                          className={`w-full rounded-[7px] px-3 py-2 text-right text-[12px] ${
+                            sortOrder === value
+                              ? "bg-[#EEF4FF] font-bold text-[#09379A]"
+                              : "hover:bg-[#F8FAFC]"
+                          }`}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </section>
 
-            {/* TABLE */}
-
-            <section
-              className="
-                mt-[16px]
-                overflow-hidden
-                rounded-[14px]
-                border
-                border-[#DDE5EF]
-                bg-white
-                shadow-[0_1px_2px_rgba(15,23,42,0.03)]
-              "
-            >
-              <div
-                className="
-                  flex
-                  items-center
-                  justify-between
-                  border-b
-                  border-[#EEF2F7]
-                  px-4
-                  py-[15px]
-
-                  sm:px-[18px]
-                "
-              >
-                <div>
-                  <h2 className="m-0 text-[15px] font-bold text-[#1E293B]">
-                    الجهات المسجلة
-                  </h2>
-
-                  <p className="m-0 mt-[2px] text-[10px] text-[#94A3B8]">
-                    الجهات المتعاونة مع الجامعة في التدريب
-                    الميداني والعملي
-                  </p>
-                </div>
-
-                <div
-                  className="
-                    rounded-[8px]
-                    bg-[#F8FAFC]
-                    px-[10px]
-                    py-[7px]
-                    text-[10px]
-                    font-bold
-                    text-[#64748B]
-                  "
-                >
+            {/* ORGANIZATIONS TABLE */}
+            <section className="rounded-[12px] border border-[#E0E7F2] bg-white p-3 sm:p-5">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="m-0 text-[16px] font-bold text-[#062569]">
+                  قائمة جهات التدريب
+                </h2>
+                <span className="text-[11px] text-[#64748B]">
                   {filteredOrganizations.length} جهة
-                </div>
+                </span>
               </div>
 
-              {/* DESKTOP TABLE */}
-
-              <div className="hidden overflow-x-auto md:block">
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-[#F8FAFC]">
-                      <TableHead>الجهة</TableHead>
-                      <TableHead>المجال</TableHead>
-                      <TableHead>التخصصات</TableHead>
-                      <TableHead>الموقع</TableHead>
-                      <TableHead>الإشغال</TableHead>
-                      <TableHead>التقييم</TableHead>
-                      <TableHead>الحالة</TableHead>
-                      <TableHead>الإجراءات</TableHead>
+              <div className="overflow-x-auto rounded-[9px] border border-[#E0E7F2]">
+                <table className="w-full min-w-[820px] border-collapse text-right text-[11px]">
+                  <thead className="bg-[#F1F5F9] text-[#64748B]">
+                    <tr>
+                      <th className="px-4 py-4">الجهة</th>
+                      <th className="px-4 py-4">النوع</th>
+                      <th className="px-4 py-4">الموقع</th>
+                      <th className="px-4 py-4">عدد المتدربين</th>
+                      <th className="px-4 py-4">حالة الاعتماد</th>
+                      <th className="px-4 py-4">الإجراءات</th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {filteredOrganizations.map(
-                      (organization) => {
-                        const occupancy =
-                          organization.capacity > 0
-                            ? Math.round(
-                                (organization.currentStudents /
-                                  organization.capacity) *
-                                  100
-                              )
-                            : 0;
+                    {visibleOrganizations.map((item) => {
+                      const { Icon, style } = getOrganizationIcon(item.type);
 
-                        return (
-                          <tr
-                            key={organization.id}
-                            className="
-                              border-t
-                              border-[#EEF2F7]
-                              transition
-
-                              hover:bg-[#FBFCFE]
-                            "
-                          >
-                            <TableCell>
+                      return (
+                        <tr
+                          key={item.id}
+                          className="border-t border-[#E6EBF5] hover:bg-[#FAFBFE]"
+                        >
+                          <td className="px-4 py-4">
+                            <div className="flex items-center gap-3">
                               <div
-                                className="
-                                  flex
-                                  min-w-[190px]
-                                  items-center
-                                  gap-[10px]
-                                "
+                                className={`flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[9px] ${style}`}
                               >
-                                <OrganizationIcon />
-
-                                <div>
-                                  <p
-                                    className="
-                                      m-0
-                                      text-[11px]
-                                      font-bold
-                                      text-[#334155]
-                                    "
-                                  >
-                                    {organization.name}
-                                  </p>
-
-                                  <span
-                                    className="
-                                      mt-[2px]
-                                      block
-                                      text-[9px]
-                                      text-[#94A3B8]
-                                    "
-                                  >
-                                    {organization.type}
-                                  </span>
-                                </div>
+                                <Icon size={19} />
                               </div>
-                            </TableCell>
-
-                            <TableCell>
-                              <span
-                                className="
-                                  text-[10px]
-                                  font-medium
-                                  text-[#475569]
-                                "
-                              >
-                                {organization.field}
-                              </span>
-                            </TableCell>
-
-                            <TableCell>
-                              <div
-                                className="
-                                  flex
-                                  max-w-[210px]
-                                  flex-wrap
-                                  gap-[4px]
-                                "
-                              >
-                                {organization.specializations
-                                  .slice(0, 2)
-                                  .map((item) => (
-                                    <span
-                                      key={item}
-                                      className="
-                                        rounded-full
-                                        bg-[#F1F5F9]
-                                        px-[7px]
-                                        py-[3px]
-                                        text-[8px]
-                                        font-medium
-                                        text-[#64748B]
-                                      "
-                                    >
-                                      {item}
-                                    </span>
-                                  ))}
-
-                                {organization.specializations
-                                  .length > 2 && (
-                                  <span
-                                    className="
-                                      rounded-full
-                                      bg-[#EEF3FF]
-                                      px-[7px]
-                                      py-[3px]
-                                      text-[8px]
-                                      font-bold
-                                      text-[#09379A]
-                                    "
-                                  >
-                                    +
-                                    {organization
-                                      .specializations
-                                      .length - 2}
-                                  </span>
-                                )}
+                              <div>
+                                <p className="m-0 font-bold">{item.name}</p>
+                                <p dir="ltr" className="m-0 mt-1 text-right text-[10px] text-[#64748B]">
+                                  {item.phone || "—"}
+                                </p>
                               </div>
-                            </TableCell>
+                            </div>
+                          </td>
 
-                            <TableCell>
-                              <div
-                                className="
-                                  flex
-                                  items-center
-                                  gap-[5px]
-                                  text-[10px]
-                                  text-[#64748B]
-                                "
-                              >
-                                <MapPin size={13} />
-                                {organization.city}
-                              </div>
-                            </TableCell>
+                          <td className="px-4 py-4">{item.type}</td>
+                          <td className="px-4 py-4">{item.location}</td>
+                          <td className="px-4 py-4">
+                            {item.students ?? item.activeStudents ?? 0}
+                          </td>
+                          <td className="px-4 py-4">
+                            <StatusBadge status={item.status} />
+                          </td>
+                          <td className="px-4 py-4">
+                            <button
+                              type="button"
+                              onClick={() => viewOrganization(item)}
+                              className="inline-flex h-[34px] items-center gap-2 rounded-[7px] border border-[#E0E7F2] bg-white px-3 text-[11px] hover:border-[#09379A] hover:text-[#09379A]"
+                            >
+                              <Eye size={15} />
+                              عرض
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
 
-                            <TableCell>
-                              <div className="min-w-[110px]">
-                                <div
-                                  className="
-                                    mb-[5px]
-                                    flex
-                                    justify-between
-                                    gap-3
-                                    text-[9px]
-                                  "
-                                >
-                                  <span className="text-[#64748B]">
-                                    {
-                                      organization.currentStudents
-                                    }{" "}
-                                    / {organization.capacity}
-                                  </span>
-
-                                  <strong className="text-[#334155]">
-                                    {occupancy}%
-                                  </strong>
-                                </div>
-
-                                <div
-                                  className="
-                                    h-[5px]
-                                    overflow-hidden
-                                    rounded-full
-                                    bg-[#EEF2F7]
-                                  "
-                                >
-                                  <div
-                                    className={`
-                                      h-full
-                                      rounded-full
-
-                                      ${
-                                        occupancy >= 90
-                                          ? "bg-[#EA580C]"
-                                          : "bg-[#09379A]"
-                                      }
-                                    `}
-                                    style={{
-                                      width: `${Math.min(
-                                        occupancy,
-                                        100
-                                      )}%`,
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </TableCell>
-
-                            <TableCell>
-                              <Rating
-                                rating={
-                                  organization.rating
-                                }
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <StatusBadge
-                                status={
-                                  organization.status
-                                }
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <div className="flex gap-[6px]">
-                                <IconButton
-                                  title="عرض التفاصيل"
-                                  onClick={() =>
-                                    openDetails(
-                                      organization
-                                    )
-                                  }
-                                >
-                                  <Eye size={15} />
-                                </IconButton>
-
-                                <IconButton
-                                  title="تعديل"
-                                  onClick={() =>
-                                    openEditForm(
-                                      organization
-                                    )
-                                  }
-                                >
-                                  <Edit3 size={14} />
-                                </IconButton>
-
-                                <IconButton title="خيارات">
-                                  <MoreHorizontal
-                                    size={15}
-                                  />
-                                </IconButton>
-                              </div>
-                            </TableCell>
-                          </tr>
-                        );
-                      }
+                    {visibleOrganizations.length === 0 && (
+                      <tr>
+                        <td colSpan={6} className="px-4 py-12 text-center text-[12px] text-[#64748B]">
+                          لا توجد جهات مطابقة للبحث.
+                        </td>
+                      </tr>
                     )}
                   </tbody>
                 </table>
-
-                {filteredOrganizations.length === 0 && (
-                  <EmptyState />
-                )}
               </div>
 
-              {/* MOBILE */}
+              {/* PAGINATION */}
+              <div className="mt-4 flex flex-col items-center justify-between gap-3 sm:flex-row">
+                <span className="text-[11px] text-[#64748B]">
+                  عرض{" "}
+                  {filteredOrganizations.length
+                    ? (safePage - 1) * PAGE_SIZE + 1
+                    : 0}
+                  {" - "}
+                  {Math.min(safePage * PAGE_SIZE, filteredOrganizations.length)}
+                  {" من "}
+                  {filteredOrganizations.length} جهة
+                </span>
 
-              <div
-                className="
-                  flex
-                  flex-col
-                  gap-[10px]
-                  p-[12px]
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    disabled={safePage === 1}
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    className="flex h-[34px] items-center gap-1 rounded-full border border-[#E0E7F2] px-3 text-[11px] disabled:opacity-40"
+                  >
+                    <ChevronRight size={14} />
+                    السابق
+                  </button>
 
-                  md:hidden
-                "
-              >
-                {filteredOrganizations.length > 0 ? (
-                  filteredOrganizations.map(
-                    (organization) => (
-                      <article
-                        key={organization.id}
-                        className="
-                          rounded-[11px]
-                          border
-                          border-[#E7ECF2]
-                          bg-[#FAFBFC]
-                          p-[13px]
-                        "
-                      >
-                        <div
-                          className="
-                            flex
-                            items-start
-                            justify-between
-                            gap-3
-                          "
-                        >
-                          <div
-                            className="
-                              flex
-                              min-w-0
-                              items-center
-                              gap-[9px]
-                            "
-                          >
-                            <OrganizationIcon />
+                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => setCurrentPage(page)}
+                      className={`h-[34px] min-w-[34px] rounded-full border text-[11px] ${
+                        page === safePage
+                          ? "border-[#09379A] bg-[#09379A] text-white"
+                          : "border-[#E0E7F2] bg-white"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
 
-                            <div className="min-w-0">
-                              <h3
-                                className="
-                                  m-0
-                                  truncate
-                                  text-[12px]
-                                  font-bold
-                                  text-[#334155]
-                                "
-                              >
-                                {organization.name}
-                              </h3>
-
-                              <p
-                                className="
-                                  m-0
-                                  mt-[2px]
-                                  text-[9px]
-                                  text-[#94A3B8]
-                                "
-                              >
-                                {organization.type}
-                              </p>
-                            </div>
-                          </div>
-
-                          <StatusBadge
-                            status={
-                              organization.status
-                            }
-                          />
-                        </div>
-
-                        <div
-                          className="
-                            mt-[12px]
-                            grid
-                            grid-cols-2
-                            gap-3
-                            border-t
-                            border-[#E7ECF2]
-                            pt-[11px]
-                          "
-                        >
-                          <MobileInfo
-                            label="المجال"
-                            value={
-                              organization.field
-                            }
-                          />
-
-                          <MobileInfo
-                            label="المدينة"
-                            value={
-                              organization.city
-                            }
-                          />
-
-                          <MobileInfo
-                            label="الطلبة"
-                            value={`${organization.currentStudents} / ${organization.capacity}`}
-                          />
-
-                          <MobileInfo
-                            label="التقييم"
-                            value={
-                              organization.rating > 0
-                                ? `${organization.rating} / 5`
-                                : "لا يوجد"
-                            }
-                          />
-                        </div>
-
-                        <div className="mt-[12px] flex gap-[8px]">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              openDetails(
-                                organization
-                              )
-                            }
-                            className="
-                              flex
-                              h-[36px]
-                              flex-1
-                              items-center
-                              justify-center
-                              gap-[6px]
-                              rounded-[8px]
-                              border
-                              border-[#D7E5FF]
-                              bg-[#F6F9FF]
-                              text-[10px]
-                              font-bold
-                              text-[#09379A]
-                            "
-                          >
-                            <Eye size={14} />
-                            التفاصيل
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              openEditForm(
-                                organization
-                              )
-                            }
-                            className="
-                              flex
-                              h-[36px]
-                              flex-1
-                              items-center
-                              justify-center
-                              gap-[6px]
-                              rounded-[8px]
-                              border
-                              border-[#D9E2EC]
-                              bg-white
-                              text-[10px]
-                              font-bold
-                              text-[#475569]
-                            "
-                          >
-                            <Edit3 size={13} />
-                            تعديل
-                          </button>
-                        </div>
-                      </article>
-                    )
-                  )
-                ) : (
-                  <EmptyState />
-                )}
+                  <button
+                    type="button"
+                    disabled={safePage === totalPages}
+                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                    className="flex h-[34px] items-center gap-1 rounded-full border border-[#E0E7F2] px-3 text-[11px] disabled:opacity-40"
+                  >
+                    التالي
+                    <ChevronLeft size={14} />
+                  </button>
+                </div>
               </div>
             </section>
 
-            {/* INFORMATION NOTE */}
-
-            <div
-              className="
-                mt-[14px]
-                flex
-                items-start
-                gap-[8px]
-                rounded-[10px]
-                border
-                border-[#D7E5FF]
-                bg-[#F6F9FF]
-                px-[13px]
-                py-[11px]
-              "
-            >
-              <CircleAlert
-                size={16}
-                className="
-                  mt-[1px]
-                  shrink-0
-                  text-[#09379A]
-                "
-              />
-
-              <p
-                className="
-                  m-0
-                  text-[10px]
-                  leading-[20px]
-                  text-[#475569]
-                "
-              >
-                الطاقة الاستيعابية تمثل الحد الأعلى
-                المقترح لعدد الطلبة داخل جهة التدريب،
-                ويمكن استخدامها لاحقًا في عملية توزيع
-                الطلبة ومنع تجاوز المقاعد المتاحة.
-              </p>
-            </div>
+            <Footer />
           </div>
         </main>
       </div>
-
-      {/* DETAILS DRAWER */}
-
-      {showDetails && selectedOrganization && (
-        <>
-          <div
-            onClick={() => setShowDetails(false)}
-            className="
-              fixed
-              inset-0
-              z-[90]
-              bg-[#0F172A]/35
-              backdrop-blur-[1px]
-            "
-          />
-
-          <aside
-            dir="rtl"
-            className="
-              fixed
-              bottom-0
-              right-0
-              top-0
-              z-[100]
-
-              flex
-              w-full
-              max-w-[470px]
-              flex-col
-
-              bg-white
-
-              shadow-[-18px_0_50px_rgba(15,23,42,0.14)]
-            "
-          >
-            <div
-              className="
-                flex
-                shrink-0
-                items-center
-                justify-between
-                gap-4
-                border-b
-                border-[#E2E8F0]
-                px-5
-                py-[17px]
-              "
-            >
-              <div>
-                <h2 className="m-0 text-[17px] font-bold text-[#1E293B]">
-                  تفاصيل جهة التدريب
-                </h2>
-
-                <p className="m-0 mt-[2px] text-[10px] text-[#94A3B8]">
-                  بيانات الجهة والتعاون الحالي
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowDetails(false)}
-                className="
-                  flex
-                  h-[34px]
-                  w-[34px]
-                  items-center
-                  justify-center
-                  rounded-[8px]
-                  border-0
-                  bg-[#F8FAFC]
-                  text-[#64748B]
-                "
-              >
-                <X size={17} />
-              </button>
-            </div>
-
-            <div
-              className="
-                min-h-0
-                flex-1
-                overflow-y-auto
-                px-5
-                py-5
-              "
-            >
-              <div className="flex items-center gap-[13px]">
-                <OrganizationIcon large />
-
-                <div className="min-w-0">
-                  <h3
-                    className="
-                      m-0
-                      text-[17px]
-                      font-bold
-                      text-[#1E293B]
-                    "
-                  >
-                    {selectedOrganization.name}
-                  </h3>
-
-                  <p
-                    className="
-                      m-0
-                      mt-[2px]
-                      text-[11px]
-                      text-[#64748B]
-                    "
-                  >
-                    {selectedOrganization.field}
-                  </p>
-
-                  <div className="mt-[6px]">
-                    <StatusBadge
-                      status={
-                        selectedOrganization.status
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div
-                className="
-                  mt-[20px]
-                  grid
-                  grid-cols-2
-                  gap-[9px]
-                "
-              >
-                <InfoCard
-                  label="نوع الجهة"
-                  value={
-                    selectedOrganization.type
-                  }
-                />
-
-                <InfoCard
-                  label="المدينة"
-                  value={
-                    selectedOrganization.city
-                  }
-                />
-
-                <InfoCard
-                  label="الطاقة الاستيعابية"
-                  value={`${selectedOrganization.capacity} طالبًا`}
-                />
-
-                <InfoCard
-                  label="الطلبة الحاليون"
-                  value={`${selectedOrganization.currentStudents} طالبًا`}
-                />
-              </div>
-
-              <div className="mt-[18px]">
-                <SectionTitle>
-                  التخصصات المقبولة
-                </SectionTitle>
-
-                <div className="flex flex-wrap gap-[6px]">
-                  {selectedOrganization.specializations.map(
-                    (item) => (
-                      <span
-                        key={item}
-                        className="
-                          rounded-full
-                          border
-                          border-[#D7E5FF]
-                          bg-[#F6F9FF]
-                          px-[9px]
-                          py-[5px]
-                          text-[9px]
-                          font-bold
-                          text-[#09379A]
-                        "
-                      >
-                        {item}
-                      </span>
-                    )
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-[18px]">
-                <SectionTitle>
-                  معلومات التواصل
-                </SectionTitle>
-
-                <ContactRow
-                  icon={Users}
-                  label="مسؤول التواصل"
-                  value={
-                    selectedOrganization.contactPerson
-                  }
-                />
-
-                <ContactRow
-                  icon={Phone}
-                  label="رقم الهاتف"
-                  value={
-                    selectedOrganization.phone
-                  }
-                />
-
-                <ContactRow
-                  icon={Mail}
-                  label="البريد الإلكتروني"
-                  value={
-                    selectedOrganization.email
-                  }
-                />
-
-                <ContactRow
-                  icon={MapPin}
-                  label="العنوان"
-                  value={
-                    selectedOrganization.address
-                  }
-                />
-              </div>
-
-              <div className="mt-[18px]">
-                <SectionTitle>
-                  مؤشرات التعاون
-                </SectionTitle>
-
-                <div className="grid grid-cols-3 gap-[8px]">
-                  <MiniStat
-                    label="طلبة حاليون"
-                    value={
-                      selectedOrganization.currentStudents
-                    }
-                  />
-
-                  <MiniStat
-                    label="الاتفاقيات"
-                    value={
-                      selectedOrganization.agreements
-                    }
-                  />
-
-                  <MiniStat
-                    label="التقييم"
-                    value={
-                      selectedOrganization.rating > 0
-                        ? selectedOrganization.rating
-                        : "—"
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="
-                shrink-0
-                border-t
-                border-[#E2E8F0]
-                bg-white
-                px-5
-                py-[14px]
-              "
-            >
-              <div
-                className="
-                  flex
-                  flex-col
-                  gap-[8px]
-
-                  sm:flex-row
-                "
-              >
-                <button
-                  type="button"
-                  onClick={() =>
-                    openEditForm(
-                      selectedOrganization
-                    )
-                  }
-                  className="
-                    flex
-                    min-h-[40px]
-                    flex-1
-                    items-center
-                    justify-center
-                    gap-[7px]
-                    rounded-[8px]
-                    border-0
-                    bg-[#09379A]
-                    px-[14px]
-                    text-[10px]
-                    font-bold
-                    text-white
-                  "
-                >
-                  <Edit3 size={14} />
-                  تعديل البيانات
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    toggleStatus(
-                      selectedOrganization.id
-                    )
-                  }
-                  className={`
-                    min-h-[40px]
-                    flex-1
-                    rounded-[8px]
-                    border
-                    px-[14px]
-                    text-[10px]
-                    font-bold
-
-                    ${
-                      selectedOrganization.status ===
-                      "نشطة"
-                        ? `
-                          border-[#FED7AA]
-                          bg-[#FFF7ED]
-                          text-[#C2410C]
-                        `
-                        : `
-                          border-[#BBF7D0]
-                          bg-[#F0FDF4]
-                          text-[#15803D]
-                        `
-                    }
-                  `}
-                >
-                  {selectedOrganization.status ===
-                  "نشطة"
-                    ? "إيقاف الجهة"
-                    : "إعادة تفعيل الجهة"}
-                </button>
-              </div>
-            </div>
-          </aside>
-        </>
-      )}
-
-      {/* ADD / EDIT MODAL */}
-
-      {showForm && (
-        <div
-          onClick={() => setShowForm(false)}
-          className="
-            fixed
-            inset-0
-            z-[110]
-
-            flex
-            items-center
-            justify-center
-
-            overflow-y-auto
-
-            bg-[#0F172A]/45
-
-            px-4
-            py-6
-
-            backdrop-blur-[2px]
-          "
-        >
-          <form
-            dir="rtl"
-            onSubmit={handleSubmit}
-            onClick={(event) =>
-              event.stopPropagation()
-            }
-            className="
-              max-h-[92dvh]
-              w-full
-              max-w-[780px]
-              overflow-y-auto
-
-              rounded-[16px]
-
-              border
-              border-[#E2E8F0]
-
-              bg-white
-
-              shadow-[0_24px_70px_rgba(15,23,42,0.20)]
-            "
-          >
-            <div
-              className="
-                sticky
-                top-0
-                z-10
-
-                flex
-                items-center
-                justify-between
-                gap-4
-
-                border-b
-                border-[#E2E8F0]
-
-                bg-white
-
-                px-5
-                py-[16px]
-
-                sm:px-6
-              "
-            >
-              <div>
-                <h2 className="m-0 text-[17px] font-bold text-[#1E293B]">
-                  {editingOrganization
-                    ? "تعديل جهة التدريب"
-                    : "إضافة جهة تدريب جديدة"}
-                </h2>
-
-                <p className="m-0 mt-[2px] text-[10px] text-[#94A3B8]">
-                  أدخل البيانات الأساسية والتواصل والطاقة
-                  الاستيعابية
-                </p>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="
-                  flex
-                  h-[34px]
-                  w-[34px]
-                  items-center
-                  justify-center
-                  rounded-[8px]
-                  border-0
-                  bg-[#F8FAFC]
-                  text-[#64748B]
-                "
-              >
-                <X size={17} />
-              </button>
-            </div>
-
-            <div
-              className="
-                grid
-                grid-cols-1
-                gap-x-[16px]
-                gap-y-[14px]
-
-                px-5
-                py-5
-
-                sm:grid-cols-2
-                sm:px-6
-              "
-            >
-              <FormInput
-                label="اسم جهة التدريب"
-                name="name"
-                value={formData.name}
-                onChange={handleFormChange}
-                placeholder="اسم المؤسسة أو الشركة"
-                required
-              />
-
-              <FormSelect
-                label="نوع الجهة"
-                name="type"
-                value={formData.type}
-                onChange={handleFormChange}
-              >
-                <option value="شركة خاصة">
-                  شركة خاصة
-                </option>
-                <option value="مؤسسة صحية">
-                  مؤسسة صحية
-                </option>
-                <option value="مؤسسة تعليمية">
-                  مؤسسة تعليمية
-                </option>
-                <option value="مؤسسة مالية">
-                  مؤسسة مالية
-                </option>
-                <option value="مؤسسة أهلية">
-                  مؤسسة أهلية
-                </option>
-                <option value="مركز تدريبي">
-                  مركز تدريبي
-                </option>
-                <option value="جهة حكومية">
-                  جهة حكومية
-                </option>
-              </FormSelect>
-
-              <FormInput
-                label="مجال العمل"
-                name="field"
-                value={formData.field}
-                onChange={handleFormChange}
-                placeholder="مثال: تكنولوجيا المعلومات"
-                required
-              />
-
-              <FormInput
-                label="المدينة"
-                name="city"
-                value={formData.city}
-                onChange={handleFormChange}
-                placeholder="غزة"
-                required
-              />
-
-              <div className="sm:col-span-2">
-                <FormInput
-                  label="التخصصات المقبولة"
-                  name="specializations"
-                  value={
-                    formData.specializations
-                  }
-                  onChange={handleFormChange}
-                  placeholder="هندسة البرمجيات، نظم المعلومات، الأمن السيبراني"
-                  required
-                />
-
-                <p
-                  className="
-                    m-0
-                    mt-[4px]
-                    text-[9px]
-                    text-[#94A3B8]
-                  "
-                >
-                  افصل بين التخصصات بفاصلة.
-                </p>
-              </div>
-
-              <div className="sm:col-span-2">
-                <FormInput
-                  label="العنوان"
-                  name="address"
-                  value={formData.address}
-                  onChange={handleFormChange}
-                  placeholder="العنوان التفصيلي للجهة"
-                  required
-                />
-              </div>
-
-              <FormInput
-                label="مسؤول التواصل"
-                name="contactPerson"
-                value={
-                  formData.contactPerson
-                }
-                onChange={handleFormChange}
-                placeholder="اسم مسؤول التدريب"
-                required
-              />
-
-              <FormInput
-                label="رقم الهاتف"
-                name="phone"
-                value={formData.phone}
-                onChange={handleFormChange}
-                placeholder="0590000000"
-                required
-              />
-
-              <FormInput
-                type="email"
-                label="البريد الإلكتروني"
-                name="email"
-                value={formData.email}
-                onChange={handleFormChange}
-                placeholder="training@example.com"
-                required
-              />
-
-              <FormInput
-                type="number"
-                label="الطاقة الاستيعابية"
-                name="capacity"
-                value={formData.capacity}
-                onChange={handleFormChange}
-                min="1"
-                placeholder="10"
-                required
-              />
-
-              <FormSelect
-                label="حالة التعاون"
-                name="status"
-                value={formData.status}
-                onChange={handleFormChange}
-              >
-                <option value="نشطة">
-                  نشطة
-                </option>
-                <option value="غير نشطة">
-                  غير نشطة
-                </option>
-              </FormSelect>
-            </div>
-
-            <div
-              className="
-                sticky
-                bottom-0
-
-                flex
-                flex-col-reverse
-                gap-[8px]
-
-                border-t
-                border-[#E2E8F0]
-
-                bg-white
-
-                px-5
-                py-[14px]
-
-                sm:flex-row
-                sm:justify-end
-                sm:px-6
-              "
-            >
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="
-                  min-h-[40px]
-                  rounded-[8px]
-                  border
-                  border-[#D9E2EC]
-                  bg-white
-                  px-[16px]
-                  text-[10px]
-                  font-bold
-                  text-[#475569]
-                "
-              >
-                إلغاء
-              </button>
-
-              <button
-                type="submit"
-                className="
-                  flex
-                  min-h-[40px]
-                  items-center
-                  justify-center
-                  gap-[7px]
-                  rounded-[8px]
-                  border-0
-                  bg-[#09379A]
-                  px-[18px]
-                  text-[10px]
-                  font-bold
-                  text-white
-                "
-              >
-                <CheckCircle2 size={15} />
-
-                {editingOrganization
-                  ? "حفظ التعديلات"
-                  : "إضافة الجهة"}
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* =========================================================
-   COMPONENTS
-========================================================= */
-
-function OrganizationIcon({ large = false }) {
-  return (
-    <div
-      className={`
-        flex
-        shrink-0
-        items-center
-        justify-center
-
-        rounded-[10px]
-
-        border
-        border-[#D7E5FF]
-
-        bg-[#EEF3FF]
-
-        text-[#09379A]
-
-        ${
-          large
-            ? "h-[58px] w-[58px]"
-            : "h-[38px] w-[38px]"
-        }
-      `}
-    >
-      <Building2
-        size={large ? 24 : 17}
-        strokeWidth={1.8}
-      />
     </div>
   );
 }
 
 function StatusBadge({ status }) {
-  const active = status === "نشطة";
+  const item = STATUS_CONFIG[status] || STATUS_CONFIG.pending;
 
   return (
-    <span
-      className={`
-        inline-flex
-        min-h-[24px]
-        items-center
-        gap-[5px]
-        whitespace-nowrap
-        rounded-full
-        border
-        px-[8px]
-        text-[9px]
-        font-bold
-
-        ${
-          active
-            ? `
-              border-[#BBF7D0]
-              bg-[#ECFDF3]
-              text-[#15803D]
-            `
-            : `
-              border-[#E2E8F0]
-              bg-[#F1F5F9]
-              text-[#64748B]
-            `
-        }
-      `}
-    >
-      <span
-        className={`
-          h-[6px]
-          w-[6px]
-          rounded-full
-
-          ${
-            active
-              ? "bg-[#22C55E]"
-              : "bg-[#94A3B8]"
-          }
-        `}
-      />
-
-      {status}
+    <span className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[10px] font-semibold ${item.style}`}>
+      <span className="h-[6px] w-[6px] rounded-full bg-current" />
+      {item.label}
     </span>
   );
 }
 
-function Rating({ rating }) {
-  if (!rating) {
-    return (
-      <span className="text-[9px] text-[#94A3B8]">
-        لا يوجد
-      </span>
-    );
-  }
+// =====================================================
+// UPDATED STAT CARD - FIGMA LAYOUT
+// =====================================================
 
-  return (
-    <div className="flex items-center gap-[4px]">
-      <Star
-        size={14}
-        fill="currentColor"
-        className="text-[#F59E0B]"
-      />
+function StatCard({ label, value, unit, icon: Icon, color = "blue" }) {
+  const styles = {
+    blue: "bg-[#E8EEF9] text-[#09379A]",
+    green: "bg-[#DCFCE7] text-[#15803D]",
+    orange: "bg-[#FFE5D9] text-[#B54708]",
+    cyan: "bg-[#DDF6FF] text-[#08759B]",
+  };
 
-      <span className="text-[10px] font-bold text-[#475569]">
-        {rating}
-      </span>
-    </div>
-  );
-}
-
-function FilterLabel({ children }) {
-  return (
-    <label
-      className="
-        mb-[5px]
-        block
-        text-[10px]
-        font-bold
-        text-[#475569]
-      "
-    >
-      {children}
-    </label>
-  );
-}
-
-function FilterSelect({
-  label,
-  value,
-  onChange,
-  children,
-}) {
-  return (
-    <div>
-      <FilterLabel>
-        {label}
-      </FilterLabel>
-
-      <select
-        value={value}
-        onChange={(event) =>
-          onChange(event.target.value)
-        }
-        className="
-          h-[42px]
-          w-full
-          rounded-[9px]
-          border
-          border-[#D9E2EC]
-          bg-white
-          px-[10px]
-          font-['Cairo']
-          text-[10px]
-          text-[#475569]
-          outline-none
-
-          focus:border-[#09379A]
-          focus:ring-2
-          focus:ring-[#09379A]/10
-        "
-      >
-        {children}
-      </select>
-    </div>
-  );
-}
-
-function TableHead({ children }) {
-  return (
-    <th
-      className="
-        whitespace-nowrap
-        px-[13px]
-        py-[11px]
-        text-right
-        text-[9px]
-        font-bold
-        text-[#64748B]
-      "
-    >
-      {children}
-    </th>
-  );
-}
-
-function TableCell({ children }) {
-  return (
-    <td className="px-[13px] py-[12px] align-middle">
-      {children}
-    </td>
-  );
-}
-
-function IconButton({
-  children,
-  title,
-  onClick,
-}) {
-  return (
-    <button
-      type="button"
-      title={title}
-      onClick={onClick}
-      className="
-        flex
-        h-[31px]
-        w-[31px]
-        items-center
-        justify-center
-        rounded-[7px]
-        border
-        border-[#DCE5F0]
-        bg-white
-        text-[#64748B]
-        transition
-
-        hover:border-[#B7C8E4]
-        hover:bg-[#F6F9FF]
-        hover:text-[#09379A]
-      "
-    >
-      {children}
-    </button>
-  );
-}
-
-function MobileInfo({
-  label,
-  value,
-}) {
-  return (
-    <div>
-      <p className="m-0 text-[9px] text-[#94A3B8]">
-        {label}
-      </p>
-
-      <p
-        className="
-          m-0
-          mt-[2px]
-          text-[10px]
-          font-medium
-          leading-[18px]
-          text-[#475569]
-        "
-      >
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function SectionTitle({ children }) {
-  return (
-    <h4
-      className="
-        m-0
-        mb-[9px]
-        text-[11px]
-        font-bold
-        text-[#334155]
-      "
-    >
-      {children}
-    </h4>
-  );
-}
-
-function InfoCard({
-  label,
-  value,
-}) {
   return (
     <div
-      className="
-        rounded-[9px]
-        border
-        border-[#E7ECF2]
-        bg-[#FAFBFC]
-        px-[11px]
-        py-[10px]
-      "
+      dir="rtl"
+      className="min-w-0 rounded-[12px] border border-[#E0E7F2] bg-white p-4 sm:p-5"
     >
-      <p className="m-0 text-[9px] text-[#94A3B8]">
-        {label}
-      </p>
-
-      <p
-        className="
-          m-0
-          mt-[3px]
-          text-[10px]
-          font-bold
-          leading-[18px]
-          text-[#334155]
-        "
-      >
-        {value || "—"}
-      </p>
-    </div>
-  );
-}
-
-function ContactRow({
-  icon: Icon,
-  label,
-  value,
-}) {
-  return (
-    <div
-      className="
-        mb-[8px]
-        flex
-        items-center
-        gap-[10px]
-        rounded-[9px]
-        border
-        border-[#E7ECF2]
-        px-[11px]
-        py-[10px]
-      "
-    >
-      <div
-        className="
-          flex
-          h-[32px]
-          w-[32px]
-          shrink-0
-          items-center
-          justify-center
-          rounded-[8px]
-          bg-[#EEF3FF]
-          text-[#09379A]
-        "
-      >
-        <Icon size={15} />
-      </div>
-
-      <div className="min-w-0">
-        <p className="m-0 text-[9px] text-[#94A3B8]">
-          {label}
-        </p>
-
-        <p
-          className="
-            m-0
-            mt-[1px]
-            break-all
-            text-[10px]
-            font-medium
-            text-[#475569]
-          "
+      {/* ICON ON RIGHT / LABEL ON LEFT */}
+      <div className="flex w-full items-center justify-between gap-3">
+        <div
+          className={`flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-[8px] ${styles[color]}`}
         >
-          {value || "—"}
-        </p>
+          <Icon size={20} />
+        </div>
+
+        <span className="min-w-0 text-left text-[11px] font-semibold leading-5 text-[#111C2D]">
+          {label}
+        </span>
+      </div>
+
+      {/* NUMBER ON RIGHT */}
+      <div className="mt-5 flex items-baseline justify-start gap-2">
+        <strong className="text-[27px] font-bold leading-none text-[#09379A]">
+          {value}
+        </strong>
+
+        <span className="text-[11px] text-[#64748B]">
+          {unit}
+        </span>
       </div>
     </div>
   );
 }
 
-function MiniStat({
-  label,
-  value,
-}) {
+function Header({ navigate }) {
   return (
-    <div
-      className="
-        rounded-[9px]
-        border
-        border-[#E7ECF2]
-        bg-[#F8FAFC]
-        px-[8px]
-        py-[10px]
-        text-center
-      "
-    >
-      <strong className="block text-[16px] text-[#14213D]">
-        {value}
-      </strong>
+    <header className="z-30 flex h-[72px] shrink-0 items-center justify-between border-b border-[#E6EBF5] bg-white px-4 sm:px-6 lg:px-8">
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new Event("toggle-admin-sidebar"))}
+          className="rounded-lg p-2 text-[#09379A] lg:hidden"
+          aria-label="فتح القائمة"
+        >
+          <Menu size={21} />
+        </button>
 
-      <span
-        className="
-          mt-[2px]
-          block
-          text-[8px]
-          leading-[15px]
-          text-[#64748B]
-        "
-      >
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function FormInput({
-  label,
-  name,
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-  required = false,
-  min,
-}) {
-  return (
-    <div>
-      <label
-        className="
-          mb-[6px]
-          block
-          text-[10px]
-          font-bold
-          text-[#475569]
-        "
-      >
-        {label}
-
-        {required && (
-          <span className="mr-[3px] text-[#DC2626]">
-            *
-          </span>
-        )}
-      </label>
-
-      <input
-        type={type}
-        name={name}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
-        required={required}
-        min={min}
-        className="
-          h-[42px]
-          w-full
-          rounded-[8px]
-          border
-          border-[#D9E2EC]
-          bg-white
-          px-[11px]
-          font-['Cairo']
-          text-[11px]
-          text-[#334155]
-          outline-none
-
-          placeholder:text-[#94A3B8]
-
-          focus:border-[#09379A]
-          focus:ring-2
-          focus:ring-[#09379A]/10
-        "
-      />
-    </div>
-  );
-}
-
-function FormSelect({
-  label,
-  name,
-  value,
-  onChange,
-  children,
-}) {
-  return (
-    <div>
-      <label
-        className="
-          mb-[6px]
-          block
-          text-[10px]
-          font-bold
-          text-[#475569]
-        "
-      >
-        {label}
-      </label>
-
-      <select
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="
-          h-[42px]
-          w-full
-          rounded-[8px]
-          border
-          border-[#D9E2EC]
-          bg-white
-          px-[10px]
-          font-['Cairo']
-          text-[11px]
-          text-[#334155]
-          outline-none
-
-          focus:border-[#09379A]
-          focus:ring-2
-          focus:ring-[#09379A]/10
-        "
-      >
-        {children}
-      </select>
-    </div>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div
-      className="
-        flex
-        min-h-[220px]
-        flex-col
-        items-center
-        justify-center
-        px-5
-        py-8
-        text-center
-      "
-    >
-      <div
-        className="
-          flex
-          h-[48px]
-          w-[48px]
-          items-center
-          justify-center
-          rounded-full
-          bg-[#F1F5F9]
-          text-[#94A3B8]
-        "
-      >
-        <Building2 size={21} />
+        <button
+          type="button"
+          onClick={() => navigate("/admin/announcements")}
+          aria-label="الإشعارات"
+          className="relative rounded-lg p-2"
+        >
+          <Bell size={20} />
+          <span className="absolute right-[7px] top-[6px] h-[7px] w-[7px] rounded-full bg-[#FF6B35]" />
+        </button>
       </div>
 
-      <h3
-        className="
-          m-0
-          mt-[11px]
-          text-[12px]
-          font-bold
-          text-[#334155]
-        "
+      <button
+        type="button"
+        onClick={() => navigate("/admin/profile")}
+        className="flex items-center gap-2 text-right"
       >
-        لا توجد جهات مطابقة
-      </h3>
+        <div className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#E6EBF5] text-[12px] font-bold text-[#09379A]">
+          سم
+        </div>
+        <div>
+          <p className="m-0 text-[12px] font-bold">د. سامر يوسف</p>
+          <p className="m-0 text-[10px] text-[#64748B]">مشرف أكاديمي</p>
+        </div>
+      </button>
+    </header>
+  );
+}
 
-      <p
-        className="
-          m-0
-          mt-[3px]
-          text-[10px]
-          leading-[18px]
-          text-[#94A3B8]
-        "
-      >
-        جرّب تغيير البحث أو الفلاتر المستخدمة.
-      </p>
-    </div>
+function Footer() {
+  return (
+    <footer className="mt-9 pb-3 text-center text-[11px] text-[#64748B]">
+      جميع الحقوق محفوظة © 2025 كلية الدراسات المتوسطة - جامعة الأزهر - غزة
+    </footer>
   );
 }

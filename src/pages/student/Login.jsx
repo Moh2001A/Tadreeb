@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Eye,
   EyeOff,
+  LayoutDashboard,
   LockKeyhole,
   Star,
   UserRound,
@@ -39,6 +40,10 @@ export default function Login() {
     navigate("/student/dashboard");
   };
 
+  const handleAdminPages = () => {
+    navigate("/admin/dashboard");
+  };
+
   return (
     <div
       dir="ltr"
@@ -65,6 +70,7 @@ export default function Login() {
         {/* =====================================================
             LEFT / BRAND SIDE - DESKTOP
         ====================================================== */}
+
         <section
           dir="rtl"
           className="
@@ -79,6 +85,7 @@ export default function Login() {
           "
         >
           {/* MAIN BRAND AREA */}
+
           <div
             className="
               flex
@@ -161,6 +168,7 @@ export default function Login() {
           </div>
 
           {/* FEATURES AREA */}
+
           <div
             className="
               px-[54px]
@@ -219,6 +227,7 @@ export default function Login() {
         {/* =====================================================
             RIGHT / LOGIN SIDE
         ====================================================== */}
+
         <section
           dir="rtl"
           className="
@@ -237,6 +246,7 @@ export default function Login() {
           {/* =====================================================
               MOBILE / TABLET BRAND
           ====================================================== */}
+
           <div
             className="
               flex
@@ -303,6 +313,7 @@ export default function Login() {
           {/* =====================================================
               MAIN FORM AREA
           ====================================================== */}
+
           <div
             className="
               flex
@@ -339,6 +350,7 @@ export default function Login() {
               "
             >
               {/* WELCOME */}
+
               <div className="text-right">
                 <h1
                   className="
@@ -377,6 +389,7 @@ export default function Login() {
               </div>
 
               {/* STUDENT ID */}
+
               <div className="mt-[24px]">
                 <label
                   htmlFor="studentId"
@@ -394,7 +407,10 @@ export default function Login() {
                   "
                 >
                   <span>رقم الطالب</span>
-                  <span className="text-[#EB0909]">*</span>
+
+                  <span className="text-[#EB0909]">
+                    *
+                  </span>
                 </label>
 
                 <div className="relative mt-[9px]">
@@ -450,6 +466,7 @@ export default function Login() {
               </div>
 
               {/* PASSWORD */}
+
               <div className="mt-[20px]">
                 <label
                   htmlFor="password"
@@ -467,7 +484,10 @@ export default function Login() {
                   "
                 >
                   <span>كلمة المرور</span>
-                  <span className="text-[#EB0909]">*</span>
+
+                  <span className="text-[#EB0909]">
+                    *
+                  </span>
                 </label>
 
                 <div className="relative mt-[9px]">
@@ -578,6 +598,7 @@ export default function Login() {
               </div>
 
               {/* REMEMBER / FORGOT */}
+
               <div
                 className="
                   mt-[14px]
@@ -616,6 +637,9 @@ export default function Login() {
 
                 <button
                   type="button"
+                  onClick={() =>
+                    navigate("/forgot-password")
+                  }
                   className="
                     border-0
                     bg-transparent
@@ -634,6 +658,7 @@ export default function Login() {
               </div>
 
               {/* LOGIN BUTTON */}
+
               <button
                 type="submit"
                 dir="ltr"
@@ -675,10 +700,66 @@ export default function Login() {
                   تسجيل الدخول
                 </span>
               </button>
+
+              {/* =================================================
+                  ADMIN PAGES BUTTON
+              ================================================== */}
+
+              <button
+                type="button"
+                onClick={handleAdminPages}
+                className="
+                  mt-[12px]
+
+                  flex
+                  h-[48px]
+                  w-full
+
+                  cursor-pointer
+
+                  items-center
+                  justify-center
+                  gap-[8px]
+
+                  rounded-[10px]
+
+                  border
+                  border-[#09379A]
+
+                  bg-white
+
+                  text-[14px]
+                  font-bold
+                  text-[#09379A]
+
+                  transition-all
+                  duration-200
+
+                  hover:bg-[#EEF4FF]
+
+                  active:scale-[0.995]
+
+                  focus-visible:outline-none
+                  focus-visible:ring-4
+                  focus-visible:ring-[#09379A]/10
+                "
+              >
+                <LayoutDashboard
+                  size={17}
+                  strokeWidth={1.9}
+                />
+
+                <span>
+                  صفحات الأدمن
+                </span>
+              </button>
             </form>
           </div>
 
-          {/* COPYRIGHT AREA */}
+          {/* =====================================================
+              COPYRIGHT AREA
+          ====================================================== */}
+
           <div
             className="
               flex
@@ -801,15 +882,15 @@ function CustomCheckbox({
         ${
           checked
             ? `
-              border-[#09379A]
-              bg-[#09379A]
-              text-white
-            `
+                border-[#09379A]
+                bg-[#09379A]
+                text-white
+              `
             : `
-              border-[#CBD5E1]
-              bg-white
-              text-transparent
-            `
+                border-[#CBD5E1]
+                bg-white
+                text-transparent
+              `
         }
       `}
     >

@@ -1,347 +1,85 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
-  CheckCircle2,
-  Clock3,
-  Eye,
-  FileCheck2,
-  GraduationCap,
-  RotateCcw,
-  Search,
-  ShieldCheck,
-  Users,
-  X,
-  XCircle,
+  BadgeCheck,
+  Bell,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
 } from "lucide-react";
 
-import Header from "../../components/admin/Header";
 import Sidebar from "../../components/admin/Sidebar";
 
 /* =========================================================
    DATA
 ========================================================= */
 
-const initialApprovals = [
+const INITIAL_APPROVALS = [
   {
     id: 1,
-    code: "AP-2026-041",
-
-    studentId: "20230876",
-    student: "سارة محمود علي",
-
-    college: "كلية الاقتصاد والعلوم الإدارية",
-    major: "إدارة الأعمال",
-
-    type: "اعتماد تدريب",
-
-    trainingPeriod:
-      "فترة التدريب الميداني - الفصل الأول",
-
-    organization: "بنك فلسطين",
-    opportunity: "تدريب إداري ومالي",
-
-    requiredHours: 120,
-
-    academicSupervisor:
-      "د. ليلى أحمد",
-
-    fieldSupervisor:
-      "أ. رامي حسن",
-
-    eligibilityStatus: "مؤهل",
-    distributionStatus: "مكتمل",
-
-    priority: "عادية",
-
-    status: "بانتظار الموافقة",
-
-    submittedAt: "2026-10-23",
-
-    note:
-      "تم استكمال الأهلية والتوزيع واعتماد جهة التدريب.",
-
-    documents: [
-      "نموذج طلب التدريب",
-      "إثبات الأهلية",
-      "اعتماد التوزيع",
-    ],
-
-    history: [
-      {
-        date: "2026-10-20",
-        action: "تم اعتماد أهلية الطالب",
-      },
-      {
-        date: "2026-10-22",
-        action: "تم توزيع الطالب",
-      },
-      {
-        date: "2026-10-23",
-        action: "تم إرسال الطلب للاعتماد",
-      },
-    ],
+    student: "أمل أحمد",
+    organization: "شركة القدس للاتصالات",
+    status: "pending",
+    requestDate: "2025/10/01",
+    officer: "د. سامر يوسف",
   },
-
   {
     id: 2,
-    code: "AP-2026-040",
-
-    studentId: "20230987",
-    student: "ريم أحمد يوسف",
-
-    college: "كلية التربية",
-    major: "تعليم أساسي",
-
-    type: "اعتماد توزيع",
-
-    trainingPeriod:
-      "فترة التدريب الميداني - الفصل الأول",
-
-    organization:
-      "مدرسة الأزهر النموذجية",
-
-    opportunity: "التربية العملية",
-
-    requiredHours: 150,
-
-    academicSupervisor:
-      "د. منى عبد الرحمن",
-
-    fieldSupervisor:
-      "أ. خالد النجار",
-
-    eligibilityStatus: "مؤهل",
-    distributionStatus: "مكتمل",
-
-    priority: "عالية",
-
-    status: "بانتظار الموافقة",
-
-    submittedAt: "2026-10-23",
-
-    note:
-      "الطالبة مؤهلة وتم استكمال التوزيع الأكاديمي والميداني.",
-
-    documents: [
-      "قرار الأهلية",
-      "اعتماد الجهة",
-      "بيانات المشرفين",
-    ],
-
-    history: [
-      {
-        date: "2026-10-19",
-        action: "تمت مراجعة الأهلية",
-      },
-      {
-        date: "2026-10-22",
-        action: "تم تنفيذ التوزيع",
-      },
-      {
-        date: "2026-10-23",
-        action: "تم إرسال الطلب للاعتماد",
-      },
-    ],
+    student: "محمود رضوان",
+    organization: "شركة المشرق الرقمية",
+    status: "approved",
+    requestDate: "2025/09/29",
+    officer: "د. سامر يوسف",
   },
-
   {
     id: 3,
-    code: "AP-2026-039",
-
-    studentId: "20231234",
-    student: "محمد سامي حسن",
-
-    college: "كلية الهندسة وتكنولوجيا المعلومات",
-    major: "نظم المعلومات",
-
-    type: "اعتماد تدريب",
-
-    trainingPeriod:
-      "فترة التدريب الميداني - الفصل الأول",
-
-    organization:
-      "شركة الاتصالات الفلسطينية",
-
-    opportunity:
-      "دعم الأنظمة والشبكات",
-
-    requiredHours: 120,
-
-    academicSupervisor:
-      "د. أحمد نصار",
-
-    fieldSupervisor:
-      "م. خالد يوسف",
-
-    eligibilityStatus: "مؤهل",
-    distributionStatus: "مكتمل",
-
-    priority: "عادية",
-
-    status: "معتمد",
-
-    submittedAt: "2026-10-18",
-    decisionDate: "2026-10-19",
-
-    note:
-      "تمت الموافقة على بدء التدريب.",
-
-    decisionNote:
-      "الملف مكتمل ويستوفي جميع الشروط.",
-
-    documents: [
-      "نموذج الطلب",
-      "الأهلية",
-      "اعتماد التوزيع",
-    ],
-
-    history: [
-      {
-        date: "2026-10-17",
-        action: "تم استكمال التوزيع",
-      },
-      {
-        date: "2026-10-18",
-        action: "تم إرسال الطلب للاعتماد",
-      },
-      {
-        date: "2026-10-19",
-        action: "تم اعتماد التدريب",
-      },
-    ],
+    student: "سارة عبد الرحمن",
+    organization: "شركة جوال",
+    status: "review",
+    requestDate: "2025/09/28",
+    officer: "أ. مريم عاشور",
   },
-
   {
     id: 4,
-    code: "AP-2026-038",
-
-    studentId: "20231045",
-    student: "أحمد خالد محمد",
-
-    college: "كلية الهندسة وتكنولوجيا المعلومات",
-    major: "هندسة البرمجيات",
-
-    type: "اعتماد توزيع",
-
-    trainingPeriod:
-      "فترة التدريب الميداني - الفصل الأول",
-
-    organization:
-      "شركة التقنية المتقدمة",
-
-    opportunity:
-      "مطور برمجيات متدرب",
-
-    requiredHours: 120,
-
-    academicSupervisor:
-      "د. سامر يوسف",
-
-    fieldSupervisor:
-      "م. محمد حمدي",
-
-    eligibilityStatus: "مؤهل",
-    distributionStatus: "مكتمل",
-
-    priority: "عادية",
-
-    status: "أعيد للمراجعة",
-
-    submittedAt: "2026-10-17",
-    decisionDate: "2026-10-18",
-
-    note:
-      "تم إرسال التوزيع للاعتماد.",
-
-    decisionNote:
-      "يرجى مراجعة تاريخ بدء التدريب في خطاب الجهة.",
-
-    documents: [
-      "الأهلية",
-      "التوزيع",
-      "خطاب الجهة",
-    ],
-
-    history: [
-      {
-        date: "2026-10-16",
-        action: "تم استكمال التوزيع",
-      },
-      {
-        date: "2026-10-17",
-        action: "تم إرسال الطلب للاعتماد",
-      },
-      {
-        date: "2026-10-18",
-        action: "أعيد الطلب للمراجعة",
-      },
-    ],
+    student: "بلال الشيخ",
+    organization: "شركة جوال",
+    status: "rejected",
+    requestDate: "2025/09/27",
+    officer: "د. خالد النجار",
   },
-
   {
     id: 5,
-    code: "AP-2026-037",
-
-    studentId: "20231356",
-    student: "لينا محمود حسن",
-
-    college: "كلية العلوم الطبية التطبيقية",
-    major: "المختبرات الطبية",
-
-    type: "اعتماد تدريب",
-
-    trainingPeriod:
-      "فترة التدريب السريري - الفصل الأول",
-
-    organization:
-      "مركز المختبرات الطبية",
-
-    opportunity:
-      "التدريب السريري في المختبرات",
-
-    requiredHours: 140,
-
-    academicSupervisor:
-      "د. خالد يوسف",
-
-    fieldSupervisor:
-      "أ. خالد إبراهيم",
-
-    eligibilityStatus: "مؤهل",
-    distributionStatus: "مكتمل",
-
-    priority: "عالية",
-
-    status: "مرفوض",
-
-    submittedAt: "2026-10-15",
-    decisionDate: "2026-10-16",
-
-    note:
-      "طلب اعتماد التدريب السريري.",
-
-    decisionNote:
-      "لا يوجد اعتماد ساري للجهة خلال الفترة الحالية.",
-
-    documents: [
-      "الأهلية",
-      "التوزيع",
-    ],
-
-    history: [
-      {
-        date: "2026-10-14",
-        action: "تم استكمال التوزيع",
-      },
-      {
-        date: "2026-10-15",
-        action: "تم إرسال الطلب للاعتماد",
-      },
-      {
-        date: "2026-10-16",
-        action: "تم رفض الطلب",
-      },
-    ],
+    student: "هدى شهير",
+    organization: "استوديو بيكسل الإبداعية",
+    status: "pending",
+    requestDate: "2025/09/25",
+    officer: "د. سامر يوسف",
+  },
+  {
+    id: 6,
+    student: "محمد العطار",
+    organization: "شركة التقنية الحديثة",
+    status: "approved",
+    requestDate: "2025/09/23",
+    officer: "د. سامر يوسف",
+  },
+  {
+    id: 7,
+    student: "نور خليل",
+    organization: "شركة الأمل للأنظمة",
+    status: "review",
+    requestDate: "2025/09/20",
+    officer: "أ. مريم عاشور",
+  },
+  {
+    id: 8,
+    student: "أحمد ناصر",
+    organization: "شركة الشرق الصناعية",
+    status: "rejected",
+    requestDate: "2025/09/18",
+    officer: "د. خالد النجار",
   },
 ];
 
@@ -350,272 +88,43 @@ const initialApprovals = [
 ========================================================= */
 
 export default function Approvals() {
-  const [approvals, setApprovals] =
-    useState(initialApprovals);
+  const navigate = useNavigate();
 
-  const [searchTerm, setSearchTerm] =
-    useState("");
+  const [approvals] = useState(INITIAL_APPROVALS);
 
-  const [typeFilter, setTypeFilter] =
-    useState("الكل");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [statusFilter, setStatusFilter] =
-    useState("الكل");
+  const pageSize = 4;
 
-  const [priorityFilter, setPriorityFilter] =
-    useState("الكل");
+  /* =======================================================
+     PAGINATION
+  ======================================================= */
 
-  const [
-    selectedApproval,
-    setSelectedApproval,
-  ] = useState(null);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(approvals.length / pageSize)
+  );
 
-  const [showDetails, setShowDetails] =
-    useState(false);
+  const safePage = Math.min(
+    currentPage,
+    totalPages
+  );
 
-  const [
-    showDecisionModal,
-    setShowDecisionModal,
-  ] = useState(false);
-
-  const [decisionType, setDecisionType] =
-    useState("");
-
-  const [decisionNote, setDecisionNote] =
-    useState("");
-
-  /* =========================================================
-     STATS
-  ========================================================= */
-
-  const statistics = useMemo(() => {
-    const total =
-      approvals.length;
-
-    const pending =
-      approvals.filter(
-        (item) =>
-          item.status ===
-          "بانتظار الموافقة"
-      ).length;
-
-    const approved =
-      approvals.filter(
-        (item) =>
-          item.status ===
-          "معتمد"
-      ).length;
-
-    const returned =
-      approvals.filter(
-        (item) =>
-          item.status ===
-          "أعيد للمراجعة"
-      ).length;
-
-    return [
-      {
-        title: "إجمالي المعاملات",
-        value: total,
-        description:
-          "طلبات اعتماد التدريب والتوزيع",
-        icon: FileCheck2,
-        bg: "bg-[#EEF3FF]",
-        color: "text-[#09379A]",
-      },
-
-      {
-        title: "بانتظار الموافقة",
-        value: pending,
-        description:
-          "تحتاج قرارًا رسميًا",
-        icon: Clock3,
-        bg: "bg-[#FFF7ED]",
-        color: "text-[#C2410C]",
-      },
-
-      {
-        title: "تم اعتمادها",
-        value: approved,
-        description:
-          "معاملات مكتملة",
-        icon: CheckCircle2,
-        bg: "bg-[#ECFDF3]",
-        color: "text-[#15803D]",
-      },
-
-      {
-        title: "أعيدت للمراجعة",
-        value: returned,
-        description:
-          "تحتاج استكمالًا أو تصحيحًا",
-        icon: RotateCcw,
-        bg: "bg-[#F3E8FF]",
-        color: "text-[#7E22CE]",
-      },
-    ];
-  }, [approvals]);
-
-  /* =========================================================
-     FILTERS
-  ========================================================= */
-
-  const filteredApprovals =
-    useMemo(() => {
-      const query =
-        searchTerm
-          .trim()
-          .toLowerCase();
-
-      return approvals.filter(
-        (item) => {
-          const matchesSearch =
-            !query ||
-            item.student
-              .toLowerCase()
-              .includes(query) ||
-            item.studentId
-              .toLowerCase()
-              .includes(query) ||
-            item.code
-              .toLowerCase()
-              .includes(query) ||
-            item.organization
-              .toLowerCase()
-              .includes(query);
-
-          const matchesType =
-            typeFilter === "الكل" ||
-            item.type === typeFilter;
-
-          const matchesStatus =
-            statusFilter ===
-              "الكل" ||
-            item.status ===
-              statusFilter;
-
-          const matchesPriority =
-            priorityFilter ===
-              "الكل" ||
-            item.priority ===
-              priorityFilter;
-
-          return (
-            matchesSearch &&
-            matchesType &&
-            matchesStatus &&
-            matchesPriority
-          );
-        }
-      );
-    }, [
-      approvals,
-      searchTerm,
-      typeFilter,
-      statusFilter,
-      priorityFilter,
-    ]);
-
-  /* =========================================================
-     DETAILS
-  ========================================================= */
-
-  const openDetails = (item) => {
-    setSelectedApproval(item);
-    setShowDetails(true);
-  };
-
-  /* =========================================================
-     DECISION
-  ========================================================= */
-
-  const openDecision = (
-    approval,
-    type
-  ) => {
-    setSelectedApproval(approval);
-    setDecisionType(type);
-    setDecisionNote("");
-    setShowDetails(false);
-    setShowDecisionModal(true);
-  };
-
-  const saveDecision = () => {
-    if (!selectedApproval) {
-      return;
-    }
-
-    if (
-      (decisionType === "رفض" ||
-        decisionType ===
-          "إعادة للمراجعة") &&
-      !decisionNote.trim()
-    ) {
-      return;
-    }
-
-    let status =
-      "بانتظار الموافقة";
-
-    let action =
-      "";
-
-    if (decisionType === "اعتماد") {
-      status = "معتمد";
-      action =
-        "تم اعتماد المعاملة";
-    }
-
-    if (
-      decisionType ===
-      "إعادة للمراجعة"
-    ) {
-      status =
-        "أعيد للمراجعة";
-
-      action =
-        "أعيدت المعاملة للمراجعة";
-    }
-
-    if (decisionType === "رفض") {
-      status = "مرفوض";
-      action =
-        "تم رفض المعاملة";
-    }
-
-    setApprovals((previous) =>
-      previous.map((item) =>
-        item.id ===
-        selectedApproval.id
-          ? {
-              ...item,
-
-              status,
-
-              decisionDate:
-                "2026-10-24",
-
-              decisionNote:
-                decisionNote.trim(),
-
-              history: [
-                ...item.history,
-
-                {
-                  date:
-                    "2026-10-24",
-                  action,
-                },
-              ],
-            }
-          : item
-      )
+  const visibleApprovals = useMemo(() => {
+    return approvals.slice(
+      (safePage - 1) * pageSize,
+      safePage * pageSize
     );
+  }, [approvals, safePage]);
 
-    setShowDecisionModal(false);
-    setSelectedApproval(null);
-    setDecisionType("");
-    setDecisionNote("");
+  /* =======================================================
+     ACTIONS
+  ======================================================= */
+
+  const toggleSidebar = () => {
+    window.dispatchEvent(
+      new Event("toggle-student-sidebar")
+    );
   };
 
   return (
@@ -623,715 +132,474 @@ export default function Approvals() {
       dir="rtl"
       className="
         flex
-        h-dvh
+        h-screen
         w-full
         overflow-hidden
-
         bg-[#F8FAFC]
-
         font-['Cairo']
-        text-[#1E293B]
+        text-[#111C2D]
       "
     >
+      {/* =====================================================
+          SIDEBAR
+      ====================================================== */}
+
       <Sidebar />
+
+      {/* =====================================================
+          PAGE
+      ====================================================== */}
 
       <div
         className="
           flex
-          h-dvh
+          h-screen
           min-w-0
           flex-1
           flex-col
           overflow-hidden
         "
       >
-        <Header />
+        {/* =================================================
+            HEADER
+        ================================================== */}
 
-        <main
+        <header
           className="
-            min-h-0
-            flex-1
-
-            overflow-x-hidden
-            overflow-y-auto
-
+            z-30
+            flex
+            h-[72px]
+            w-full
+            shrink-0
+            items-center
+            justify-between
+            border-b
+            border-[#E6EBF5]
+            bg-white
             px-4
-            pb-8
-            pt-5
-
-            sm:px-5
-            md:px-6
-
-            xl:px-[40px]
-            xl:pb-[40px]
-            xl:pt-[26px]
+            sm:px-6
+            lg:px-8
           "
         >
-          <div className="mx-auto w-full max-w-[1180px]">
-            {/* BREADCRUMB */}
+          {/* LEFT */}
 
-            <div
+          <div
+            className="
+              flex
+              items-center
+              gap-3
+            "
+          >
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              aria-label="فتح القائمة"
               className="
                 flex
-                flex-wrap
+                h-[38px]
+                w-[38px]
                 items-center
-                gap-[7px]
-
-                text-[11px]
-                font-medium
-                text-[#64748B]
+                justify-center
+                rounded-[8px]
+                text-[#09379A]
+                hover:bg-[#F1F5F9]
+                lg:hidden
               "
             >
-              <span>
-                الرئيسية
-              </span>
+              <Menu size={21} />
+            </button>
 
-              <span className="text-[#94A3B8]">
-                ›
-              </span>
-
-              <span>
-                التدريب الميداني
-              </span>
-
-              <span className="text-[#94A3B8]">
-                ›
-              </span>
+            <button
+              type="button"
+              onClick={() =>
+                navigate("/admin/announcements")
+              }
+              aria-label="الإشعارات"
+              className="
+                relative
+                flex
+                h-[38px]
+                w-[38px]
+                items-center
+                justify-center
+                rounded-[8px]
+                text-[#111C2D]
+                hover:bg-[#F8FAFC]
+              "
+            >
+              <Bell size={20} />
 
               <span
                 className="
+                  absolute
+                  right-[6px]
+                  top-[5px]
+                  h-[7px]
+                  w-[7px]
+                  rounded-full
+                  bg-[#FF6B35]
+                "
+              />
+            </button>
+          </div>
+
+          {/* USER */}
+
+          <div
+            className="
+              flex
+              items-center
+              gap-2
+            "
+          >
+            <div
+              className="
+                flex
+                h-[44px]
+                w-[44px]
+                shrink-0
+                items-center
+                justify-center
+                rounded-full
+                bg-[#E6EBF5]
+                text-[12px]
+                font-bold
+                text-[#09379A]
+              "
+            >
+              سم
+            </div>
+
+            <div>
+              <p
+                className="
+                  m-0
+                  text-[12px]
                   font-bold
-                  text-[#09379A]
                 "
               >
-                الموافقات
+                د. سامر يوسف
+              </p>
+
+              <p
+                className="
+                  m-0
+                  text-[10px]
+                  text-[#64748B]
+                "
+              >
+                مشرف أكاديمي
+              </p>
+            </div>
+          </div>
+        </header>
+
+        {/* =================================================
+            CONTENT
+        ================================================== */}
+
+        <main
+          className="
+            w-full
+            min-w-0
+            flex-1
+            overflow-x-hidden
+            overflow-y-auto
+            px-4
+            pb-7
+            pt-5
+            sm:px-6
+            lg:px-8
+          "
+        >
+          <div
+            className="
+              mx-auto
+              w-full
+              max-w-[1450px]
+            "
+          >
+            {/* =============================================
+                BREADCRUMB
+            ============================================== */}
+
+            <div
+              className="
+                mb-8
+                flex
+                items-center
+                gap-2
+                text-[12px]
+                text-[#64748B]
+              "
+            >
+              <button
+                type="button"
+                onClick={() =>
+                  navigate("/admin/dashboard")
+                }
+                className="
+                  hover:text-[#09379A]
+                "
+              >
+                الرئيسية
+              </button>
+
+              <ChevronLeft size={15} />
+
+              <span
+                className="
+                  font-semibold
+                  text-[#111C2D]
+                "
+              >
+                اعتماد التدريب
               </span>
             </div>
 
-            {/* HEADER */}
+            {/* =============================================
+                PAGE TITLE
+            ============================================== */}
 
-            <section className="mt-[5px]">
+            <section className="mb-6">
               <h1
                 className="
                   m-0
-
-                  text-[25px]
+                  text-[23px]
                   font-bold
-                  leading-[38px]
-                  text-[#14213D]
-
-                  sm:text-[27px]
+                  leading-9
+                  text-[#111C2D]
+                  sm:text-[26px]
                 "
               >
-                الموافقات
+                اعتماد التدريب
               </h1>
 
               <p
                 className="
                   m-0
-                  mt-[3px]
-
-                  max-w-[850px]
-
-                  text-[11px]
-                  leading-[21px]
+                  mt-1
+                  text-[13px]
                   text-[#64748B]
-
-                  sm:text-[12px]
                 "
               >
-                الاعتماد الرسمي لطلبات
-                التدريب والتوزيع بعد اكتمال
-                الأهلية وتحديد جهة التدريب
-                والمشرفين، وقبل بدء التدريب
-                الفعلي.
+                متابعة واعتماد تدريب الطلاب
               </p>
             </section>
 
-            {/* STATS */}
+            {/* =============================================
+                PROCESS STEPS
+            ============================================== */}
 
             <section
               className="
-                mt-[22px]
-
-                grid
-                grid-cols-1
-                gap-[12px]
-
-                sm:grid-cols-2
-                xl:grid-cols-4
-              "
-            >
-              {statistics.map(
-                (item) => {
-                  const Icon =
-                    item.icon;
-
-                  return (
-                    <article
-                      key={item.title}
-                      className="
-                        min-h-[128px]
-
-                        rounded-[14px]
-
-                        border
-                        border-[#DDE5EF]
-
-                        bg-white
-
-                        p-[17px]
-                      "
-                    >
-                      <div
-                        className="
-                          flex
-                          items-start
-                          justify-between
-                          gap-4
-                        "
-                      >
-                        <div>
-                          <p
-                            className="
-                              m-0
-
-                              text-[10px]
-                              text-[#64748B]
-                            "
-                          >
-                            {item.title}
-                          </p>
-
-                          <strong
-                            className="
-                              mt-[8px]
-                              block
-
-                              text-[27px]
-                              text-[#14213D]
-                            "
-                          >
-                            {item.value}
-                          </strong>
-
-                          <p
-                            className="
-                              m-0
-                              mt-[5px]
-
-                              text-[9px]
-                              text-[#94A3B8]
-                            "
-                          >
-                            {
-                              item.description
-                            }
-                          </p>
-                        </div>
-
-                        <div
-                          className={`
-                            flex
-                            h-[42px]
-                            w-[42px]
-                            items-center
-                            justify-center
-
-                            rounded-[10px]
-
-                            ${item.bg}
-                            ${item.color}
-                          `}
-                        >
-                          <Icon
-                            size={20}
-                          />
-                        </div>
-                      </div>
-                    </article>
-                  );
-                }
-              )}
-            </section>
-
-            {/* FILTERS */}
-
-            <section
-              className="
-                mt-[18px]
-
-                rounded-[14px]
-
+                mb-6
+                rounded-[12px]
                 border
-                border-[#DDE5EF]
-
+                border-[#E0E7F2]
                 bg-white
-
-                p-[15px]
+                px-4
+                py-5
+                sm:px-6
               "
             >
               <div
                 className="
                   grid
                   grid-cols-1
-                  gap-[10px]
-
-                  md:grid-cols-2
-                  xl:grid-cols-4
+                  gap-5
+                  md:grid-cols-4
+                  md:gap-0
                 "
               >
-                <div>
-                  <Label>
-                    البحث
-                  </Label>
+                <ApprovalStep
+                  number="1"
+                  label="تقديم الطلب"
+                  state="done"
+                />
 
-                  <div
-                    className="
-                      flex
-                      h-[42px]
-                      items-center
-                      gap-[8px]
+                <ApprovalStep
+                  number="2"
+                  label="مراجعة المشرف"
+                  state="done"
+                />
 
-                      rounded-[9px]
+                <ApprovalStep
+                  number="3"
+                  label="اعتماد التدريب"
+                  state="active"
+                />
 
-                      border
-                      border-[#D9E2EC]
-
-                      px-[11px]
-                    "
-                  >
-                    <Search
-                      size={16}
-                      className="text-[#94A3B8]"
-                    />
-
-                    <input
-                      value={
-                        searchTerm
-                      }
-                      onChange={(
-                        event
-                      ) =>
-                        setSearchTerm(
-                          event.target
-                            .value
-                        )
-                      }
-                      placeholder="الطالب، الرقم، المعاملة أو الجهة..."
-                      className="
-                        min-w-0
-                        flex-1
-
-                        border-0
-                        bg-transparent
-
-                        font-['Cairo']
-
-                        text-[10px]
-
-                        outline-none
-                      "
-                    />
-                  </div>
-                </div>
-
-                <FilterSelect
-                  label="نوع المعاملة"
-                  value={
-                    typeFilter
-                  }
-                  onChange={
-                    setTypeFilter
-                  }
-                >
-                  <option value="الكل">
-                    كل الأنواع
-                  </option>
-
-                  <option value="اعتماد تدريب">
-                    اعتماد تدريب
-                  </option>
-
-                  <option value="اعتماد توزيع">
-                    اعتماد توزيع
-                  </option>
-                </FilterSelect>
-
-                <FilterSelect
-                  label="الحالة"
-                  value={
-                    statusFilter
-                  }
-                  onChange={
-                    setStatusFilter
-                  }
-                >
-                  <option value="الكل">
-                    كل الحالات
-                  </option>
-
-                  <option value="بانتظار الموافقة">
-                    بانتظار الموافقة
-                  </option>
-
-                  <option value="معتمد">
-                    معتمد
-                  </option>
-
-                  <option value="أعيد للمراجعة">
-                    أعيد للمراجعة
-                  </option>
-
-                  <option value="مرفوض">
-                    مرفوض
-                  </option>
-                </FilterSelect>
-
-                <FilterSelect
-                  label="الأولوية"
-                  value={
-                    priorityFilter
-                  }
-                  onChange={
-                    setPriorityFilter
-                  }
-                >
-                  <option value="الكل">
-                    كل الأولويات
-                  </option>
-
-                  <option value="عادية">
-                    عادية
-                  </option>
-
-                  <option value="عالية">
-                    عالية
-                  </option>
-                </FilterSelect>
+                <ApprovalStep
+                  number="4"
+                  label="بدء التدريب"
+                  state="upcoming"
+                  last
+                />
               </div>
             </section>
 
-            {/* TABLE */}
+            {/* =============================================
+                TABLE
+            ============================================== */}
 
             <section
               className="
-                mt-[16px]
-
+                w-full
+                min-w-0
                 overflow-hidden
-
-                rounded-[14px]
-
+                rounded-[12px]
                 border
-                border-[#DDE5EF]
-
+                border-[#E0E7F2]
                 bg-white
+                p-3
+                sm:p-5
               "
             >
               <div
                 className="
-                  flex
-                  items-center
-                  justify-between
-
-                  border-b
-                  border-[#EEF2F7]
-
-                  px-[18px]
-                  py-[15px]
+                  w-full
+                  max-w-full
+                  min-w-0
+                  overflow-x-auto
+                  overflow-y-hidden
+                  rounded-[9px]
+                  border
+                  border-[#E0E7F2]
                 "
               >
-                <div>
-                  <h2
-                    className="
-                      m-0
-
-                      text-[14px]
-                      font-bold
-                      text-[#1E293B]
-                    "
-                  >
-                    معاملات الاعتماد
-                  </h2>
-
-                  <p
-                    className="
-                      m-0
-                      mt-[2px]
-
-                      text-[9px]
-                      text-[#94A3B8]
-                    "
-                  >
-                    ملفات جاهزة للمراجعة
-                    والقرار الرسمي
-                  </p>
-                </div>
-
-                <span
+                <table
                   className="
-                    rounded-[8px]
-
-                    bg-[#F8FAFC]
-
-                    px-[10px]
-                    py-[7px]
-
-                    text-[9px]
-                    font-bold
-                    text-[#64748B]
+                    w-full
+                    min-w-[850px]
+                    border-collapse
+                    text-right
                   "
                 >
-                  {
-                    filteredApprovals.length
-                  }{" "}
-                  معاملة
-                </span>
-              </div>
-
-              {/* DESKTOP */}
-
-              <div
-                className="
-                  hidden
-                  overflow-x-auto
-
-                  md:block
-                "
-              >
-                <table className="w-full border-collapse">
                   <thead>
-                    <tr className="bg-[#F8FAFC]">
-                      <TableHead>
-                        المعاملة
-                      </TableHead>
-
-                      <TableHead>
+                    <tr
+                      className="
+                        bg-[#F1F5F9]
+                        text-[11px]
+                        font-semibold
+                        text-[#64748B]
+                      "
+                    >
+                      <th className="px-4 py-4">
                         الطالب
-                      </TableHead>
+                      </th>
 
-                      <TableHead>
-                        النوع
-                      </TableHead>
+                      <th className="px-4 py-4">
+                        جهة التدريب
+                      </th>
 
-                      <TableHead>
-                        الجهة
-                      </TableHead>
+                      <th className="px-4 py-4">
+                        حالة الاعتماد
+                      </th>
 
-                      <TableHead>
-                        الأهلية
-                      </TableHead>
+                      <th className="px-4 py-4">
+                        تاريخ الطلب
+                      </th>
 
-                      <TableHead>
-                        الأولوية
-                      </TableHead>
+                      <th className="px-4 py-4">
+                        المسؤول عن الاعتماد
+                      </th>
 
-                      <TableHead>
-                        الحالة
-                      </TableHead>
-
-                      <TableHead>
-                        الإجراء
-                      </TableHead>
+                      <th className="px-4 py-4">
+                        الإجراءات
+                      </th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {filteredApprovals.map(
+                    {visibleApprovals.map(
                       (item) => (
                         <tr
                           key={item.id}
                           className="
                             border-t
-                            border-[#EEF2F7]
-
-                            hover:bg-[#FBFCFE]
+                            border-[#E6EBF5]
+                            text-[11px]
+                            hover:bg-[#FAFBFE]
                           "
                         >
-                          <TableCell>
-                            <div>
-                              <p
-                                className="
-                                  m-0
+                          <td
+                            className="
+                              px-4
+                              py-4
+                              font-semibold
+                            "
+                          >
+                            {item.student}
+                          </td>
 
-                                  text-[9px]
-                                  font-bold
-                                  text-[#334155]
-                                "
-                              >
-                                {item.code}
-                              </p>
+                          <td className="px-4 py-4">
+                            {item.organization}
+                          </td>
 
-                              <span
-                                className="
-                                  mt-[2px]
-                                  block
-
-                                  text-[8px]
-                                  text-[#94A3B8]
-                                "
-                              >
-                                {
-                                  item.submittedAt
-                                }
-                              </span>
-                            </div>
-                          </TableCell>
-
-                          <TableCell>
-                            <div className="min-w-[145px]">
-                              <p
-                                className="
-                                  m-0
-
-                                  text-[10px]
-                                  font-bold
-                                  text-[#334155]
-                                "
-                              >
-                                {
-                                  item.student
-                                }
-                              </p>
-
-                              <span
-                                className="
-                                  mt-[2px]
-                                  block
-
-                                  text-[8px]
-                                  text-[#94A3B8]
-                                "
-                              >
-                                {
-                                  item.studentId
-                                }
-                                {" · "}
-                                {
-                                  item.major
-                                }
-                              </span>
-                            </div>
-                          </TableCell>
-
-                          <TableCell>
-                            <span
-                              className="
-                                text-[9px]
-                                font-medium
-                                text-[#475569]
-                              "
-                            >
-                              {
-                                item.type
-                              }
-                            </span>
-                          </TableCell>
-
-                          <TableCell>
-                            <div className="min-w-[150px]">
-                              <p
-                                className="
-                                  m-0
-
-                                  text-[9px]
-                                  font-medium
-                                  text-[#475569]
-                                "
-                              >
-                                {
-                                  item.organization
-                                }
-                              </p>
-
-                              <span
-                                className="
-                                  mt-[2px]
-                                  block
-
-                                  text-[8px]
-                                  text-[#94A3B8]
-                                "
-                              >
-                                {
-                                  item.opportunity
-                                }
-                              </span>
-                            </div>
-                          </TableCell>
-
-                          <TableCell>
-                            <span
-                              className="
-                                rounded-full
-
-                                bg-[#ECFDF3]
-
-                                px-[8px]
-                                py-[5px]
-
-                                text-[8px]
-                                font-bold
-                                text-[#15803D]
-                              "
-                            >
-                              {
-                                item.eligibilityStatus
-                              }
-                            </span>
-                          </TableCell>
-
-                          <TableCell>
-                            <PriorityBadge
-                              priority={
-                                item.priority
-                              }
+                          <td className="px-4 py-4">
+                            <ApprovalStatus
+                              status={item.status}
                             />
-                          </TableCell>
+                          </td>
 
-                          <TableCell>
-                            <ApprovalBadge
-                              status={
-                                item.status
-                              }
-                            />
-                          </TableCell>
+                          <td
+                            className="
+                              whitespace-nowrap
+                              px-4
+                              py-4
+                            "
+                            dir="ltr"
+                          >
+                            {item.requestDate}
+                          </td>
 
-                          <TableCell>
+                          <td className="px-4 py-4">
+                            {item.officer}
+                          </td>
+
+                          {/* ACTION */}
+
+                          <td className="px-4 py-4">
                             <button
                               type="button"
                               onClick={() =>
-                                openDetails(
-                                  item
+                                navigate(
+                                  `/admin/approvals/${item.id}`
                                 )
                               }
                               className="
                                 flex
                                 h-[32px]
                                 items-center
-                                gap-[5px]
+                                gap-[6px]
 
                                 rounded-[7px]
 
                                 border
-                                border-[#DCE5F0]
+                                border-[#E0E7F2]
 
                                 bg-white
 
-                                px-[9px]
+                                px-3
 
-                                text-[9px]
-                                font-bold
+                                text-[10px]
+                                font-semibold
                                 text-[#09379A]
+
+                                transition
+
+                                hover:border-[#09379A]
+                                hover:bg-[#F8FBFF]
                               "
                             >
-                              <Eye
-                                size={14}
-                              />
+                              <BadgeCheck size={14} />
 
-                              مراجعة
+                              {item.status === "approved"
+                                ? "التفاصيل"
+                                : "اعتماد / تفاصيل"}
                             </button>
-                          </TableCell>
+                          </td>
                         </tr>
                       )
                     )}
@@ -1339,1420 +607,394 @@ export default function Approvals() {
                 </table>
               </div>
 
-              {/* MOBILE */}
+              {/* ===========================================
+                  PAGINATION
+              ============================================ */}
+
+              <div
+                className="
+                  mt-4
+                  flex
+                  flex-col
+                  gap-3
+                  sm:flex-row
+                  sm:items-center
+                  sm:justify-between
+                "
+              >
+                <p
+                  className="
+                    m-0
+                    text-[10px]
+                    text-[#64748B]
+                  "
+                >
+                  عرض{" "}
+                  {approvals.length
+                    ? (safePage - 1) *
+                        pageSize +
+                      1
+                    : 0}
+                  {" - "}
+                  {Math.min(
+                    safePage * pageSize,
+                    approvals.length
+                  )}{" "}
+                  من {approvals.length} طلبًا
+                </p>
+
+                <div
+                  className="
+                    flex
+                    flex-wrap
+                    items-center
+                    gap-2
+                  "
+                >
+                  {/* PREVIOUS */}
+
+                  <button
+                    type="button"
+                    disabled={safePage === 1}
+                    onClick={() =>
+                      setCurrentPage((page) =>
+                        Math.max(
+                          1,
+                          page - 1
+                        )
+                      )
+                    }
+                    className="
+                      flex
+                      h-[34px]
+                      items-center
+                      gap-1
+                      rounded-full
+                      border
+                      border-[#E0E7F2]
+                      bg-white
+                      px-3
+                      text-[10px]
+                      disabled:opacity-40
+                    "
+                  >
+                    <ChevronRight size={13} />
+
+                    السابق
+                  </button>
+
+                  {/* PAGES */}
+
+                  {Array.from(
+                    {
+                      length: totalPages,
+                    },
+                    (_, index) => index + 1
+                  ).map((page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() =>
+                        setCurrentPage(page)
+                      }
+                      className={`
+                        h-[34px]
+                        min-w-[34px]
+
+                        rounded-full
+
+                        border
+
+                        text-[10px]
+
+                        ${
+                          page === safePage
+                            ? `
+                                border-[#09379A]
+                                bg-[#09379A]
+                                text-white
+                              `
+                            : `
+                                border-[#E0E7F2]
+                                bg-white
+                              `
+                        }
+                      `}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  {/* NEXT */}
+
+                  <button
+                    type="button"
+                    disabled={
+                      safePage === totalPages
+                    }
+                    onClick={() =>
+                      setCurrentPage((page) =>
+                        Math.min(
+                          totalPages,
+                          page + 1
+                        )
+                      )
+                    }
+                    className="
+                      flex
+                      h-[34px]
+                      items-center
+                      gap-1
+                      rounded-full
+                      border
+                      border-[#E0E7F2]
+                      bg-white
+                      px-3
+                      text-[10px]
+                      disabled:opacity-40
+                    "
+                  >
+                    التالي
+
+                    <ChevronLeft size={13} />
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            {/* =============================================
+                FOOTER
+            ============================================== */}
+
+            <footer
+              className="
+                mt-[300px]
+                flex
+                flex-col
+                gap-3
+                pb-2
+                text-[11px]
+                text-[#64748B]
+                sm:flex-row
+                sm:items-center
+                sm:justify-between
+              "
+            >
+              <p className="m-0">
+                جميع الحقوق محفوظة © 2025 كلية الدراسات المتوسطة - جامعة الأزهر - غزة
+              </p>
 
               <div
                 className="
                   flex
-                  flex-col
-                  gap-[9px]
-
-                  p-[12px]
-
-                  md:hidden
+                  flex-wrap
+                  items-center
+                  gap-3
                 "
               >
-                {filteredApprovals.map(
-                  (item) => (
-                    <article
-                      key={item.id}
-                      className="
-                        rounded-[11px]
+                <span className="text-[#09379A]">
+                  الدعم الفني والأكاديمي
+                </span>
 
-                        border
-                        border-[#E7ECF2]
+                <span>•</span>
 
-                        bg-[#FAFBFC]
-
-                        p-[12px]
-                      "
-                    >
-                      <div
-                        className="
-                          flex
-                          items-start
-                          justify-between
-                          gap-3
-                        "
-                      >
-                        <div>
-                          <p
-                            className="
-                              m-0
-
-                              text-[11px]
-                              font-bold
-                              text-[#334155]
-                            "
-                          >
-                            {
-                              item.student
-                            }
-                          </p>
-
-                          <span
-                            className="
-                              mt-[2px]
-                              block
-
-                              text-[8px]
-                              text-[#94A3B8]
-                            "
-                          >
-                            {item.code}
-                            {" · "}
-                            {item.type}
-                          </span>
-                        </div>
-
-                        <ApprovalBadge
-                          status={
-                            item.status
-                          }
-                        />
-                      </div>
-
-                      <div
-                        className="
-                          mt-[10px]
-
-                          grid
-                          grid-cols-2
-                          gap-[9px]
-
-                          border-t
-                          border-[#E7ECF2]
-
-                          pt-[10px]
-                        "
-                      >
-                        <MobileInfo
-                          label="التخصص"
-                          value={
-                            item.major
-                          }
-                        />
-
-                        <MobileInfo
-                          label="جهة التدريب"
-                          value={
-                            item.organization
-                          }
-                        />
-
-                        <MobileInfo
-                          label="الأولوية"
-                          value={
-                            item.priority
-                          }
-                        />
-
-                        <MobileInfo
-                          label="تاريخ الإرسال"
-                          value={
-                            item.submittedAt
-                          }
-                        />
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() =>
-                          openDetails(
-                            item
-                          )
-                        }
-                        className="
-                          mt-[11px]
-
-                          flex
-                          h-[35px]
-                          w-full
-                          items-center
-                          justify-center
-                          gap-[5px]
-
-                          rounded-[8px]
-
-                          border
-                          border-[#D7E5FF]
-
-                          bg-[#F6F9FF]
-
-                          text-[9px]
-                          font-bold
-                          text-[#09379A]
-                        "
-                      >
-                        <Eye
-                          size={14}
-                        />
-
-                        مراجعة المعاملة
-                      </button>
-                    </article>
-                  )
-                )}
+                <span className="text-[#09379A]">
+                  دليل بوابة التدريب الميداني
+                </span>
               </div>
-            </section>
+            </footer>
           </div>
         </main>
       </div>
-
-      {/* DETAILS */}
-
-      {showDetails &&
-        selectedApproval && (
-          <>
-            <div
-              onClick={() =>
-                setShowDetails(false)
-              }
-              className="
-                fixed
-                inset-0
-                z-[90]
-
-                bg-[#0F172A]/35
-              "
-            />
-
-            <aside
-              dir="rtl"
-              className="
-                fixed
-                bottom-0
-                right-0
-                top-0
-                z-[100]
-
-                flex
-                w-full
-                max-w-[620px]
-                flex-col
-
-                bg-white
-              "
-            >
-              <div
-                className="
-                  flex
-                  items-center
-                  justify-between
-
-                  border-b
-                  border-[#E2E8F0]
-
-                  px-5
-                  py-[17px]
-                "
-              >
-                <div>
-                  <h2
-                    className="
-                      m-0
-
-                      text-[17px]
-                      font-bold
-                    "
-                  >
-                    تفاصيل المعاملة
-                  </h2>
-
-                  <p
-                    className="
-                      m-0
-                      mt-[2px]
-
-                      text-[9px]
-                      text-[#94A3B8]
-                    "
-                  >
-                    {
-                      selectedApproval.code
-                    }
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowDetails(
-                      false
-                    )
-                  }
-                  className="
-                    flex
-                    h-[34px]
-                    w-[34px]
-                    items-center
-                    justify-center
-
-                    rounded-[8px]
-
-                    border-0
-
-                    bg-[#F8FAFC]
-                  "
-                >
-                  <X size={17} />
-                </button>
-              </div>
-
-              <div
-                className="
-                  min-h-0
-                  flex-1
-                  overflow-y-auto
-
-                  px-5
-                  py-5
-                "
-              >
-                <div
-                  className="
-                    flex
-                    items-start
-                    justify-between
-                    gap-4
-                  "
-                >
-                  <div
-                    className="
-                      flex
-                      items-center
-                      gap-[10px]
-                    "
-                  >
-                    <div
-                      className="
-                        flex
-                        h-[44px]
-                        w-[44px]
-                        items-center
-                        justify-center
-
-                        rounded-[10px]
-
-                        bg-[#EEF3FF]
-
-                        text-[#09379A]
-                      "
-                    >
-                      <GraduationCap
-                        size={21}
-                      />
-                    </div>
-
-                    <div>
-                      <h3
-                        className="
-                          m-0
-
-                          text-[14px]
-                          font-bold
-                          text-[#334155]
-                        "
-                      >
-                        {
-                          selectedApproval.student
-                        }
-                      </h3>
-
-                      <p
-                        className="
-                          m-0
-                          mt-[2px]
-
-                          text-[9px]
-                          text-[#94A3B8]
-                        "
-                      >
-                        {
-                          selectedApproval.studentId
-                        }
-                        {" · "}
-                        {
-                          selectedApproval.major
-                        }
-                      </p>
-                    </div>
-                  </div>
-
-                  <ApprovalBadge
-                    status={
-                      selectedApproval.status
-                    }
-                  />
-                </div>
-
-                <SectionTitle>
-                  بيانات المعاملة
-                </SectionTitle>
-
-                <div
-                  className="
-                    grid
-                    grid-cols-2
-                    gap-[8px]
-                  "
-                >
-                  <InfoBox
-                    label="نوع المعاملة"
-                    value={
-                      selectedApproval.type
-                    }
-                  />
-
-                  <InfoBox
-                    label="الأولوية"
-                    value={
-                      selectedApproval.priority
-                    }
-                  />
-
-                  <InfoBox
-                    label="الفترة التدريبية"
-                    value={
-                      selectedApproval.trainingPeriod
-                    }
-                  />
-
-                  <InfoBox
-                    label="ساعات التدريب"
-                    value={`${selectedApproval.requiredHours} ساعة`}
-                  />
-                </div>
-
-                <SectionTitle>
-                  حالة ما قبل الاعتماد
-                </SectionTitle>
-
-                <div
-                  className="
-                    grid
-                    grid-cols-2
-                    gap-[8px]
-                  "
-                >
-                  <StatusCheck
-                    label="الأهلية"
-                    value={
-                      selectedApproval.eligibilityStatus
-                    }
-                    passed={
-                      selectedApproval.eligibilityStatus ===
-                      "مؤهل"
-                    }
-                  />
-
-                  <StatusCheck
-                    label="التوزيع"
-                    value={
-                      selectedApproval.distributionStatus
-                    }
-                    passed={
-                      selectedApproval.distributionStatus ===
-                      "مكتمل"
-                    }
-                  />
-                </div>
-
-                <SectionTitle>
-                  بيانات التدريب
-                </SectionTitle>
-
-                <div
-                  className="
-                    grid
-                    grid-cols-2
-                    gap-[8px]
-                  "
-                >
-                  <InfoBox
-                    label="جهة التدريب"
-                    value={
-                      selectedApproval.organization
-                    }
-                  />
-
-                  <InfoBox
-                    label="الفرصة"
-                    value={
-                      selectedApproval.opportunity
-                    }
-                  />
-
-                  <InfoBox
-                    label="المشرف الأكاديمي"
-                    value={
-                      selectedApproval.academicSupervisor
-                    }
-                  />
-
-                  <InfoBox
-                    label="مشرف الجهة"
-                    value={
-                      selectedApproval.fieldSupervisor
-                    }
-                  />
-                </div>
-
-                <SectionTitle>
-                  المستندات
-                </SectionTitle>
-
-                <div
-                  className="
-                    flex
-                    flex-col
-                    gap-[7px]
-                  "
-                >
-                  {selectedApproval.documents.map(
-                    (
-                      document,
-                      index
-                    ) => (
-                      <div
-                        key={document}
-                        className="
-                          flex
-                          items-center
-                          gap-[8px]
-
-                          rounded-[9px]
-
-                          border
-                          border-[#E7ECF2]
-
-                          bg-[#FAFBFC]
-
-                          px-[10px]
-                          py-[9px]
-                        "
-                      >
-                        <div
-                          className="
-                            flex
-                            h-[25px]
-                            w-[25px]
-                            items-center
-                            justify-center
-
-                            rounded-full
-
-                            bg-[#ECFDF3]
-
-                            text-[#15803D]
-                          "
-                        >
-                          <CheckCircle2
-                            size={13}
-                          />
-                        </div>
-
-                        <div>
-                          <p
-                            className="
-                              m-0
-
-                              text-[9px]
-                              font-bold
-                              text-[#475569]
-                            "
-                          >
-                            {document}
-                          </p>
-
-                          <span
-                            className="
-                              text-[8px]
-                              text-[#94A3B8]
-                            "
-                          >
-                            مستند{" "}
-                            {index + 1}
-                          </span>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-
-                <SectionTitle>
-                  ملاحظات الطلب
-                </SectionTitle>
-
-                <div
-                  className="
-                    rounded-[9px]
-
-                    border
-                    border-[#E7ECF2]
-
-                    bg-[#FAFBFC]
-
-                    px-[11px]
-                    py-[10px]
-
-                    text-[9px]
-                    leading-[19px]
-                    text-[#475569]
-                  "
-                >
-                  {
-                    selectedApproval.note ||
-                    "لا توجد ملاحظات."
-                  }
-                </div>
-
-                {selectedApproval.decisionNote && (
-                  <>
-                    <SectionTitle>
-                      قرار الاعتماد
-                    </SectionTitle>
-
-                    <div
-                      className="
-                        rounded-[9px]
-
-                        border
-                        border-[#D7E5FF]
-
-                        bg-[#F6F9FF]
-
-                        px-[11px]
-                        py-[10px]
-                      "
-                    >
-                      <p
-                        className="
-                          m-0
-
-                          text-[9px]
-                          leading-[19px]
-                          text-[#475569]
-                        "
-                      >
-                        {
-                          selectedApproval.decisionNote
-                        }
-                      </p>
-
-                      {selectedApproval.decisionDate && (
-                        <span
-                          className="
-                            mt-[6px]
-                            block
-
-                            text-[8px]
-                            text-[#94A3B8]
-                          "
-                        >
-                          تاريخ القرار:{" "}
-                          {
-                            selectedApproval.decisionDate
-                          }
-                        </span>
-                      )}
-                    </div>
-                  </>
-                )}
-
-                <SectionTitle>
-                  سجل المعاملة
-                </SectionTitle>
-
-                <div
-                  className="
-                    flex
-                    flex-col
-                    gap-[7px]
-                  "
-                >
-                  {selectedApproval.history.map(
-                    (
-                      historyItem,
-                      index
-                    ) => (
-                      <div
-                        key={`${historyItem.date}-${index}`}
-                        className="
-                          flex
-                          items-start
-                          gap-[8px]
-                        "
-                      >
-                        <div
-                          className="
-                            mt-[2px]
-
-                            h-[8px]
-                            w-[8px]
-                            shrink-0
-
-                            rounded-full
-
-                            bg-[#09379A]
-                          "
-                        />
-
-                        <div>
-                          <p
-                            className="
-                              m-0
-
-                              text-[9px]
-                              font-medium
-                              text-[#475569]
-                            "
-                          >
-                            {
-                              historyItem.action
-                            }
-                          </p>
-
-                          <span
-                            className="
-                              text-[8px]
-                              text-[#94A3B8]
-                            "
-                          >
-                            {
-                              historyItem.date
-                            }
-                          </span>
-                        </div>
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-
-              {selectedApproval.status ===
-                "بانتظار الموافقة" && (
-                <div
-                  className="
-                    flex
-                    gap-[7px]
-
-                    border-t
-                    border-[#E2E8F0]
-
-                    px-5
-                    py-[14px]
-                  "
-                >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      openDecision(
-                        selectedApproval,
-                        "اعتماد"
-                      )
-                    }
-                    className="
-                      flex
-                      min-h-[40px]
-                      flex-1
-                      items-center
-                      justify-center
-                      gap-[5px]
-
-                      rounded-[8px]
-
-                      border-0
-
-                      bg-[#15803D]
-
-                      text-[9px]
-                      font-bold
-                      text-white
-                    "
-                  >
-                    <CheckCircle2
-                      size={14}
-                    />
-
-                    اعتماد
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      openDecision(
-                        selectedApproval,
-                        "إعادة للمراجعة"
-                      )
-                    }
-                    className="
-                      flex
-                      min-h-[40px]
-                      flex-1
-                      items-center
-                      justify-center
-                      gap-[5px]
-
-                      rounded-[8px]
-
-                      border
-                      border-[#FED7AA]
-
-                      bg-[#FFF7ED]
-
-                      text-[9px]
-                      font-bold
-                      text-[#C2410C]
-                    "
-                  >
-                    <RotateCcw
-                      size={14}
-                    />
-
-                    إعادة
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      openDecision(
-                        selectedApproval,
-                        "رفض"
-                      )
-                    }
-                    className="
-                      flex
-                      min-h-[40px]
-                      flex-1
-                      items-center
-                      justify-center
-                      gap-[5px]
-
-                      rounded-[8px]
-
-                      border
-                      border-[#FECDD3]
-
-                      bg-[#FFF1F2]
-
-                      text-[9px]
-                      font-bold
-                      text-[#BE123C]
-                    "
-                  >
-                    <XCircle
-                      size={14}
-                    />
-
-                    رفض
-                  </button>
-                </div>
-              )}
-            </aside>
-          </>
-        )}
-
-      {/* DECISION MODAL */}
-
-      {showDecisionModal &&
-        selectedApproval && (
-          <div
-            onClick={() =>
-              setShowDecisionModal(
-                false
-              )
-            }
-            className="
-              fixed
-              inset-0
-              z-[120]
-
-              flex
-              items-center
-              justify-center
-
-              bg-[#0F172A]/45
-
-              px-4
-              py-6
-            "
-          >
-            <div
-              dir="rtl"
-              onClick={(event) =>
-                event.stopPropagation()
-              }
-              className="
-                w-full
-                max-w-[520px]
-
-                rounded-[16px]
-
-                bg-white
-              "
-            >
-              <div
-                className="
-                  flex
-                  items-center
-                  justify-between
-
-                  border-b
-                  border-[#E2E8F0]
-
-                  px-5
-                  py-[16px]
-                "
-              >
-                <div>
-                  <h2
-                    className="
-                      m-0
-
-                      text-[16px]
-                      font-bold
-                    "
-                  >
-                    {decisionType ===
-                    "اعتماد"
-                      ? "اعتماد المعاملة"
-                      : decisionType ===
-                        "رفض"
-                      ? "رفض المعاملة"
-                      : "إعادة المعاملة للمراجعة"}
-                  </h2>
-
-                  <p
-                    className="
-                      m-0
-                      mt-[2px]
-
-                      text-[9px]
-                      text-[#94A3B8]
-                    "
-                  >
-                    {
-                      selectedApproval.code
-                    }
-                    {" · "}
-                    {
-                      selectedApproval.student
-                    }
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowDecisionModal(
-                      false
-                    )
-                  }
-                  className="
-                    flex
-                    h-[32px]
-                    w-[32px]
-                    items-center
-                    justify-center
-
-                    rounded-[8px]
-
-                    border-0
-
-                    bg-[#F8FAFC]
-                  "
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              <div
-                className="
-                  px-5
-                  py-5
-                "
-              >
-                <Label>
-                  ملاحظات القرار
-                  {(decisionType ===
-                    "رفض" ||
-                    decisionType ===
-                      "إعادة للمراجعة") &&
-                    " *"}
-                </Label>
-
-                <textarea
-                  value={decisionNote}
-                  onChange={(event) =>
-                    setDecisionNote(
-                      event.target.value
-                    )
-                  }
-                  rows={5}
-                  placeholder={
-                    decisionType ===
-                    "اعتماد"
-                      ? "يمكن إضافة ملاحظة اختيارية..."
-                      : "اكتب سبب القرار بوضوح..."
-                  }
-                  className="
-                    w-full
-
-                    resize-none
-
-                    rounded-[9px]
-
-                    border
-                    border-[#D9E2EC]
-
-                    px-[11px]
-                    py-[10px]
-
-                    font-['Cairo']
-
-                    text-[10px]
-                    leading-[20px]
-
-                    outline-none
-
-                    focus:border-[#09379A]
-                    focus:ring-2
-                    focus:ring-[#09379A]/10
-                  "
-                />
-              </div>
-
-              <div
-                className="
-                  flex
-                  flex-col-reverse
-                  gap-[8px]
-
-                  border-t
-                  border-[#E2E8F0]
-
-                  px-5
-                  py-[14px]
-
-                  sm:flex-row
-                  sm:justify-end
-                "
-              >
-                <button
-                  type="button"
-                  onClick={() =>
-                    setShowDecisionModal(
-                      false
-                    )
-                  }
-                  className="
-                    min-h-[40px]
-
-                    rounded-[8px]
-
-                    border
-                    border-[#D9E2EC]
-
-                    bg-white
-
-                    px-[15px]
-
-                    text-[9px]
-                    font-bold
-                  "
-                >
-                  إلغاء
-                </button>
-
-                <button
-                  type="button"
-                  onClick={
-                    saveDecision
-                  }
-                  className={`
-                    min-h-[40px]
-
-                    rounded-[8px]
-
-                    border-0
-
-                    px-[18px]
-
-                    text-[9px]
-                    font-bold
-                    text-white
-
-                    ${
-                      decisionType ===
-                      "اعتماد"
-                        ? "bg-[#15803D]"
-                        : decisionType ===
-                          "رفض"
-                        ? "bg-[#BE123C]"
-                        : "bg-[#C2410C]"
-                    }
-                  `}
-                >
-                  تأكيد القرار
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
     </div>
   );
 }
 
 /* =========================================================
-   COMPONENTS
+   APPROVAL STEP
 ========================================================= */
 
-const inputStyle = `
-  h-[42px]
-  w-full
-
-  rounded-[9px]
-
-  border
-  border-[#D9E2EC]
-
-  bg-white
-
-  px-[11px]
-
-  font-['Cairo']
-
-  text-[10px]
-  text-[#334155]
-
-  outline-none
-
-  focus:border-[#09379A]
-  focus:ring-2
-  focus:ring-[#09379A]/10
-`;
-
-function ApprovalBadge({
-  status,
-}) {
-  const styles = {
-    "بانتظار الموافقة":
-      "bg-[#FFF7ED] text-[#C2410C] border-[#FED7AA]",
-
-    معتمد:
-      "bg-[#ECFDF3] text-[#15803D] border-[#BBF7D0]",
-
-    "أعيد للمراجعة":
-      "bg-[#F3E8FF] text-[#7E22CE] border-[#E9D5FF]",
-
-    مرفوض:
-      "bg-[#FFF1F2] text-[#BE123C] border-[#FECDD3]",
-  };
-
-  return (
-    <span
-      className={`
-        inline-flex
-        min-h-[23px]
-        items-center
-
-        whitespace-nowrap
-
-        rounded-full
-
-        border
-
-        px-[8px]
-
-        text-[8px]
-        font-bold
-
-        ${
-          styles[status] ||
-          "border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B]"
-        }
-      `}
-    >
-      {status}
-    </span>
-  );
-}
-
-function PriorityBadge({
-  priority,
-}) {
-  return (
-    <span
-      className={`
-        inline-flex
-        min-h-[22px]
-        items-center
-
-        rounded-full
-
-        px-[7px]
-
-        text-[8px]
-        font-bold
-
-        ${
-          priority === "عالية"
-            ? "bg-[#FFF1F2] text-[#BE123C]"
-            : "bg-[#F1F5F9] text-[#64748B]"
-        }
-      `}
-    >
-      {priority}
-    </span>
-  );
-}
-
-function StatusCheck({
+function ApprovalStep({
+  number,
   label,
-  value,
-  passed,
+  state,
+  last = false,
 }) {
+  const done = state === "done";
+  const active = state === "active";
+
   return (
     <div
       className="
-        rounded-[9px]
-
-        border
-        border-[#E7ECF2]
-
-        bg-[#FAFBFC]
-
-        px-[10px]
-        py-[9px]
+        relative
+        flex
+        items-center
+        md:flex-1
       "
     >
-      <p
-        className="
-          m-0
-
-          text-[8px]
-          text-[#94A3B8]
-        "
-      >
-        {label}
-      </p>
-
       <div
         className="
-          mt-[4px]
-
+          relative
+          z-[2]
           flex
           items-center
-          gap-[5px]
+          gap-3
+          bg-white
         "
       >
-        {passed ? (
-          <CheckCircle2
-            size={13}
-            className="text-[#15803D]"
-          />
-        ) : (
-          <XCircle
-            size={13}
-            className="text-[#BE123C]"
-          />
-        )}
-
-        <strong
+        <div
           className={`
-            text-[9px]
+            flex
+            h-[34px]
+            w-[34px]
+            shrink-0
+
+            items-center
+            justify-center
+
+            rounded-full
+
+            border
+
+            text-[11px]
+            font-bold
 
             ${
-              passed
-                ? "text-[#15803D]"
-                : "text-[#BE123C]"
+              done
+                ? `
+                    border-[#15803D]
+                    bg-[#15803D]
+                    text-white
+                  `
+                : active
+                ? `
+                    border-[#09379A]
+                    bg-[#09379A]
+                    text-white
+                  `
+                : `
+                    border-[#D7E0EB]
+                    bg-white
+                    text-[#94A3B8]
+                  `
             }
           `}
         >
-          {value}
-        </strong>
+          {done ? (
+            <Check size={16} />
+          ) : (
+            number
+          )}
+        </div>
+
+        <span
+          className={`
+            whitespace-nowrap
+
+            text-[11px]
+            font-semibold
+
+            ${
+              done
+                ? "text-[#15803D]"
+                : active
+                ? "text-[#09379A]"
+                : "text-[#64748B]"
+            }
+          `}
+        >
+          {label}
+        </span>
       </div>
+
+      {!last && (
+        <div
+          className={`
+            absolute
+            left-[15px]
+            right-[45px]
+            top-[17px]
+
+            hidden
+            h-[2px]
+
+            md:block
+
+            ${
+              done
+                ? "bg-[#15803D]"
+                : "bg-[#DCE5F3]"
+            }
+          `}
+        />
+      )}
     </div>
   );
 }
 
-function Label({ children }) {
+/* =========================================================
+   STATUS
+========================================================= */
+
+function ApprovalStatus({ status }) {
+  const config = {
+    pending: {
+      label: "بانتظار الاعتماد",
+      className:
+        "bg-[#FFE5D9] text-[#B54708]",
+    },
+
+    approved: {
+      label: "معتمد",
+      className:
+        "bg-[#DCFCE7] text-[#15803D]",
+    },
+
+    review: {
+      label: "قيد المراجعة",
+      className:
+        "bg-[#DDF6FF] text-[#08759B]",
+    },
+
+    rejected: {
+      label: "مرفوض",
+      className:
+        "bg-[#FEE2E2] text-[#DC2626]",
+    },
+  };
+
+  const current = config[status];
+
   return (
-    <label
-      className="
-        mb-[6px]
-        block
+    <span
+      className={`
+        inline-flex
+        items-center
+        gap-[5px]
 
-        text-[10px]
-        font-bold
-        text-[#475569]
-      "
-    >
-      {children}
-    </label>
-  );
-}
-
-function FilterSelect({
-  label,
-  value,
-  onChange,
-  children,
-}) {
-  return (
-    <div>
-      <Label>{label}</Label>
-
-      <select
-        value={value}
-        onChange={(event) =>
-          onChange(
-            event.target.value
-          )
-        }
-        className={inputStyle}
-      >
-        {children}
-      </select>
-    </div>
-  );
-}
-
-function TableHead({
-  children,
-}) {
-  return (
-    <th
-      className="
         whitespace-nowrap
 
-        px-[13px]
-        py-[11px]
-
-        text-right
-        text-[9px]
-        font-bold
-        text-[#64748B]
-      "
-    >
-      {children}
-    </th>
-  );
-}
-
-function TableCell({
-  children,
-}) {
-  return (
-    <td
-      className="
-        px-[13px]
-        py-[12px]
-
-        align-middle
-      "
-    >
-      {children}
-    </td>
-  );
-}
-
-function InfoBox({
-  label,
-  value,
-}) {
-  return (
-    <div
-      className="
-        rounded-[9px]
-
-        border
-        border-[#E7ECF2]
-
-        bg-[#FAFBFC]
+        rounded-full
 
         px-[10px]
-        py-[9px]
-      "
+        py-[5px]
+
+        text-[9px]
+        font-semibold
+
+        ${current.className}
+      `}
     >
-      <p
+      <span
         className="
-          m-0
-
-          text-[8px]
-          text-[#94A3B8]
+          h-[5px]
+          w-[5px]
+          rounded-full
+          bg-current
         "
-      >
-        {label}
-      </p>
+      />
 
-      <p
-        className="
-          m-0
-          mt-[3px]
-
-          text-[9px]
-          font-bold
-          leading-[18px]
-          text-[#475569]
-        "
-      >
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function MobileInfo({
-  label,
-  value,
-}) {
-  return (
-    <div>
-      <p
-        className="
-          m-0
-
-          text-[8px]
-          text-[#94A3B8]
-        "
-      >
-        {label}
-      </p>
-
-      <p
-        className="
-          m-0
-          mt-[2px]
-
-          text-[9px]
-          font-medium
-          text-[#475569]
-        "
-      >
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function SectionTitle({
-  children,
-}) {
-  return (
-    <h4
-      className="
-        m-0
-        mb-[9px]
-        mt-[20px]
-
-        text-[11px]
-        font-bold
-        text-[#334155]
-      "
-    >
-      {children}
-    </h4>
+      {current.label}
+    </span>
   );
 }

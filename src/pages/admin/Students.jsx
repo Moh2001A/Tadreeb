@@ -1,2467 +1,1274 @@
-import { useMemo, useState } from "react";
+
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import {
-  AlertTriangle,
-  BookOpenCheck,
-  Building2,
-  CheckCircle2,
-  Eye,
-  GraduationCap,
+  Bell,
+  Menu,
   Search,
-  UserCheck,
-  Users,
+  Plus,
+  SlidersHorizontal,
+  ArrowDownUp,
+  Eye,
+  Trash2,
+  ChevronLeft,
+  ChevronRight,
   X,
+  Download,
+  RotateCcw,
 } from "lucide-react";
 
-import Header from "../../components/admin/Header";
 import Sidebar from "../../components/admin/Sidebar";
 
-/* =========================================================
-   TRAINING REQUIREMENTS
-========================================================= */
+// =====================================================
+// DATA
+// =====================================================
 
-const trainingRequirements = {
-  "هندسة البرمجيات": {
-    courseCode: "SE-490",
-    trainingCourse: "التدريب الميداني في هندسة البرمجيات",
-    minimumAcademicHours: 90,
-    requiredTrainingHours: 120,
-    minimumGpa: 2.0,
-  },
+const DELETED_STUDENTS_KEY = "cis-deleted-student-ids-v1";
 
-  "نظم المعلومات": {
-    courseCode: "IS-490",
-    trainingCourse: "التدريب الميداني في نظم المعلومات",
-    minimumAcademicHours: 90,
-    requiredTrainingHours: 120,
-    minimumGpa: 2.0,
-  },
-
-  "إدارة الأعمال": {
-    courseCode: "BUS-410",
-    trainingCourse: "التدريب العملي في إدارة الأعمال",
-    minimumAcademicHours: 85,
-    requiredTrainingHours: 120,
-    minimumGpa: 2.0,
-  },
-
-  المحاسبة: {
-    courseCode: "ACC-410",
-    trainingCourse: "التدريب العملي في المحاسبة",
-    minimumAcademicHours: 85,
-    requiredTrainingHours: 120,
-    minimumGpa: 2.0,
-  },
-
-  التمريض: {
-    courseCode: "NUR-480",
-    trainingCourse: "التدريب السريري المتقدم",
-    minimumAcademicHours: 100,
-    requiredTrainingHours: 160,
-    minimumGpa: 2.5,
-  },
-
-  "المختبرات الطبية": {
-    courseCode: "MLT-470",
-    trainingCourse: "التدريب السريري في المختبرات",
-    minimumAcademicHours: 100,
-    requiredTrainingHours: 140,
-    minimumGpa: 2.5,
-  },
-
-  "تعليم أساسي": {
-    courseCode: "EDU-450",
-    trainingCourse: "التربية العملية",
-    minimumAcademicHours: 90,
-    requiredTrainingHours: 150,
-    minimumGpa: 2.0,
-  },
-
-  الإعلام: {
-    courseCode: "MEDIA-420",
-    trainingCourse: "التدريب الإعلامي",
-    minimumAcademicHours: 80,
-    requiredTrainingHours: 100,
-    minimumGpa: 2.0,
-  },
-};
-
-/* =========================================================
-   STUDENTS
-========================================================= */
-
-const studentsData = [
+const INITIAL_STUDENTS = [
   {
-    id: 1,
-    studentId: "20231045",
-    name: "أحمد خالد محمد",
-
-    college: "كلية الهندسة وتكنولوجيا المعلومات",
-    major: "هندسة البرمجيات",
-
-    academicHours: 104,
-    gpa: 3.12,
-
-    phone: "0599001122",
-    email: "ahmad@student.edu",
-
-    eligibility: "مؤهل",
-
-    trainingStatus: "يتدرب حاليًا",
-
-    organization: "شركة التقنية المتقدمة",
-
-    opportunity: "مطور برمجيات متدرب",
-
-    academicSupervisor: "د. سامر يوسف",
-    fieldSupervisor: "م. محمد حمدي",
-
-    requiredHours: 120,
-    completedHours: 78,
+    id: "20231234",
+    name: "أمل أحمد صيام",
+    major: "البرمجيات وقواعد البيانات",
+    organization: "شركة القدس للاتصالات",
+    status: "قيد التدريب",
+    supervisor: "د. سامر يوسف",
+    startDate: "2025/12/01",
   },
-
   {
-    id: 2,
-    studentId: "20230876",
-    name: "سارة محمود علي",
-
-    college: "كلية الاقتصاد والعلوم الإدارية",
-    major: "إدارة الأعمال",
-
-    academicHours: 96,
-    gpa: 3.41,
-
-    phone: "0599445566",
-    email: "sara@student.edu",
-
-    eligibility: "مؤهل",
-
-    trainingStatus: "بانتظار البدء",
-
-    organization: "بنك فلسطين",
-
-    opportunity: "تدريب إداري ومالي",
-
-    academicSupervisor: "د. ليلى أحمد",
-    fieldSupervisor: "أ. رامي حسن",
-
-    requiredHours: 120,
-    completedHours: 0,
+    id: "20231045",
+    name: "محمود إبراهيم رضوان",
+    major: "تكنولوجيا علم البيانات",
+    organization: "شركة المشرق الرقمية",
+    status: "قيد التدريب",
+    supervisor: "د. سامر يوسف",
+    startDate: "2025/12/01",
   },
-
   {
-    id: 3,
-    studentId: "20231234",
-    name: "محمد سامي حسن",
-
-    college: "كلية الهندسة وتكنولوجيا المعلومات",
-    major: "نظم المعلومات",
-
-    academicHours: 94,
-    gpa: 2.73,
-
-    phone: "0599332211",
-    email: "mohammad@student.edu",
-
-    eligibility: "مؤهل",
-
-    trainingStatus: "يتدرب حاليًا",
-
-    organization: "شركة الاتصالات الفلسطينية",
-
-    opportunity: "دعم الأنظمة والشبكات",
-
-    academicSupervisor: "د. أحمد نصار",
-    fieldSupervisor: "م. خالد يوسف",
-
-    requiredHours: 120,
-    completedHours: 90,
+    id: "20231188",
+    name: "سارة عبد الرحمن",
+    major: "الاتصالات وإنترنت الأشياء",
+    organization: "شركة جوال",
+    status: "بانتظار الاعتماد",
+    supervisor: "د. سامر يوسف",
+    startDate: "—",
   },
-
   {
-    id: 4,
-    studentId: "20230987",
-    name: "ريم أحمد يوسف",
-
-    college: "كلية التربية",
-    major: "تعليم أساسي",
-
-    academicHours: 88,
-    gpa: 2.91,
-
-    phone: "0599887766",
-    email: "reem@student.edu",
-
-    eligibility: "غير مؤهل",
-
-    trainingStatus: "لم يبدأ",
-
+    id: "20231302",
+    name: "أنس كمال البيطار",
+    major: "إلكترونيات صناعية وتحكم",
+    organization: "شركة الأمل للأنظمة الصناعية",
+    status: "منتهٍ",
+    supervisor: "د. سامر يوسف",
+    startDate: "2025/09/15",
+  },
+  {
+    id: "20231450",
+    name: "هدى يوسف شهر",
+    major: "التصميم الجرافيكي والفنون الرقمية",
+    organization: "استوديو بيكسل للتصميم",
+    status: "لم يبدأ",
+    supervisor: "د. سامر يوسف",
+    startDate: "2026/01/10",
+  },
+  {
+    id: "20231533",
+    name: "بلال مصطفى الشيخ",
+    major: "صيانة الحاسب الآلي",
     organization: "—",
-
-    opportunity: "—",
-
-    academicSupervisor: "د. منى عبد الرحمن",
-    fieldSupervisor: "—",
-
-    requiredHours: 150,
-    completedHours: 0,
+    status: "مرفوض",
+    supervisor: "د. سامر يوسف",
+    startDate: "—",
   },
-
   {
-    id: 5,
-    studentId: "20230765",
-    name: "مريم أحمد علي",
-
-    college: "كلية العلوم الطبية التطبيقية",
-    major: "التمريض",
-
-    academicHours: 118,
-    gpa: 3.54,
-
-    phone: "0599776655",
-    email: "mariam@student.edu",
-
-    eligibility: "مكتمل التدريب",
-
-    trainingStatus: "مكتمل",
-
-    organization: "مستشفى الشفاء",
-
-    opportunity: "تدريب سريري",
-
-    academicSupervisor: "د. سارة خليل",
-    fieldSupervisor: "أ. محمود حسن",
-
-    requiredHours: 160,
-    completedHours: 160,
+    id: "20231601",
+    name: "محمد خالد العطار",
+    major: "البرمجيات وقواعد البيانات",
+    organization: "شركة التقنية الحديثة",
+    status: "قيد التدريب",
+    supervisor: "د. سامر يوسف",
+    startDate: "2026/01/15",
   },
-
   {
-    id: 6,
-    studentId: "20231356",
-    name: "لينا محمود حسن",
-
-    college: "كلية العلوم الطبية التطبيقية",
-    major: "المختبرات الطبية",
-
-    academicHours: 103,
-    gpa: 2.67,
-
-    phone: "0599665544",
-    email: "lina@student.edu",
-
-    eligibility: "يحتاج مراجعة",
-
-    trainingStatus: "لم يبدأ",
-
+    id: "20231628",
+    name: "نور أحمد خليل",
+    major: "تكنولوجيا علم البيانات",
+    organization: "شركة المشرق الرقمية",
+    status: "لم يبدأ",
+    supervisor: "د. سامر يوسف",
+    startDate: "—",
+  },
+  {
+    id: "20231712",
+    name: "ياسمين محمود",
+    major: "التصميم الجرافيكي والفنون الرقمية",
+    organization: "استوديو بيكسل للتصميم",
+    status: "منتهٍ",
+    supervisor: "د. سامر يوسف",
+    startDate: "2025/08/20",
+  },
+  {
+    id: "20231744",
+    name: "أحمد سامي ناصر",
+    major: "إلكترونيات صناعية وتحكم",
     organization: "—",
-
-    opportunity: "—",
-
-    academicSupervisor: "د. خالد يوسف",
-    fieldSupervisor: "—",
-
-    requiredHours: 140,
-    completedHours: 0,
+    status: "بانتظار الاعتماد",
+    supervisor: "د. سامر يوسف",
+    startDate: "—",
   },
-
   {
-    id: 7,
-    studentId: "20231587",
-    name: "عمر يوسف سليمان",
-
-    college: "كلية الآداب والعلوم الإنسانية",
-    major: "الإعلام",
-
-    academicHours: 84,
-    gpa: 1.86,
-
-    phone: "0599554433",
-    email: "omar@student.edu",
-
-    eligibility: "غير مؤهل",
-
-    trainingStatus: "غير متاح",
-
-    organization: "—",
-
-    opportunity: "—",
-
-    academicSupervisor: "د. خالد حسن",
-    fieldSupervisor: "—",
-
-    requiredHours: 100,
-    completedHours: 0,
+    id: "20231805",
+    name: "رنا محمد علي",
+    major: "الاتصالات وإنترنت الأشياء",
+    organization: "شركة جوال",
+    status: "قيد التدريب",
+    supervisor: "د. سامر يوسف",
+    startDate: "2026/01/05",
+  },
+  {
+    id: "20231840",
+    name: "خالد عادل حسن",
+    major: "صيانة الحاسب الآلي",
+    organization: "شركة التقنية الحديثة",
+    status: "مرفوض",
+    supervisor: "د. سامر يوسف",
+    startDate: "—",
   },
 ];
 
-/* =========================================================
-   PAGE
-========================================================= */
+const STATUS_OPTIONS = [
+  "الكل",
+  "قيد التدريب",
+  "لم يبدأ",
+  "بانتظار الاعتماد",
+  "منتهٍ",
+  "مرفوض",
+];
+
+const STATUS_STYLES = {
+  "قيد التدريب": "bg-[#DDF6FF] text-[#08759B]",
+  "بانتظار الاعتماد": "bg-[#FFE5D9] text-[#B54708]",
+  "منتهٍ": "bg-[#DCFCE7] text-[#15803D]",
+  "لم يبدأ": "bg-[#F1F5F9] text-[#475569]",
+  "مرفوض": "bg-[#FEE2E2] text-[#DC2626]",
+};
+
+const SORT_OPTIONS = [
+  { value: "name", label: "حسب اسم الطالب" },
+  { value: "id", label: "حسب الرقم الجامعي" },
+  { value: "date", label: "حسب تاريخ البدء" },
+];
+
+const PAGE_SIZE = 6;
+
+// =====================================================
+// LOCAL STORAGE
+// =====================================================
+
+function getDeletedStudentIds() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem(DELETED_STUDENTS_KEY) || "[]"
+    );
+
+    return Array.isArray(saved) ? saved.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+function readStudents() {
+  const deletedIds = new Set(getDeletedStudentIds());
+
+  return INITIAL_STUDENTS.filter(
+    (student) => !deletedIds.has(String(student.id))
+  );
+}
+
+function saveDeletedStudent(studentId) {
+  try {
+    const ids = new Set(getDeletedStudentIds());
+    ids.add(String(studentId));
+
+    localStorage.setItem(
+      DELETED_STUDENTS_KEY,
+      JSON.stringify([...ids])
+    );
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// =====================================================
+// MAIN PAGE
+// =====================================================
 
 export default function Students() {
-  const [searchTerm, setSearchTerm] =
-    useState("");
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const [collegeFilter, setCollegeFilter] =
-    useState("الكل");
+  const [students, setStudents] = useState(readStudents);
 
-  const [eligibilityFilter, setEligibilityFilter] =
-    useState("الكل");
+  const [search, setSearch] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("الكل");
+  const [selectedMajor, setSelectedMajor] = useState("الكل");
+  const [sortOrder, setSortOrder] = useState("name");
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const [trainingFilter, setTrainingFilter] =
-    useState("الكل");
+  const [showFilters, setShowFilters] = useState(false);
+  const [showSort, setShowSort] = useState(false);
 
-  const [selectedStudent, setSelectedStudent] =
-    useState(null);
+  // DELETE MODAL
+  const [studentToDelete, setStudentToDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const [showDetails, setShowDetails] =
-    useState(false);
+  // Refresh if data was changed in another tab
+  useEffect(() => {
+    const refreshStudents = () => {
+      setStudents(readStudents());
+    };
 
-  /* =========================================================
-     OPTIONS
-  ========================================================= */
+    window.addEventListener("storage", refreshStudents);
 
-  const colleges = useMemo(
-    () => [
-      ...new Set(
-        studentsData.map(
-          (student) => student.college
-        )
-      ),
-    ],
-    []
-  );
-
-  /* =========================================================
-     STATS
-  ========================================================= */
-
-  const statistics = useMemo(() => {
-    const total =
-      studentsData.length;
-
-    const eligible =
-      studentsData.filter(
-        (student) =>
-          student.eligibility === "مؤهل"
-      ).length;
-
-    const training =
-      studentsData.filter(
-        (student) =>
-          student.trainingStatus ===
-          "يتدرب حاليًا"
-      ).length;
-
-    const completed =
-      studentsData.filter(
-        (student) =>
-          student.trainingStatus ===
-          "مكتمل"
-      ).length;
-
-    return [
-      {
-        title: "إجمالي الطلبة",
-        value: total,
-        description: "طلبة مرتبطون بالتدريب",
-        icon: Users,
-        bg: "bg-[#EEF3FF]",
-        color: "text-[#09379A]",
-      },
-
-      {
-        title: "مؤهلون للتدريب",
-        value: eligible,
-        description: "استوفوا المتطلبات الأكاديمية",
-        icon: UserCheck,
-        bg: "bg-[#ECFDF3]",
-        color: "text-[#15803D]",
-      },
-
-      {
-        title: "يتدربون حاليًا",
-        value: training,
-        description: "لديهم تدريب نشط",
-        icon: GraduationCap,
-        bg: "bg-[#FFF7ED]",
-        color: "text-[#C2410C]",
-      },
-
-      {
-        title: "أكملوا التدريب",
-        value: completed,
-        description: "تم إنهاء متطلبات التدريب",
-        icon: CheckCircle2,
-        bg: "bg-[#F3E8FF]",
-        color: "text-[#7E22CE]",
-      },
-    ];
+    return () => {
+      window.removeEventListener("storage", refreshStudents);
+    };
   }, []);
 
-  /* =========================================================
-     FILTER
-  ========================================================= */
+  // Refresh on returning to this route
+  useEffect(() => {
+    setStudents(readStudents());
+  }, [location.key]);
+
+  // Close delete modal with Escape
+  useEffect(() => {
+    if (!studentToDelete) return;
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setStudentToDelete(null);
+        setDeleteError("");
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [studentToDelete]);
+
+  // =====================================================
+  // FILTER & SORT
+  // =====================================================
+
+  const majors = useMemo(
+    () => [
+      ...new Set(
+        students.map((student) => student.major).filter(Boolean)
+      ),
+    ],
+    [students]
+  );
 
   const filteredStudents = useMemo(() => {
-    const query =
-      searchTerm.trim().toLowerCase();
+    const query = search.trim().toLowerCase();
 
-    return studentsData.filter(
-      (student) => {
-        const matchesSearch =
-          !query ||
-          student.name
+    const result = students.filter((student) => {
+      const matchesSearch =
+        !query ||
+        [
+          student.name,
+          student.id,
+          student.major,
+          student.organization,
+        ].some((value) =>
+          String(value || "")
             .toLowerCase()
-            .includes(query) ||
-          student.studentId
-            .toLowerCase()
-            .includes(query) ||
-          student.major
-            .toLowerCase()
-            .includes(query);
+            .includes(query)
+        );
 
-        const matchesCollege =
-          collegeFilter === "الكل" ||
-          student.college ===
-            collegeFilter;
+      const matchesStatus =
+        selectedStatus === "الكل" ||
+        student.status === selectedStatus;
 
-        const matchesEligibility =
-          eligibilityFilter === "الكل" ||
-          student.eligibility ===
-            eligibilityFilter;
+      const matchesMajor =
+        selectedMajor === "الكل" ||
+        student.major === selectedMajor;
 
-        const matchesTraining =
-          trainingFilter === "الكل" ||
-          student.trainingStatus ===
-            trainingFilter;
+      return matchesSearch && matchesStatus && matchesMajor;
+    });
 
-        return (
-          matchesSearch &&
-          matchesCollege &&
-          matchesEligibility &&
-          matchesTraining
+    return [...result].sort((a, b) => {
+      if (sortOrder === "id") {
+        return String(a.id).localeCompare(String(b.id));
+      }
+
+      if (sortOrder === "date") {
+        return String(b.startDate).localeCompare(
+          String(a.startDate)
         );
       }
-    );
+
+      return String(a.name).localeCompare(
+        String(b.name),
+        "ar"
+      );
+    });
   }, [
-    searchTerm,
-    collegeFilter,
-    eligibilityFilter,
-    trainingFilter,
+    students,
+    search,
+    selectedStatus,
+    selectedMajor,
+    sortOrder,
   ]);
 
-  /* =========================================================
-     DETAILS
-  ========================================================= */
+  // =====================================================
+  // PAGINATION
+  // =====================================================
 
-  const openDetails = (student) => {
-    setSelectedStudent(student);
-    setShowDetails(true);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredStudents.length / PAGE_SIZE)
+  );
+
+  const safePage = Math.min(currentPage, totalPages);
+
+  const visibleStudents = filteredStudents.slice(
+    (safePage - 1) * PAGE_SIZE,
+    safePage * PAGE_SIZE
+  );
+
+  // =====================================================
+  // ACTIONS
+  // =====================================================
+
+  const toggleSidebar = () => {
+    window.dispatchEvent(
+      new Event("toggle-admin-sidebar")
+    );
   };
+
+  const resetFilters = () => {
+    setSearch("");
+    setSelectedStatus("الكل");
+    setSelectedMajor("الكل");
+    setSortOrder("name");
+    setCurrentPage(1);
+    setShowFilters(false);
+    setShowSort(false);
+  };
+
+  const updateSearch = (value) => {
+    setSearch(value);
+    setCurrentPage(1);
+  };
+
+  const handleAddStudent = () => {
+    navigate("/admin/add-student");
+  };
+
+  const handleViewStudent = (student) => {
+    navigate(
+      `/admin/students/${encodeURIComponent(student.id)}`,
+      {
+        state: {
+          student: { ...student },
+        },
+      }
+    );
+  };
+
+  const handleDeleteClick = (student) => {
+    setStudentToDelete(student);
+    setDeleteError("");
+    setShowFilters(false);
+    setShowSort(false);
+  };
+
+  const closeDeleteModal = () => {
+    setStudentToDelete(null);
+    setDeleteError("");
+  };
+
+  const confirmDelete = () => {
+    if (!studentToDelete) return;
+
+    const student = studentToDelete;
+
+    const saved = saveDeletedStudent(student.id);
+
+    if (!saved) {
+      setDeleteError(
+        "تعذر حفظ عملية الحذف، يرجى المحاولة مرة أخرى."
+      );
+      return;
+    }
+
+    setStudents((previous) =>
+      previous.filter(
+        (item) => String(item.id) !== String(student.id)
+      )
+    );
+
+    setStudentToDelete(null);
+    setDeleteError("");
+
+    setSuccessMessage(
+      `تم حذف الطالب ${student.name} من قائمة الطلاب بنجاح.`
+    );
+  };
+
+  // =====================================================
+  // EXPORT CSV
+  // =====================================================
+
+  const exportCSV = () => {
+    const headers = [
+      "اسم الطالب",
+      "الرقم الجامعي",
+      "التخصص",
+      "جهة التدريب",
+      "حالة التدريب",
+      "المشرف الأكاديمي",
+      "تاريخ البدء",
+    ];
+
+    const rows = filteredStudents.map((student) => [
+      student.name,
+      student.id,
+      student.major,
+      student.organization,
+      student.status,
+      student.supervisor,
+      student.startDate,
+    ]);
+
+    const csv = [headers, ...rows]
+      .map((row) =>
+        row
+          .map((value) =>
+            `"${String(value ?? "").replaceAll('"', '""')}"`
+          )
+          .join(",")
+      )
+      .join("\r\n");
+
+    const blob = new Blob(["\uFEFF", csv], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "students.csv";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    URL.revokeObjectURL(url);
+  };
+
+  const inputClass =
+    "h-[40px] w-full rounded-[8px] border border-[#E0E7F2] bg-white px-3 text-[12px] outline-none focus:border-[#09379A]";
+
+  const toolButtonClass =
+    "inline-flex h-[44px] items-center justify-center gap-2 rounded-[8px] border border-[#E0E7F2] bg-white px-4 text-[12px] transition hover:border-[#B9C9E8]";
+
+  // =====================================================
+  // PAGE JSX
+  // =====================================================
 
   return (
     <div
       dir="rtl"
-      className="
-        flex
-        h-dvh
-        w-full
-        overflow-hidden
-
-        bg-[#F8FAFC]
-
-        font-['Cairo']
-        text-[#1E293B]
-      "
+      className="flex h-screen w-full overflow-hidden bg-[#F8FAFC] font-['Cairo'] text-[#111C2D]"
     >
       <Sidebar />
 
-      <div
-        className="
-          flex
-          h-dvh
-          min-w-0
-          flex-1
-          flex-col
-          overflow-hidden
-        "
-      >
-        <Header />
+      <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
 
-        <main
-          className="
-            min-h-0
-            flex-1
-
-            overflow-x-hidden
-            overflow-y-auto
-
-            px-4
-            pb-8
-            pt-5
-
-            sm:px-5
-            md:px-6
-            xl:px-[40px]
-            xl:pb-[40px]
-            xl:pt-[26px]
-          "
-        >
-          <div className="mx-auto w-full max-w-[1180px]">
-            {/* =================================================
-                BREADCRUMB
-            ================================================== */}
-
-            <div
-              className="
-                flex
-                flex-wrap
-                items-center
-                gap-[7px]
-
-                text-[11px]
-                font-medium
-                text-[#64748B]
-              "
+        {/* HEADER */}
+        <header className="z-30 flex h-[72px] w-full shrink-0 items-center justify-between border-b border-[#E6EBF5] bg-white px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={toggleSidebar}
+              aria-label="فتح القائمة"
+              className="flex h-[38px] w-[38px] items-center justify-center rounded-[8px] text-[#09379A] hover:bg-[#F1F5F9] lg:hidden"
             >
-              <span>
-                الرئيسية
-              </span>
+              <Menu size={21} />
+            </button>
 
-              <span className="text-[#94A3B8]">
-                ›
-              </span>
+            <button
+              type="button"
+              onClick={() =>
+                navigate("/admin/announcements")
+              }
+              aria-label="الإشعارات"
+              className="relative flex h-[38px] w-[38px] items-center justify-center rounded-[8px] hover:bg-[#F8FAFC]"
+            >
+              <Bell size={20} />
+              <span className="absolute right-[6px] top-[5px] h-[7px] w-[7px] rounded-full bg-[#FF6B35]" />
+            </button>
+          </div>
 
-              <span>
-                إدارة الطلبة
-              </span>
+          <button
+            type="button"
+            onClick={() => navigate("/admin/profile")}
+            className="flex items-center gap-2 text-right"
+          >
+            <div className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full bg-[#E6EBF5] text-[12px] font-bold text-[#09379A]">
+              سم
+            </div>
 
-              <span className="text-[#94A3B8]">
-                ›
-              </span>
+            <div>
+              <p className="m-0 text-[12px] font-bold">
+                د. سامر يوسف
+              </p>
+              <p className="m-0 text-[10px] text-[#64748B]">
+                مشرف أكاديمي
+              </p>
+            </div>
+          </button>
+        </header>
 
-              <span
-                className="
-                  font-bold
-                  text-[#09379A]
-                "
+        {/* MAIN CONTENT */}
+        <main className="w-full min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-6 pt-5 sm:px-6 lg:px-8">
+          <div className="mx-auto w-full min-w-0 max-w-[1450px]">
+
+            {/* BREADCRUMB */}
+            <div className="mb-2 flex items-center gap-2 text-[12px] text-[#64748B]">
+              <button
+                type="button"
+                onClick={() =>
+                  navigate("/admin/dashboard")
+                }
+                className="hover:text-[#09379A]"
               >
-                الطلبة
+                الرئيسية
+              </button>
+
+              <ChevronLeft size={15} />
+
+              <span className="font-semibold text-[#111C2D]">
+                الطلاب
               </span>
             </div>
 
-            {/* =================================================
-                HEADER
-            ================================================== */}
-
-            <section className="mt-[5px]">
-              <h1
-                className="
-                  m-0
-
-                  text-[25px]
-                  font-bold
-                  leading-[38px]
-                  text-[#14213D]
-
-                  sm:text-[27px]
-                "
-              >
-                الطلبة
-              </h1>
-
-              <p
-                className="
-                  m-0
-                  mt-[3px]
-
-                  max-w-[800px]
-
-                  text-[11px]
-                  leading-[21px]
-                  text-[#64748B]
-
-                  sm:text-[12px]
-                "
-              >
-                متابعة ملفات طلبة التدريب
-                وحالتهم الأكاديمية والأهلية
-                والتوزيع والتقدم في الساعات
-                التدريبية.
-              </p>
-            </section>
-
-            {/* =================================================
-                STATS
-            ================================================== */}
-
-            <section
-              className="
-                mt-[22px]
-
-                grid
-                grid-cols-1
-                gap-[12px]
-
-                sm:grid-cols-2
-                xl:grid-cols-4
-              "
-            >
-              {statistics.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <article
-                    key={item.title}
-                    className="
-                      min-h-[128px]
-
-                      rounded-[14px]
-
-                      border
-                      border-[#DDE5EF]
-
-                      bg-white
-
-                      p-[17px]
-                    "
-                  >
-                    <div
-                      className="
-                        flex
-                        items-start
-                        justify-between
-                        gap-4
-                      "
-                    >
-                      <div>
-                        <p
-                          className="
-                            m-0
-                            text-[10px]
-                            text-[#64748B]
-                          "
-                        >
-                          {item.title}
-                        </p>
-
-                        <strong
-                          className="
-                            mt-[8px]
-                            block
-                            text-[27px]
-                            text-[#14213D]
-                          "
-                        >
-                          {item.value}
-                        </strong>
-
-                        <p
-                          className="
-                            m-0
-                            mt-[5px]
-
-                            text-[9px]
-                            text-[#94A3B8]
-                          "
-                        >
-                          {item.description}
-                        </p>
-                      </div>
-
-                      <div
-                        className={`
-                          flex
-                          h-[42px]
-                          w-[42px]
-                          items-center
-                          justify-center
-
-                          rounded-[10px]
-
-                          ${item.bg}
-                          ${item.color}
-                        `}
-                      >
-                        <Icon size={20} />
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </section>
-
-            {/* =================================================
-                FILTERS
-            ================================================== */}
-
-            <section
-              className="
-                mt-[18px]
-
-                rounded-[14px]
-
-                border
-                border-[#DDE5EF]
-
-                bg-white
-
-                p-[15px]
-              "
-            >
-              <div
-                className="
-                  grid
-                  grid-cols-1
-                  gap-[10px]
-
-                  md:grid-cols-2
-                  xl:grid-cols-4
-                "
-              >
-                <div>
-                  <Label>
-                    البحث
-                  </Label>
-
-                  <div
-                    className="
-                      flex
-                      h-[42px]
-                      items-center
-                      gap-[8px]
-
-                      rounded-[9px]
-
-                      border
-                      border-[#D9E2EC]
-
-                      px-[11px]
-
-                      focus-within:border-[#09379A]
-                      focus-within:ring-2
-                      focus-within:ring-[#09379A]/10
-                    "
-                  >
-                    <Search
-                      size={16}
-                      className="text-[#94A3B8]"
-                    />
-
-                    <input
-                      value={searchTerm}
-                      onChange={(event) =>
-                        setSearchTerm(
-                          event.target.value
-                        )
-                      }
-                      placeholder="الاسم، الرقم الجامعي أو التخصص..."
-                      className="
-                        min-w-0
-                        flex-1
-
-                        border-0
-                        bg-transparent
-
-                        font-['Cairo']
-                        text-[10px]
-
-                        outline-none
-                      "
-                    />
-                  </div>
-                </div>
-
-                <FilterSelect
-                  label="الكلية"
-                  value={collegeFilter}
-                  onChange={setCollegeFilter}
-                >
-                  <option value="الكل">
-                    كل الكليات
-                  </option>
-
-                  {colleges.map((college) => (
-                    <option
-                      key={college}
-                      value={college}
-                    >
-                      {college}
-                    </option>
-                  ))}
-                </FilterSelect>
-
-                <FilterSelect
-                  label="الأهلية"
-                  value={eligibilityFilter}
-                  onChange={
-                    setEligibilityFilter
-                  }
-                >
-                  <option value="الكل">
-                    كل الحالات
-                  </option>
-
-                  <option value="مؤهل">
-                    مؤهل
-                  </option>
-
-                  <option value="غير مؤهل">
-                    غير مؤهل
-                  </option>
-
-                  <option value="يحتاج مراجعة">
-                    يحتاج مراجعة
-                  </option>
-
-                  <option value="مكتمل التدريب">
-                    مكتمل التدريب
-                  </option>
-                </FilterSelect>
-
-                <FilterSelect
-                  label="حالة التدريب"
-                  value={trainingFilter}
-                  onChange={setTrainingFilter}
-                >
-                  <option value="الكل">
-                    كل الحالات
-                  </option>
-
-                  <option value="يتدرب حاليًا">
-                    يتدرب حاليًا
-                  </option>
-
-                  <option value="بانتظار البدء">
-                    بانتظار البدء
-                  </option>
-
-                  <option value="لم يبدأ">
-                    لم يبدأ
-                  </option>
-
-                  <option value="مكتمل">
-                    مكتمل
-                  </option>
-
-                  <option value="غير متاح">
-                    غير متاح
-                  </option>
-                </FilterSelect>
-              </div>
-            </section>
-
-            {/* =================================================
-                STUDENTS TABLE
-            ================================================== */}
-
-            <section
-              className="
-                mt-[16px]
-
-                overflow-hidden
-
-                rounded-[14px]
-
-                border
-                border-[#DDE5EF]
-
-                bg-white
-              "
-            >
-              <div
-                className="
-                  flex
-                  items-center
-                  justify-between
-
-                  border-b
-                  border-[#EEF2F7]
-
-                  px-[18px]
-                  py-[15px]
-                "
-              >
-                <div>
-                  <h2
-                    className="
-                      m-0
-
-                      text-[14px]
-                      font-bold
-                      text-[#1E293B]
-                    "
-                  >
-                    قائمة الطلبة
-                  </h2>
-
-                  <p
-                    className="
-                      m-0
-                      mt-[2px]
-
-                      text-[9px]
-                      text-[#94A3B8]
-                    "
-                  >
-                    عرض حالة الطالب الأكاديمية
-                    والتدريبية
-                  </p>
-                </div>
-
-                <span
-                  className="
-                    rounded-[8px]
-
-                    bg-[#F8FAFC]
-
-                    px-[10px]
-                    py-[7px]
-
-                    text-[9px]
-                    font-bold
-                    text-[#64748B]
-                  "
-                >
-                  {filteredStudents.length} طالب
-                </span>
+            {/* PAGE TITLE */}
+            <section className="mb-6 flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
+                <h1 className="m-0 text-[23px] font-bold leading-9 text-[#111C2D] sm:text-[26px]">
+                  إدارة الطلاب
+                </h1>
+
+                <p className="m-0 mt-1 text-[13px] leading-6 text-[#64748B]">
+                  قائمة الطلاب المتدربين ومتابعة حالتهم
+                </p>
               </div>
 
-              {/* DESKTOP */}
-
-              <div
-                className="
-                  hidden
-                  overflow-x-auto
-
-                  md:block
-                "
+              <button
+                type="button"
+                onClick={handleAddStudent}
+                className="inline-flex h-[44px] shrink-0 items-center justify-center gap-2 rounded-[9px] bg-[#FF6534] px-5 text-[13px] font-semibold text-white transition-colors hover:bg-[#E95526]"
               >
-                <table className="w-full border-collapse">
-                  <thead>
-                    <tr className="bg-[#F8FAFC]">
-                      <TableHead>
-                        الطالب
-                      </TableHead>
-
-                      <TableHead>
-                        التخصص
-                      </TableHead>
-
-                      <TableHead>
-                        الأهلية
-                      </TableHead>
-
-                      <TableHead>
-                        حالة التدريب
-                      </TableHead>
-
-                      <TableHead>
-                        الساعات
-                      </TableHead>
-
-                      <TableHead>
-                        جهة التدريب
-                      </TableHead>
-
-                      <TableHead>
-                        الإجراء
-                      </TableHead>
-                    </tr>
-                  </thead>
-
-                  <tbody>
-                    {filteredStudents.map(
-                      (student) => {
-                        const percentage =
-                          student.requiredHours > 0
-                            ? Math.round(
-                                (student.completedHours /
-                                  student.requiredHours) *
-                                  100
-                              )
-                            : 0;
-
-                        return (
-                          <tr
-                            key={student.id}
-                            className="
-                              border-t
-                              border-[#EEF2F7]
-
-                              hover:bg-[#FBFCFE]
-                            "
-                          >
-                            <TableCell>
-                              <div className="min-w-[150px]">
-                                <p
-                                  className="
-                                    m-0
-
-                                    text-[10px]
-                                    font-bold
-                                    text-[#334155]
-                                  "
-                                >
-                                  {student.name}
-                                </p>
-
-                                <span
-                                  className="
-                                    mt-[2px]
-                                    block
-
-                                    text-[8px]
-                                    text-[#94A3B8]
-                                  "
-                                >
-                                  {student.studentId}
-                                </span>
-                              </div>
-                            </TableCell>
-
-                            <TableCell>
-                              <div className="min-w-[145px]">
-                                <p
-                                  className="
-                                    m-0
-
-                                    text-[9px]
-                                    font-medium
-                                    text-[#475569]
-                                  "
-                                >
-                                  {student.major}
-                                </p>
-
-                                <span
-                                  className="
-                                    mt-[2px]
-                                    block
-
-                                    max-w-[180px]
-
-                                    text-[8px]
-                                    leading-[15px]
-                                    text-[#94A3B8]
-                                  "
-                                >
-                                  {student.college}
-                                </span>
-                              </div>
-                            </TableCell>
-
-                            <TableCell>
-                              <EligibilityBadge
-                                status={
-                                  student.eligibility
-                                }
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <TrainingBadge
-                                status={
-                                  student.trainingStatus
-                                }
-                              />
-                            </TableCell>
-
-                            <TableCell>
-                              <div className="min-w-[110px]">
-                                <div
-                                  className="
-                                    mb-[5px]
-
-                                    flex
-                                    items-center
-                                    justify-between
-
-                                    text-[8px]
-                                  "
-                                >
-                                  <span className="text-[#64748B]">
-                                    {
-                                      student.completedHours
-                                    }
-                                    /
-                                    {
-                                      student.requiredHours
-                                    }
-                                  </span>
-
-                                  <strong className="text-[#09379A]">
-                                    {percentage}%
-                                  </strong>
-                                </div>
-
-                                <div
-                                  className="
-                                    h-[5px]
-                                    overflow-hidden
-                                    rounded-full
-                                    bg-[#E2E8F0]
-                                  "
-                                >
-                                  <div
-                                    className="
-                                      h-full
-                                      rounded-full
-                                      bg-[#09379A]
-                                    "
-                                    style={{
-                                      width: `${Math.min(
-                                        percentage,
-                                        100
-                                      )}%`,
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </TableCell>
-
-                            <TableCell>
-                              <span
-                                className="
-                                  max-w-[170px]
-
-                                  text-[9px]
-                                  leading-[17px]
-                                  text-[#475569]
-                                "
-                              >
-                                {student.organization}
-                              </span>
-                            </TableCell>
-
-                            <TableCell>
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  openDetails(student)
-                                }
-                                className="
-                                  flex
-                                  h-[32px]
-                                  items-center
-                                  gap-[5px]
-
-                                  rounded-[7px]
-
-                                  border
-                                  border-[#DCE5F0]
-
-                                  bg-white
-
-                                  px-[9px]
-
-                                  text-[9px]
-                                  font-bold
-                                  text-[#09379A]
-                                "
-                              >
-                                <Eye size={14} />
-                                عرض
-                              </button>
-                            </TableCell>
-                          </tr>
-                        );
-                      }
-                    )}
-                  </tbody>
-                </table>
-
-                {filteredStudents.length ===
-                  0 && <EmptyState />}
-              </div>
-
-              {/* MOBILE */}
-
-              <div
-                className="
-                  flex
-                  flex-col
-                  gap-[9px]
-
-                  p-[12px]
-
-                  md:hidden
-                "
-              >
-                {filteredStudents.length >
-                0 ? (
-                  filteredStudents.map(
-                    (student) => {
-                      const percentage =
-                        student.requiredHours > 0
-                          ? Math.round(
-                              (student.completedHours /
-                                student.requiredHours) *
-                                100
-                            )
-                          : 0;
-
-                      return (
-                        <article
-                          key={student.id}
-                          className="
-                            rounded-[11px]
-
-                            border
-                            border-[#E7ECF2]
-
-                            bg-[#FAFBFC]
-
-                            p-[12px]
-                          "
-                        >
-                          <div
-                            className="
-                              flex
-                              items-start
-                              justify-between
-                              gap-3
-                            "
-                          >
-                            <div>
-                              <p
-                                className="
-                                  m-0
-
-                                  text-[11px]
-                                  font-bold
-                                  text-[#334155]
-                                "
-                              >
-                                {student.name}
-                              </p>
-
-                              <span
-                                className="
-                                  mt-[2px]
-                                  block
-
-                                  text-[8px]
-                                  text-[#94A3B8]
-                                "
-                              >
-                                {student.studentId}
-                                {" · "}
-                                {student.major}
-                              </span>
-                            </div>
-
-                            <EligibilityBadge
-                              status={
-                                student.eligibility
-                              }
-                            />
-                          </div>
-
-                          <div
-                            className="
-                              mt-[10px]
-
-                              grid
-                              grid-cols-2
-                              gap-[9px]
-
-                              border-t
-                              border-[#E7ECF2]
-
-                              pt-[10px]
-                            "
-                          >
-                            <MobileInfo
-                              label="حالة التدريب"
-                              value={
-                                student.trainingStatus
-                              }
-                            />
-
-                            <MobileInfo
-                              label="جهة التدريب"
-                              value={
-                                student.organization
-                              }
-                            />
-
-                            <MobileInfo
-                              label="الساعات"
-                              value={`${student.completedHours}/${student.requiredHours}`}
-                            />
-
-                            <MobileInfo
-                              label="نسبة الإنجاز"
-                              value={`${percentage}%`}
-                            />
-                          </div>
-
-                          <button
-                            type="button"
-                            onClick={() =>
-                              openDetails(student)
-                            }
-                            className="
-                              mt-[11px]
-
-                              flex
-                              h-[35px]
-                              w-full
-                              items-center
-                              justify-center
-                              gap-[6px]
-
-                              rounded-[8px]
-
-                              border
-                              border-[#D7E5FF]
-
-                              bg-[#F6F9FF]
-
-                              text-[9px]
-                              font-bold
-                              text-[#09379A]
-                            "
-                          >
-                            <Eye size={14} />
-                            عرض ملف الطالب
-                          </button>
-                        </article>
-                      );
-                    }
-                  )
-                ) : (
-                  <EmptyState />
-                )}
-              </div>
+                <Plus size={18} />
+                إضافة طالب
+              </button>
             </section>
-          </div>
-        </main>
-      </div>
 
-      {/* =====================================================
-          DETAILS DRAWER
-      ====================================================== */}
-
-      {showDetails &&
-        selectedStudent && (
-          <>
-            <div
-              onClick={() =>
-                setShowDetails(false)
-              }
-              className="
-                fixed
-                inset-0
-                z-[90]
-
-                bg-[#0F172A]/35
-              "
-            />
-
-            <aside
-              dir="rtl"
-              className="
-                fixed
-                bottom-0
-                right-0
-                top-0
-                z-[100]
-
-                flex
-                w-full
-                max-w-[620px]
-                flex-col
-
-                bg-white
-
-                shadow-[-18px_0_50px_rgba(15,23,42,0.14)]
-              "
-            >
-              {/* HEADER */}
-
+            {/* SUCCESS MESSAGE */}
+            {successMessage && (
               <div
-                className="
-                  flex
-                  items-center
-                  justify-between
-                  gap-4
-
-                  border-b
-                  border-[#E2E8F0]
-
-                  px-5
-                  py-[17px]
-                "
+                role="status"
+                className="mb-5 flex items-center justify-between gap-3 rounded-[9px] border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-[12px] text-[#15803D]"
               >
-                <div>
-                  <h2
-                    className="
-                      m-0
-
-                      text-[17px]
-                      font-bold
-                      text-[#1E293B]
-                    "
-                  >
-                    ملف الطالب
-                  </h2>
-
-                  <p
-                    className="
-                      m-0
-                      mt-[2px]
-
-                      text-[9px]
-                      text-[#94A3B8]
-                    "
-                  >
-                    {selectedStudent.studentId}
-                  </p>
-                </div>
+                <span>{successMessage}</span>
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowDetails(false)
-                  }
-                  className="
-                    flex
-                    h-[34px]
-                    w-[34px]
-                    items-center
-                    justify-center
-
-                    rounded-[8px]
-
-                    border-0
-
-                    bg-[#F8FAFC]
-
-                    text-[#64748B]
-                  "
+                  aria-label="إغلاق رسالة النجاح"
+                  onClick={() => setSuccessMessage("")}
                 >
-                  <X size={17} />
+                  <X size={16} />
                 </button>
               </div>
+            )}
 
-              {/* BODY */}
+            {/* SEARCH & TOOLS */}
+            <section className="mb-5 flex min-w-0 flex-col gap-3 xl:flex-row xl:items-center">
 
-              <div
-                className="
-                  min-h-0
-                  flex-1
-                  overflow-y-auto
+              {/* SEARCH */}
+              <div className="relative min-w-0 flex-1">
+                <Search
+                  size={18}
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[#64748B]"
+                />
 
-                  px-5
-                  py-5
-                "
-              >
-                {/* STUDENT */}
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) =>
+                    updateSearch(event.target.value)
+                  }
+                  placeholder="ابحث بالاسم أو الرقم الجامعي..."
+                  aria-label="البحث عن طالب"
+                  className="h-[44px] w-full min-w-0 rounded-[8px] border border-[#E0E7F2] bg-white pl-10 pr-11 text-[13px] outline-none focus:border-[#09379A] focus:ring-2 focus:ring-[#09379A]/10"
+                />
 
-                <div
-                  className="
-                    flex
-                    items-start
-                    justify-between
-                    gap-4
-                  "
-                >
-                  <div
-                    className="
-                      flex
-                      items-center
-                      gap-[11px]
-                    "
+                {search && (
+                  <button
+                    type="button"
+                    aria-label="مسح البحث"
+                    onClick={() => updateSearch("")}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 rounded p-1 text-[#64748B] hover:bg-[#F1F5F9]"
                   >
-                    <div
-                      className="
-                        flex
-                        h-[46px]
-                        w-[46px]
-                        shrink-0
-                        items-center
-                        justify-center
-
-                        rounded-[12px]
-
-                        bg-[#EEF3FF]
-
-                        text-[#09379A]
-                      "
-                    >
-                      <GraduationCap
-                        size={22}
-                      />
-                    </div>
-
-                    <div>
-                      <h3
-                        className="
-                          m-0
-
-                          text-[15px]
-                          font-bold
-                          text-[#334155]
-                        "
-                      >
-                        {selectedStudent.name}
-                      </h3>
-
-                      <p
-                        className="
-                          m-0
-                          mt-[2px]
-
-                          text-[9px]
-                          text-[#94A3B8]
-                        "
-                      >
-                        {selectedStudent.major}
-                      </p>
-                    </div>
-                  </div>
-
-                  <EligibilityBadge
-                    status={
-                      selectedStudent.eligibility
-                    }
-                  />
-                </div>
-
-                {/* BASIC */}
-
-                <SectionTitle>
-                  البيانات الأكاديمية
-                </SectionTitle>
-
-                <div
-                  className="
-                    grid
-                    grid-cols-2
-                    gap-[8px]
-                  "
-                >
-                  <InfoBox
-                    label="الكلية"
-                    value={
-                      selectedStudent.college
-                    }
-                  />
-
-                  <InfoBox
-                    label="التخصص"
-                    value={
-                      selectedStudent.major
-                    }
-                  />
-
-                  <InfoBox
-                    label="الساعات الأكاديمية"
-                    value={`${selectedStudent.academicHours} ساعة`}
-                  />
-
-                  <InfoBox
-                    label="المعدل التراكمي"
-                    value={
-                      selectedStudent.gpa
-                    }
-                  />
-                </div>
-
-                {/* REQUIREMENT */}
-
-                <SectionTitle>
-                  متطلبات التدريب
-                </SectionTitle>
-
-                {trainingRequirements[
-                  selectedStudent.major
-                ] ? (
-                  <div
-                    className="
-                      rounded-[11px]
-
-                      border
-                      border-[#D7E5FF]
-
-                      bg-[#F6F9FF]
-
-                      p-[13px]
-                    "
-                  >
-                    <div
-                      className="
-                        flex
-                        items-start
-                        gap-[9px]
-                      "
-                    >
-                      <BookOpenCheck
-                        size={18}
-                        className="
-                          mt-[2px]
-                          shrink-0
-                          text-[#09379A]
-                        "
-                      />
-
-                      <div className="min-w-0">
-                        <p
-                          className="
-                            m-0
-
-                            text-[10px]
-                            font-bold
-                            text-[#334155]
-                          "
-                        >
-                          {
-                            trainingRequirements[
-                              selectedStudent
-                                .major
-                            ].trainingCourse
-                          }
-                        </p>
-
-                        <p
-                          className="
-                            m-0
-                            mt-[2px]
-
-                            text-[8px]
-                            text-[#64748B]
-                          "
-                        >
-                          {
-                            trainingRequirements[
-                              selectedStudent
-                                .major
-                            ].courseCode
-                          }
-                        </p>
-                      </div>
-                    </div>
-
-                    <div
-                      className="
-                        mt-[11px]
-
-                        grid
-                        grid-cols-3
-                        gap-[7px]
-                      "
-                    >
-                      <RequirementValue
-                        label="ساعات أكاديمية"
-                        value={
-                          trainingRequirements[
-                            selectedStudent
-                              .major
-                          ]
-                            .minimumAcademicHours
-                        }
-                      />
-
-                      <RequirementValue
-                        label="ساعات تدريب"
-                        value={
-                          trainingRequirements[
-                            selectedStudent
-                              .major
-                          ]
-                            .requiredTrainingHours
-                        }
-                      />
-
-                      <RequirementValue
-                        label="أدنى معدل"
-                        value={
-                          trainingRequirements[
-                            selectedStudent
-                              .major
-                          ].minimumGpa
-                        }
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <EmptyBox
-                    text="لا توجد متطلبات تدريب معرفة لهذا التخصص."
-                  />
+                    <X size={15} />
+                  </button>
                 )}
+              </div>
 
-                {/* ELIGIBILITY */}
+              {/* TOOLS */}
+              <div className="flex flex-wrap items-center gap-2">
 
-                <SectionTitle>
-                  حالة الأهلية
-                </SectionTitle>
-
-                <div
-                  className="
-                    rounded-[11px]
-
-                    border
-                    border-[#E2E8F0]
-
-                    bg-[#FAFBFC]
-
-                    p-[13px]
-                  "
-                >
-                  <div
-                    className="
-                      flex
-                      items-center
-                      justify-between
-                      gap-4
-                    "
+                {/* FILTER */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowFilters((value) => !value);
+                      setShowSort(false);
+                    }}
+                    className={`${toolButtonClass} ${
+                      showFilters
+                        ? "border-[#09379A] bg-[#EEF4FF] text-[#09379A]"
+                        : ""
+                    }`}
                   >
-                    <div>
-                      <p
-                        className="
-                          m-0
+                    <SlidersHorizontal size={17} />
+                    تصفية
+                  </button>
 
-                          text-[9px]
-                          font-bold
-                          text-[#475569]
-                        "
+                  {showFilters && (
+                    <div className="absolute right-0 top-[50px] z-20 w-[260px] max-w-[calc(100vw-32px)] rounded-[12px] border border-[#E0E7F2] bg-white p-4 shadow-lg">
+                      <div className="mb-4 flex items-center justify-between">
+                        <h3 className="m-0 text-[13px] font-bold">
+                          تصفية الطلاب
+                        </h3>
+
+                        <button
+                          type="button"
+                          aria-label="إغلاق التصفية"
+                          onClick={() => setShowFilters(false)}
+                        >
+                          <X size={16} />
+                        </button>
+                      </div>
+
+                      <label className="mb-2 block text-[11px] font-semibold text-[#475569]">
+                        حالة التدريب
+                      </label>
+
+                      <select
+                        value={selectedStatus}
+                        onChange={(event) => {
+                          setSelectedStatus(event.target.value);
+                          setCurrentPage(1);
+                        }}
+                        className={`${inputClass} mb-4`}
                       >
-                        نتيجة التحقق
-                      </p>
+                        {STATUS_OPTIONS.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
 
-                      <p
-                        className="
-                          m-0
-                          mt-[3px]
+                      <label className="mb-2 block text-[11px] font-semibold text-[#475569]">
+                        التخصص
+                      </label>
 
-                          text-[8px]
-                          text-[#94A3B8]
-                        "
+                      <select
+                        value={selectedMajor}
+                        onChange={(event) => {
+                          setSelectedMajor(event.target.value);
+                          setCurrentPage(1);
+                        }}
+                        className={`${inputClass} mb-4`}
                       >
-                        وفق متطلبات التخصص
-                      </p>
-                    </div>
+                        <option value="الكل">
+                          كل التخصصات
+                        </option>
 
-                    <EligibilityBadge
-                      status={
-                        selectedStudent.eligibility
-                      }
-                    />
-                  </div>
+                        {majors.map((major) => (
+                          <option key={major} value={major}>
+                            {major}
+                          </option>
+                        ))}
+                      </select>
 
-                  {selectedStudent.eligibility ===
-                    "غير مؤهل" && (
-                    <div
-                      className="
-                        mt-[11px]
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={resetFilters}
+                          className="inline-flex h-[36px] flex-1 items-center justify-center gap-1 rounded-[7px] border border-[#E0E7F2] text-[11px]"
+                        >
+                          <RotateCcw size={13} />
+                          إعادة ضبط
+                        </button>
 
-                        flex
-                        items-start
-                        gap-[7px]
-
-                        rounded-[8px]
-
-                        bg-[#FFF1F2]
-
-                        px-[10px]
-                        py-[9px]
-                      "
-                    >
-                      <AlertTriangle
-                        size={14}
-                        className="
-                          mt-[1px]
-                          shrink-0
-                          text-[#BE123C]
-                        "
-                      />
-
-                      <p
-                        className="
-                          m-0
-
-                          text-[8px]
-                          leading-[17px]
-                          text-[#9F1239]
-                        "
-                      >
-                        الطالب لا يستوفي
-                        حاليًا جميع متطلبات
-                        تخصصه للتدريب.
-                      </p>
+                        <button
+                          type="button"
+                          onClick={() => setShowFilters(false)}
+                          className="h-[36px] flex-1 rounded-[7px] bg-[#09379A] text-[11px] font-semibold text-white"
+                        >
+                          تطبيق
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
 
-                {/* TRAINING */}
+                {/* SORT */}
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowSort((value) => !value);
+                      setShowFilters(false);
+                    }}
+                    className={toolButtonClass}
+                  >
+                    <ArrowDownUp size={17} />
+                    ترتيب
+                  </button>
 
-                <SectionTitle>
-                  التدريب الحالي
-                </SectionTitle>
-
-                <div
-                  className="
-                    flex
-                    items-center
-                    justify-between
-                    gap-3
-
-                    rounded-[11px]
-
-                    border
-                    border-[#E7ECF2]
-
-                    bg-[#FAFBFC]
-
-                    p-[12px]
-                  "
-                >
-                  <div>
-                    <p
-                      className="
-                        m-0
-
-                        text-[9px]
-                        font-bold
-                        text-[#334155]
-                      "
-                    >
-                      حالة التدريب
-                    </p>
-
-                    <p
-                      className="
-                        m-0
-                        mt-[3px]
-
-                        text-[8px]
-                        text-[#94A3B8]
-                      "
-                    >
-                      حالة الملف الحالية
-                    </p>
-                  </div>
-
-                  <TrainingBadge
-                    status={
-                      selectedStudent.trainingStatus
-                    }
-                  />
+                  {showSort && (
+                    <div className="absolute left-0 top-[50px] z-20 w-[190px] rounded-[10px] border border-[#E0E7F2] bg-white p-2 shadow-lg">
+                      {SORT_OPTIONS.map((option) => (
+                        <button
+                          key={option.value}
+                          type="button"
+                          onClick={() => {
+                            setSortOrder(option.value);
+                            setShowSort(false);
+                          }}
+                          className={`w-full rounded-[7px] px-3 py-2 text-right text-[12px] ${
+                            sortOrder === option.value
+                              ? "bg-[#EEF4FF] font-semibold text-[#09379A]"
+                              : "hover:bg-[#F8FAFC]"
+                          }`}
+                        >
+                          {option.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
-                <div
-                  className="
-                    mt-[8px]
-
-                    grid
-                    grid-cols-2
-                    gap-[8px]
-                  "
+                {/* EXPORT */}
+                <button
+                  type="button"
+                  onClick={exportCSV}
+                  className={toolButtonClass}
                 >
-                  <InfoBox
-                    label="جهة التدريب"
-                    value={
-                      selectedStudent.organization
-                    }
-                  />
+                  <Download size={16} />
+                  تصدير
+                </button>
+              </div>
+            </section>
 
-                  <InfoBox
-                    label="الفرصة"
-                    value={
-                      selectedStudent.opportunity
-                    }
-                  />
+            {/* STATUS FILTERS */}
+            <section className="mb-6 flex min-w-0 flex-wrap items-center gap-2">
+              {STATUS_OPTIONS.map((status) => {
+                const active = selectedStatus === status;
 
-                  <InfoBox
-                    label="المشرف الأكاديمي"
-                    value={
-                      selectedStudent.academicSupervisor
-                    }
-                  />
+                return (
+                  <button
+                    key={status}
+                    type="button"
+                    onClick={() => {
+                      setSelectedStatus(status);
+                      setCurrentPage(1);
+                    }}
+                    className={`inline-flex h-[36px] items-center gap-2 rounded-full border px-4 text-[11px] transition ${
+                      active
+                        ? "border-[#09379A] bg-[#09379A] font-semibold text-white"
+                        : "border-[#E0E7F2] bg-white text-[#475569] hover:border-[#B9C9E8]"
+                    }`}
+                  >
+                    {status}
+                    {status === "الكل" && ` ${students.length}`}
+                  </button>
+                );
+              })}
+            </section>
 
-                  <InfoBox
-                    label="مشرف الجهة"
-                    value={
-                      selectedStudent.fieldSupervisor
-                    }
-                  />
+            {/* =============================================
+                STUDENTS TABLE - NO HORIZONTAL SCROLL
+            ============================================= */}
+            <section className="w-full min-w-0 rounded-[12px] border border-[#E0E7F2] bg-white p-2 sm:p-4 xl:p-5">
+
+              <div className="mb-4 flex min-w-0 flex-wrap items-center justify-between gap-2">
+                <div>
+                  <h2 className="m-0 text-[15px] font-bold text-[#062569]">
+                    قائمة الطلاب
+                  </h2>
+
+                  <p className="m-0 mt-1 text-[11px] text-[#64748B]">
+                    بيانات الطلاب وحالة التدريب الحالية
+                  </p>
                 </div>
 
-                {/* HOURS */}
+                <span className="text-[11px] text-[#64748B]">
+                  {filteredStudents.length} طالبًا
+                </span>
+              </div>
 
-                <SectionTitle>
-                  الساعات التدريبية
-                </SectionTitle>
+              {/* IMPORTANT: NO overflow-x-auto */}
+              <div className="w-full min-w-0 overflow-hidden rounded-[9px] border border-[#E0E7F2]">
 
-                <TrainingProgress
-                  completed={
-                    selectedStudent.completedHours
-                  }
-                  required={
-                    selectedStudent.requiredHours
-                  }
-                />
+                <table className="w-full table-fixed border-collapse text-right">
 
-                {/* CONTACT */}
+                  {/* COLUMN WIDTHS */}
+                  <colgroup>
+                    <col style={{ width: "15%" }} />
+                    <col style={{ width: "11%" }} />
+                    <col style={{ width: "17%" }} />
+                    <col style={{ width: "16%" }} />
+                    <col style={{ width: "13%" }} />
+                    <col style={{ width: "12%" }} />
+                    <col style={{ width: "16%" }} />
+                  </colgroup>
 
-                <SectionTitle>
-                  بيانات التواصل
-                </SectionTitle>
+                  {/* TABLE HEADER */}
+                  <thead>
+                    <tr className="bg-[#F1F5F9] text-[9px] font-semibold text-[#475569] lg:text-[10px] xl:text-[11px]">
+                      <th className="break-words px-1 py-4 sm:px-2">
+                        اسم الطالب
+                      </th>
 
-                <div
-                  className="
-                    grid
-                    grid-cols-2
-                    gap-[8px]
-                  "
-                >
-                  <InfoBox
-                    label="رقم الجوال"
-                    value={
-                      selectedStudent.phone
+                      <th className="break-words px-1 py-4 sm:px-2">
+                        الرقم الجامعي
+                      </th>
+
+                      <th className="break-words px-1 py-4 sm:px-2">
+                        التخصص
+                      </th>
+
+                      <th className="break-words px-1 py-4 sm:px-2">
+                        جهة التدريب
+                      </th>
+
+                      <th className="break-words px-1 py-4 sm:px-2">
+                        حالة التدريب
+                      </th>
+
+                      <th className="break-words px-1 py-4 sm:px-2">
+                        المشرف الأكاديمي
+                      </th>
+
+                      <th className="break-words px-1 py-4 text-center sm:px-2">
+                        الإجراءات
+                      </th>
+                    </tr>
+                  </thead>
+
+                  {/* TABLE BODY */}
+                  <tbody>
+                    {visibleStudents.map((student) => (
+                      <tr
+                        key={student.id}
+                        className="border-t border-[#E6EBF5] text-[9px] transition-colors hover:bg-[#FAFBFE] lg:text-[10px] xl:text-[11px]"
+                      >
+                        {/* NAME */}
+                        <td className="break-words px-1 py-4 font-semibold leading-5 sm:px-2">
+                          {student.name}
+                        </td>
+
+                        {/* STUDENT ID */}
+                        <td className="px-0.5 py-4 text-center sm:px-1">
+                          <span
+                            dir="ltr"
+                            className="inline-block max-w-full break-all text-[8px] sm:text-[9px] lg:text-[10px]"
+                          >
+                            {student.id}
+                          </span>
+                        </td>
+
+                        {/* MAJOR */}
+                        <td className="break-words px-1 py-4 leading-5 sm:px-2">
+                          {student.major}
+                        </td>
+
+                        {/* ORGANIZATION */}
+                        <td className="break-words px-1 py-4 leading-5 sm:px-2">
+                          {student.organization}
+                        </td>
+
+                        {/* STATUS */}
+                        <td className="px-0.5 py-4 sm:px-1">
+                          <StatusBadge status={student.status} />
+                        </td>
+
+                        {/* SUPERVISOR */}
+                        <td className="break-words px-1 py-4 leading-5 sm:px-2">
+                          {student.supervisor}
+                        </td>
+
+                        {/* VIEW + DELETE */}
+                        <td className="px-0.5 py-4 text-center align-middle sm:px-1">
+                          <div className="flex flex-wrap items-center justify-center gap-1">
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleViewStudent(student)
+                              }
+                              className="inline-flex min-h-[29px] min-w-0 items-center justify-center gap-1 rounded-[7px] border border-[#E0E7F2] bg-white px-1.5 py-1 text-[9px] transition hover:border-[#09379A] hover:text-[#09379A] sm:px-2 lg:text-[10px]"
+                              aria-label={`عرض تفاصيل ${student.name}`}
+                            >
+                              <Eye
+                                size={13}
+                                className="hidden shrink-0 sm:block"
+                              />
+                              عرض
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleDeleteClick(student)
+                              }
+                              className="inline-flex min-h-[29px] min-w-0 items-center justify-center gap-1 rounded-[7px] border border-[#FECACA] bg-white px-1.5 py-1 text-[9px] text-[#DC2626] transition hover:bg-[#FEF2F2] sm:px-2 lg:text-[10px]"
+                              aria-label={`حذف الطالب ${student.name}`}
+                            >
+                              <Trash2
+                                size={12}
+                                className="hidden shrink-0 sm:block"
+                              />
+                              حذف
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+
+                    {/* EMPTY STATE */}
+                    {visibleStudents.length === 0 && (
+                      <tr>
+                        <td
+                          colSpan={7}
+                          className="px-3 py-14 text-center"
+                        >
+                          <div className="mx-auto flex max-w-[300px] flex-col items-center">
+                            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#F1F5F9] text-[#64748B]">
+                              <Search size={21} />
+                            </div>
+
+                            <p className="m-0 text-[13px] font-semibold text-[#334155]">
+                              لا توجد نتائج مطابقة
+                            </p>
+
+                            <p className="m-0 mt-1 text-[11px] text-[#64748B]">
+                              جرّب تعديل البحث أو معايير التصفية.
+                            </p>
+
+                            <button
+                              type="button"
+                              onClick={resetFilters}
+                              className="mt-4 text-[11px] font-semibold text-[#09379A] hover:underline"
+                            >
+                              مسح عوامل التصفية
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* PAGINATION */}
+              <div className="mt-4 flex min-w-0 flex-wrap items-center justify-between gap-4">
+                <p className="m-0 text-[11px] text-[#64748B]">
+                  عرض{" "}
+                  {filteredStudents.length === 0
+                    ? 0
+                    : (safePage - 1) * PAGE_SIZE + 1}
+                  {" - "}
+                  {Math.min(
+                    safePage * PAGE_SIZE,
+                    filteredStudents.length
+                  )}
+                  {" من "}
+                  {filteredStudents.length} طالبًا
+                </p>
+
+                <div className="flex max-w-full flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={safePage === 1}
+                    onClick={() =>
+                      setCurrentPage((page) =>
+                        Math.max(1, page - 1)
+                      )
                     }
-                  />
+                    className="inline-flex h-[35px] items-center gap-1 rounded-full border border-[#E0E7F2] px-3 text-[11px] disabled:opacity-40"
+                  >
+                    <ChevronRight size={14} />
+                    السابق
+                  </button>
 
-                  <InfoBox
-                    label="البريد الإلكتروني"
-                    value={
-                      selectedStudent.email
+                  {Array.from(
+                    { length: totalPages },
+                    (_, index) => index + 1
+                  ).map((page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      onClick={() => setCurrentPage(page)}
+                      className={`h-[35px] min-w-[35px] rounded-full border text-[11px] ${
+                        safePage === page
+                          ? "border-[#09379A] bg-[#09379A] font-semibold text-white"
+                          : "border-[#E0E7F2] bg-white hover:border-[#09379A]"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+
+                  <button
+                    type="button"
+                    disabled={safePage === totalPages}
+                    onClick={() =>
+                      setCurrentPage((page) =>
+                        Math.min(totalPages, page + 1)
+                      )
                     }
-                  />
+                    className="inline-flex h-[35px] items-center gap-1 rounded-full border border-[#E0E7F2] px-3 text-[11px] disabled:opacity-40"
+                  >
+                    التالي
+                    <ChevronLeft size={14} />
+                  </button>
                 </div>
               </div>
-            </aside>
-          </>
-        )}
+            </section>
+
+            {/* FOOTER */}
+            <footer className="mt-8 flex min-w-0 flex-wrap items-center justify-between gap-3 pb-2 text-[11px] text-[#64748B]">
+              <p className="m-0 leading-5">
+                جميع الحقوق محفوظة © 2025 كلية الدراسات المتوسطة -
+                جامعة الأزهر - غزة
+              </p>
+
+              <div className="flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => navigate("/admin/settings")}
+                  className="text-[#09379A] hover:underline"
+                >
+                  الدعم الفني والأكاديمي
+                </button>
+
+                <span>•</span>
+
+                <button
+                  type="button"
+                  onClick={() => navigate("/admin/settings")}
+                  className="text-[#09379A] hover:underline"
+                >
+                  دليل بوابة التدريب الميداني
+                </button>
+              </div>
+            </footer>
+          </div>
+        </main>
+      </div>
+
+      {/* DELETE CONFIRMATION MODAL */}
+      {studentToDelete && (
+        <DeleteStudentModal
+          student={studentToDelete}
+          error={deleteError}
+          onCancel={closeDeleteModal}
+          onConfirm={confirmDelete}
+        />
+      )}
     </div>
   );
 }
 
-/* =========================================================
-   COMPONENTS
-========================================================= */
+// =====================================================
+// DELETE STUDENT MODAL
+// =====================================================
 
-const inputStyle = `
-  h-[42px]
-  w-full
 
-  rounded-[9px]
-
-  border
-  border-[#D9E2EC]
-
-  bg-white
-
-  px-[11px]
-
-  font-['Cairo']
-
-  text-[10px]
-  text-[#334155]
-
-  outline-none
-
-  focus:border-[#09379A]
-  focus:ring-2
-  focus:ring-[#09379A]/10
-`;
-
-function EligibilityBadge({
-  status,
+function DeleteStudentModal({
+  student,
+  error,
+  onCancel,
+  onConfirm,
 }) {
-  const styles = {
-    مؤهل:
-      "bg-[#ECFDF3] text-[#15803D] border-[#BBF7D0]",
-
-    "غير مؤهل":
-      "bg-[#FFF1F2] text-[#BE123C] border-[#FECDD3]",
-
-    "يحتاج مراجعة":
-      "bg-[#FFF7ED] text-[#C2410C] border-[#FED7AA]",
-
-    "مكتمل التدريب":
-      "bg-[#EEF3FF] text-[#09379A] border-[#D7E5FF]",
-  };
-
-  return (
-    <span
-      className={`
-        inline-flex
-        min-h-[23px]
-        items-center
-
-        whitespace-nowrap
-
-        rounded-full
-
-        border
-
-        px-[8px]
-
-        text-[8px]
-        font-bold
-
-        ${
-          styles[status] ||
-          "border-[#E2E8F0] bg-[#F8FAFC] text-[#64748B]"
-        }
-      `}
-    >
-      {status}
-    </span>
-  );
-}
-
-function TrainingBadge({
-  status,
-}) {
-  const styles = {
-    "يتدرب حاليًا":
-      "bg-[#EEF3FF] text-[#09379A]",
-
-    "بانتظار البدء":
-      "bg-[#FFF7ED] text-[#C2410C]",
-
-    "لم يبدأ":
-      "bg-[#F1F5F9] text-[#64748B]",
-
-    مكتمل:
-      "bg-[#ECFDF3] text-[#15803D]",
-
-    "غير متاح":
-      "bg-[#FFF1F2] text-[#BE123C]",
-  };
-
-  return (
-    <span
-      className={`
-        inline-flex
-        min-h-[23px]
-        items-center
-
-        whitespace-nowrap
-
-        rounded-full
-
-        px-[8px]
-
-        text-[8px]
-        font-bold
-
-        ${
-          styles[status] ||
-          "bg-[#F8FAFC] text-[#64748B]"
-        }
-      `}
-    >
-      {status}
-    </span>
-  );
-}
-
-function TrainingProgress({
-  completed,
-  required,
-}) {
-  const percentage =
-    required > 0
-      ? Math.round(
-          (completed / required) *
-            100
-        )
-      : 0;
-
   return (
     <div
+      dir="rtl"
       className="
-        rounded-[11px]
-
-        border
-        border-[#E7ECF2]
-
-        bg-[#FAFBFC]
-
-        p-[13px]
+        fixed inset-0 z-[9999]
+        flex items-center justify-center
+        bg-[#0F172A]/55
+        p-4
+        font-['Cairo']
       "
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) {
+          onCancel();
+        }
+      }}
     >
-      <div
+      <section
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="delete-student-title"
+        aria-describedby="delete-student-description"
         className="
-          flex
-          items-end
-          justify-between
-          gap-3
+          w-full max-w-[520px]
+          rounded-[12px]
+          bg-white
+          px-[28px] py-[28px]
+          shadow-[0_20px_60px_rgba(15,23,42,0.18)]
+          sm:px-[28px]
         "
       >
-        <div>
-          <span
-            className="
-              text-[8px]
-              text-[#94A3B8]
-            "
-          >
-            الساعات المنجزة
-          </span>
-
-          <p
-            className="
-              m-0
-              mt-[2px]
-
-              text-[15px]
-              font-bold
-              text-[#334155]
-            "
-          >
-            {completed}
-            <span
-              className="
-                mr-[3px]
-
-                text-[9px]
-                font-medium
-                text-[#94A3B8]
-              "
-            >
-              / {required} ساعة
-            </span>
-          </p>
-        </div>
-
-        <strong
-          className="
-            text-[12px]
-            text-[#09379A]
-          "
-        >
-          {percentage}%
-        </strong>
-      </div>
-
-      <div
-        className="
-          mt-[10px]
-
-          h-[7px]
-
-          overflow-hidden
-          rounded-full
-
-          bg-[#E2E8F0]
-        "
-      >
+        {/* DELETE ICON */}
         <div
           className="
-            h-full
+            mb-[20px]
+            flex h-[56px] w-[56px]
+            items-center justify-center
             rounded-full
-            bg-[#09379A]
+            bg-[#FEE2E2]
+            text-[#DC2626]
           "
-          style={{
-            width: `${Math.min(
-              percentage,
-              100
-            )}%`,
-          }}
-        />
-      </div>
+        >
+          <Trash2 size={25} strokeWidth={2} />
+        </div>
+
+        {/* TITLE */}
+        <h2
+          id="delete-student-title"
+          className="
+            m-0
+            text-right
+            text-[20px]
+            font-bold
+            leading-[32px]
+            text-[#111C2D]
+          "
+        >
+          حذف الطالب
+        </h2>
+
+        {/* DESCRIPTION */}
+        <p
+          id="delete-student-description"
+          className="
+            mb-0 mt-[13px]
+            text-right
+            text-[13px]
+            leading-[26px]
+            text-[#64748B]
+          "
+        >
+          سيتم حذف الطالب بشكل نهائي من سجل تدريبه، لا يمكن
+          التراجع عن هذا الإجراء.
+        </p>
+
+        {/* ERROR MESSAGE */}
+        {error && (
+          <p
+            role="alert"
+            className="
+              mb-0 mt-3
+              text-right text-[12px]
+              text-[#DC2626]
+            "
+          >
+            {error}
+          </p>
+        )}
+
+        {/* ACTION BUTTONS */}
+        <div className="mt-[17px] flex flex-wrap items-center gap-[12px]">
+          {/* CONFIRM */}
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="
+              inline-flex h-[44px]
+              items-center justify-center gap-[10px]
+              rounded-[8px]
+              bg-[#09379A]
+              px-[21px]
+              text-[12px]
+              font-bold
+              text-white
+              transition-colors
+              hover:bg-[#072E81]
+            "
+          >
+            <Trash2 size={16} strokeWidth={1.9} />
+            تأكيد الحذف
+          </button>
+
+          {/* CANCEL */}
+          <button
+            type="button"
+            onClick={onCancel}
+            className="
+              inline-flex h-[44px]
+              items-center justify-center
+              rounded-[8px]
+              border border-[#E0E7F2]
+              bg-white
+              px-[20px]
+              text-[12px]
+              font-semibold
+              text-[#111C2D]
+              transition-colors
+              hover:bg-[#F8FAFC]
+            "
+          >
+            إلغاء
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
 
-function RequirementValue({
-  label,
-  value,
-}) {
+
+// =====================================================
+// STATUS BADGE
+// =====================================================
+
+function StatusBadge({ status }) {
   return (
-    <div
-      className="
-        rounded-[8px]
-
-        bg-white
-
-        px-[8px]
-        py-[8px]
-
-        text-center
-      "
+    <span
+      className={`inline-flex max-w-full items-center gap-1 rounded-full px-1 py-1 text-[8px] font-semibold leading-4 sm:px-2 sm:text-[9px] lg:text-[10px] ${
+        STATUS_STYLES[status] ||
+        "bg-[#F1F5F9] text-[#475569]"
+      }`}
     >
-      <strong
-        className="
-          block
-
-          text-[12px]
-          text-[#09379A]
-        "
-      >
-        {value}
-      </strong>
-
-      <span
-        className="
-          mt-[2px]
-          block
-
-          text-[7px]
-          text-[#94A3B8]
-        "
-      >
-        {label}
-      </span>
-    </div>
-  );
-}
-
-function Label({ children }) {
-  return (
-    <label
-      className="
-        mb-[6px]
-        block
-
-        text-[10px]
-        font-bold
-        text-[#475569]
-      "
-    >
-      {children}
-    </label>
-  );
-}
-
-function FilterSelect({
-  label,
-  value,
-  onChange,
-  children,
-}) {
-  return (
-    <div>
-      <Label>{label}</Label>
-
-      <select
-        value={value}
-        onChange={(event) =>
-          onChange(event.target.value)
-        }
-        className={inputStyle}
-      >
-        {children}
-      </select>
-    </div>
-  );
-}
-
-function TableHead({ children }) {
-  return (
-    <th
-      className="
-        whitespace-nowrap
-
-        px-[13px]
-        py-[11px]
-
-        text-right
-        text-[9px]
-        font-bold
-        text-[#64748B]
-      "
-    >
-      {children}
-    </th>
-  );
-}
-
-function TableCell({ children }) {
-  return (
-    <td
-      className="
-        px-[13px]
-        py-[12px]
-
-        align-middle
-      "
-    >
-      {children}
-    </td>
-  );
-}
-
-function InfoBox({
-  label,
-  value,
-}) {
-  return (
-    <div
-      className="
-        rounded-[9px]
-
-        border
-        border-[#E7ECF2]
-
-        bg-[#FAFBFC]
-
-        px-[10px]
-        py-[9px]
-      "
-    >
-      <p
-        className="
-          m-0
-
-          text-[8px]
-          text-[#94A3B8]
-        "
-      >
-        {label}
-      </p>
-
-      <p
-        className="
-          m-0
-          mt-[3px]
-
-          break-words
-
-          text-[9px]
-          font-bold
-          leading-[18px]
-          text-[#475569]
-        "
-      >
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function MobileInfo({
-  label,
-  value,
-}) {
-  return (
-    <div>
-      <p
-        className="
-          m-0
-
-          text-[8px]
-          text-[#94A3B8]
-        "
-      >
-        {label}
-      </p>
-
-      <p
-        className="
-          m-0
-          mt-[2px]
-
-          text-[9px]
-          font-medium
-          leading-[17px]
-          text-[#475569]
-        "
-      >
-        {value}
-      </p>
-    </div>
-  );
-}
-
-function SectionTitle({
-  children,
-}) {
-  return (
-    <h4
-      className="
-        m-0
-        mb-[9px]
-        mt-[20px]
-
-        text-[11px]
-        font-bold
-        text-[#334155]
-      "
-    >
-      {children}
-    </h4>
-  );
-}
-
-function EmptyBox({
-  text,
-}) {
-  return (
-    <div
-      className="
-        rounded-[9px]
-
-        border
-        border-dashed
-        border-[#D9E2EC]
-
-        px-[12px]
-        py-[20px]
-
-        text-center
-
-        text-[9px]
-        text-[#94A3B8]
-      "
-    >
-      {text}
-    </div>
-  );
-}
-
-function EmptyState() {
-  return (
-    <div
-      className="
-        flex
-        min-h-[220px]
-        flex-col
-        items-center
-        justify-center
-
-        px-5
-        py-8
-
-        text-center
-      "
-    >
-      <Users
-        size={26}
-        className="text-[#94A3B8]"
-      />
-
-      <h3
-        className="
-          m-0
-          mt-[9px]
-
-          text-[12px]
-          font-bold
-          text-[#334155]
-        "
-      >
-        لا توجد نتائج
-      </h3>
-
-      <p
-        className="
-          m-0
-          mt-[3px]
-
-          text-[9px]
-          text-[#94A3B8]
-        "
-      >
-        لا يوجد طلبة مطابقون للفلاتر الحالية.
-      </p>
-    </div>
+      <span className="h-[5px] w-[5px] shrink-0 rounded-full bg-current" />
+      <span className="min-w-0 break-words">{status}</span>
+    </span>
   );
 }

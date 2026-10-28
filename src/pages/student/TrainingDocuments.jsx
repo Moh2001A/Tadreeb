@@ -333,7 +333,7 @@ export default function TrainingDocuments() {
     }
 
     navigate(
-      "/student/applications/status"
+      "/student/applications"
     );
   };
 
