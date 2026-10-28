@@ -1,4 +1,6 @@
-import { useNavigate } from "react-router-dom";
+
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 import {
   Bell,
@@ -7,494 +9,447 @@ import {
   ArrowRight,
   Printer,
   Star,
+  AlertCircle,
+  Plus,
+  Pencil,
+  ClipboardCheck,
 } from "lucide-react";
 
 import Sidebar from "../../components/admin/Sidebar";
 
-const CRITERIA = [
-  {
-    title: "المهارات الفنية والتطبيقية",
-    score: 4,
-  },
-  {
-    title: "الالتزام والانضباط",
-    score: 5,
-  },
-  {
-    title: "التواصل والعمل الجماعي",
-    score: 4,
-  },
-  {
-    title: "الابتكار وحل المشكلات",
-    score: 4,
-  },
-];
+import {
+  getEvaluation,
+  calculateFinalScore,
+  formatScore,
+  STATUS_CONFIG,
+  CRITERIA,
+} from "./evaluationStore";
+
+// =====================================================
+// MAIN COMPONENT
+// =====================================================
 
 export default function EvaluationDetails() {
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  const toggleSidebar = () => {
-    window.dispatchEvent(
-      new Event("toggle-student-sidebar")
-    );
+  const [evaluation, setEvaluation] = useState(() =>
+    getEvaluation(id)
+  );
+
+  useEffect(() => {
+    const refresh = () => {
+      setEvaluation(getEvaluation(id));
+    };
+
+    refresh();
+
+    window.addEventListener("storage", refresh);
+    window.addEventListener("focus", refresh);
+    window.addEventListener("evaluations-updated", refresh);
+
+    return () => {
+      window.removeEventListener("storage", refresh);
+      window.removeEventListener("focus", refresh);
+      window.removeEventListener("evaluations-updated", refresh);
+    };
+  }, [id]);
+
+  const goBack = () => {
+    navigate("/admin/evaluations");
   };
 
-  const handlePrint = () => {
-    window.print();
+  const basePath = `/admin/evaluations/${encodeURIComponent(id)}`;
+
+  // =====================================================
+  // NOT FOUND
+  // =====================================================
+
+  if (!evaluation) {
+    return (
+      <PageShell navigate={navigate}>
+        <div className="flex min-h-[320px] flex-col items-center justify-center rounded-[12px] border border-[#E0E7F2] bg-white p-8 text-center">
+          <AlertCircle size={40} className="text-[#DC2626]" />
+
+          <h1 className="mt-4 text-[20px] font-bold">
+            التقييم غير موجود
+          </h1>
+
+          <p className="mt-2 text-[12px] text-[#64748B]">
+            لم يتم العثور على تقييم بهذا الرقم.
+          </p>
+
+          <button
+            type="button"
+            onClick={goBack}
+            className="mt-4 rounded-[8px] bg-[#09379A] px-5 py-3 text-[12px] font-semibold text-white"
+          >
+            العودة إلى التقييمات
+          </button>
+        </div>
+      </PageShell>
+    );
+  }
+
+  // =====================================================
+  // EVALUATION STATE
+  // =====================================================
+
+  const isApproved = evaluation.status === "approved";
+
+  const hasFieldScore = evaluation.fieldScore != null;
+  const hasAcademicScore = evaluation.academicScore != null;
+
+  const finalScore = calculateFinalScore(evaluation);
+
+  const status =
+    STATUS_CONFIG[evaluation.status] ||
+    STATUS_CONFIG.not_started;
+
+  const hasFieldCriteria =
+    evaluation.fieldCriteria &&
+    Object.keys(evaluation.fieldCriteria).length > 0;
+
+  // =====================================================
+  // PAGE
+  // =====================================================
+
+  return (
+    <PageShell navigate={navigate}>
+      {/* BREADCRUMB */}
+      <nav className="mb-7 flex flex-wrap items-center gap-2 text-[12px] text-[#64748B] print:hidden">
+        <button
+          type="button"
+          onClick={() => navigate("/admin/dashboard")}
+          className="hover:text-[#09379A]"
+        >
+          الرئيسية
+        </button>
+
+        <ChevronLeft size={15} />
+
+        <span className="font-bold text-[#111C2D]">
+          تفاصيل التقييم
+        </span>
+      </nav>
+
+      {/* PAGE HEADER */}
+      <section className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="m-0 text-[26px] font-bold leading-10">
+            تفاصيل التقييم
+          </h1>
+
+          <p className="m-0 mt-1 text-[12px] text-[#64748B]">
+            {evaluation.fullName || evaluation.student}
+            {" - "}
+            {evaluation.organization}
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 print:hidden">
+          <button
+            type="button"
+            onClick={goBack}
+            className="inline-flex h-[44px] items-center gap-2 rounded-[8px] border border-[#E0E7F2] bg-white px-5 text-[12px] transition hover:border-[#09379A]"
+          >
+            <ArrowRight size={16} />
+            التقييمات
+          </button>
+
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="inline-flex h-[44px] items-center gap-2 rounded-[8px] border border-[#E0E7F2] bg-white px-5 text-[12px] transition hover:border-[#09379A]"
+          >
+            <Printer size={16} />
+            طباعة
+          </button>
+        </div>
+      </section>
+
+      {/* MAIN GRID */}
+      <div className="grid grid-cols-1 items-start gap-5 xl:grid-cols-[minmax(0,1.65fr)_400px]">
+
+        {/* RIGHT COLUMN */}
+        <div className="min-w-0 space-y-6">
+
+          {/* FIELD SUPERVISOR CRITERIA */}
+          <Section title="معايير تقييم المشرف الميداني">
+            {hasFieldCriteria ? (
+              <div>
+                {CRITERIA.map((criterion) => (
+                  <div
+                    key={criterion.key}
+                    className="flex min-h-[56px] flex-wrap items-center justify-between gap-3 border-b border-[#E6EBF5] py-3 last:border-0"
+                  >
+                    <span className="text-[12px] font-bold leading-6">
+                      {criterion.label}
+                    </span>
+
+                    <RatingStars
+                      score={
+                        evaluation.fieldCriteria?.[criterion.key]
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="m-0 py-4 text-[12px] leading-7 text-[#64748B]">
+                {hasFieldScore
+                  ? "الدرجة الإجمالية للمشرف الميداني متوفرة، لكن تفاصيل المعايير لم تُسجّل بعد."
+                  : "لم يتم تسجيل تقييم المشرف الميداني بعد."}
+              </p>
+            )}
+          </Section>
+
+          {/* FIELD SUPERVISOR NOTES */}
+          <Section title="ملاحظات المشرف الميداني">
+            <p className="m-0 text-[12px] leading-7 text-[#64748B]">
+              {evaluation.fieldNote ||
+                "لا توجد ملاحظات مسجلة من المشرف الميداني."}
+            </p>
+          </Section>
+        </div>
+
+        {/* LEFT COLUMN */}
+        <div className="min-w-0 space-y-6">
+
+          {/* FINAL SCORE */}
+          <Section title="الدرجة النهائية">
+            <div className="text-center">
+              <div className="text-[45px] font-bold leading-none text-[#062569]">
+                {formatScore(finalScore)}
+              </div>
+
+              <p className="m-0 mt-2 text-[11px] text-[#64748B]">
+                {finalScore == null
+                  ? "لم تكتمل مكونات الدرجة بعد"
+                  : "من 5 - الدرجة النهائية"}
+              </p>
+
+              {/* STATUS BADGE */}
+              <div className="mt-3">
+                <span
+                  className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-semibold ${
+                    isApproved
+                      ? "bg-[#E8EEF9] text-[#09379A]"
+                      : status.className
+                  }`}
+                >
+                  <span className="h-[6px] w-[6px] rounded-full bg-current" />
+                  {status.label}
+                </span>
+              </div>
+
+              {/* WORKFLOW ACTION */}
+              {!isApproved && hasFieldScore && (
+                <div className="mt-5 flex flex-wrap justify-center gap-2 print:hidden">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!hasAcademicScore) {
+                        navigate(`${basePath}/add`);
+                      } else {
+                        navigate(`${basePath}/final-review`);
+                      }
+                    }}
+                    className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-[8px] bg-[#09379A] px-4 py-2 text-[11px] font-semibold text-white transition hover:bg-[#072E81]"
+                  >
+                    {hasAcademicScore ? (
+                      <ClipboardCheck size={16} />
+                    ) : (
+                      <Plus size={16} />
+                    )}
+
+                    {hasAcademicScore
+                      ? "مراجعة التقييم النهائي"
+                      : "إضافة تقييم أكاديمي"}
+                  </button>
+
+                  {hasAcademicScore && (
+                    <button
+                      type="button"
+                      onClick={() => navigate(`${basePath}/add`)}
+                      className="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-[8px] border border-[#E0E7F2] bg-white px-4 py-2 text-[11px] font-semibold text-[#09379A] transition hover:border-[#09379A]"
+                    >
+                      <Pencil size={15} />
+                      تعديل التقييم الأكاديمي
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </Section>
+
+          {/* SCORES */}
+          <Section title="الدرجات">
+            <div className="grid grid-cols-2 gap-6">
+              <ScoreItem
+                label="المشرف الميداني"
+                value={evaluation.fieldScore}
+              />
+
+              <ScoreItem
+                label="المشرف الأكاديمي"
+                value={evaluation.academicScore}
+              />
+            </div>
+          </Section>
+        </div>
+      </div>
+
+      <Footer />
+    </PageShell>
+  );
+}
+
+// =====================================================
+// SECTION
+// =====================================================
+
+function Section({ title, children }) {
+  return (
+    <section className="min-w-0 rounded-[12px] border border-[#E0E7F2] bg-white p-5 sm:p-6">
+      <h2 className="m-0 border-b border-[#E6EBF5] pb-4 text-[17px] font-bold text-[#062569]">
+        {title}
+      </h2>
+
+      {children}
+    </section>
+  );
+}
+
+// =====================================================
+// RATING STARS
+// =====================================================
+
+function RatingStars({ score }) {
+  const value = score == null ? null : Number(score);
+
+  return (
+    <div
+      dir="ltr"
+      className="flex shrink-0 items-center gap-[2px]"
+      aria-label={
+        value == null
+          ? "لم يتم التقييم"
+          : `التقييم ${value} من 5`
+      }
+    >
+      {[1, 2, 3, 4, 5].map((number) => (
+        <Star
+          key={number}
+          size={17}
+          strokeWidth={1.8}
+          className={
+            value == null
+              ? "text-[#CBD5E1]"
+              : "text-[#F59E0B]"
+          }
+          fill={
+            value != null && number <= value
+              ? "#F59E0B"
+              : "transparent"
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
+// =====================================================
+// SCORE ITEM
+// =====================================================
+
+function ScoreItem({ label, value }) {
+  return (
+    <div className="min-w-0">
+      <p className="m-0 text-[11px] text-[#64748B]">
+        {label}
+      </p>
+
+      <p className="m-0 mt-2 text-[12px] font-semibold text-[#111C2D]">
+        {value != null
+          ? `${formatScore(value, 1)} من 5`
+          : "لم يتم التقييم"}
+      </p>
+    </div>
+  );
+}
+
+// =====================================================
+// PAGE LAYOUT
+// =====================================================
+
+function PageShell({ navigate, children }) {
+  const toggleSidebar = () => {
+    window.dispatchEvent(
+      new Event("toggle-admin-sidebar")
+    );
   };
 
   return (
     <div
       dir="rtl"
-      className="
-        flex
-        h-screen
-        w-full
-        overflow-hidden
-        bg-[#F8FAFC]
-        font-['Cairo']
-        text-[#111C2D]
-      "
+      className="flex h-screen w-full overflow-hidden bg-[#F8FAFC] font-['Cairo'] text-[#111C2D] print:h-auto print:overflow-visible"
     >
-      <Sidebar />
+      <div className="print:hidden">
+        <Sidebar />
+      </div>
 
-      <div
-        className="
-          flex
-          h-screen
-          min-w-0
-          flex-1
-          flex-col
-          overflow-hidden
-        "
-      >
+      <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden print:h-auto print:overflow-visible">
         {/* HEADER */}
-
-        <header
-          className="
-            z-30
-            flex
-            h-[72px]
-            shrink-0
-            items-center
-            justify-between
-            border-b
-            border-[#E6EBF5]
-            bg-white
-            px-4
-            sm:px-6
-            lg:px-8
-          "
-        >
+        <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-[#E6EBF5] bg-white px-4 sm:px-6 lg:px-8 print:hidden">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={toggleSidebar}
-              className="
-                flex
-                h-[38px]
-                w-[38px]
-                items-center
-                justify-center
-                rounded-[8px]
-                text-[#09379A]
-                hover:bg-[#F1F5F9]
-                lg:hidden
-              "
+              aria-label="فتح القائمة"
+              className="flex h-[38px] w-[38px] items-center justify-center rounded-[8px] text-[#09379A] hover:bg-[#F1F5F9] lg:hidden"
             >
               <Menu size={21} />
             </button>
 
             <button
               type="button"
-              onClick={() =>
-                navigate("/admin/announcements")
-              }
-              className="
-                relative
-                flex
-                h-[38px]
-                w-[38px]
-                items-center
-                justify-center
-                rounded-[8px]
-                text-[#111C2D]
-                hover:bg-[#F8FAFC]
-              "
+              onClick={() => navigate("/admin/announcements")}
+              aria-label="الإشعارات"
+              className="relative flex h-[38px] w-[38px] items-center justify-center rounded-[8px] hover:bg-[#F8FAFC]"
             >
               <Bell size={20} />
 
-              <span
-                className="
-                  absolute
-                  right-[6px]
-                  top-[5px]
-                  h-[7px]
-                  w-[7px]
-                  rounded-full
-                  bg-[#FF6B35]
-                "
-              />
+              <span className="absolute right-[6px] top-[5px] h-[7px] w-[7px] rounded-full bg-[#FF6534]" />
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div
-              className="
-                flex
-                h-[44px]
-                w-[44px]
-                items-center
-                justify-center
-                rounded-full
-                bg-[#E6EBF5]
-                text-[12px]
-                font-bold
-                text-[#09379A]
-              "
-            >
+          {/* PROFILE */}
+          <button
+            type="button"
+            onClick={() => navigate("/admin/profile")}
+            className="flex items-center gap-2 text-right"
+          >
+            <span className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full bg-[#E6EBF5] text-[12px] font-bold text-[#09379A]">
               سم
-            </div>
+            </span>
 
-            <div>
-              <p className="m-0 text-[12px] font-bold">
+            <span>
+              <span className="block text-[12px] font-bold">
                 د. سامر يوسف
-              </p>
+              </span>
 
-              <p className="m-0 text-[10px] text-[#64748B]">
+              <span className="block text-[10px] text-[#64748B]">
                 مشرف أكاديمي
-              </p>
-            </div>
-          </div>
+              </span>
+            </span>
+          </button>
         </header>
 
-        {/* CONTENT */}
-
-        <main
-          className="
-            min-w-0
-            flex-1
-            overflow-x-hidden
-            overflow-y-auto
-            px-4
-            pb-7
-            pt-5
-            sm:px-6
-            lg:px-8
-          "
-        >
+        {/* MAIN */}
+        <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-5 sm:px-6 lg:px-8 print:overflow-visible">
           <div className="mx-auto w-full max-w-[1450px]">
-            {/* BREADCRUMB */}
-
-            <div
-              className="
-                mb-8
-                flex
-                items-center
-                gap-2
-                text-[12px]
-                text-[#64748B]
-              "
-            >
-              <button
-                onClick={() =>
-                  navigate("/admin/dashboard")
-                }
-              >
-                الرئيسية
-              </button>
-
-              <ChevronLeft size={15} />
-
-              <span className="font-bold text-[#111C2D]">
-                تفاصيل التقييم
-              </span>
-            </div>
-
-            {/* TITLE */}
-
-            <section
-              className="
-                mb-6
-                flex
-                flex-col
-                gap-4
-                sm:flex-row
-                sm:items-start
-                sm:justify-between
-              "
-            >
-              <div>
-                <h1
-                  className="
-                    m-0
-                    text-[25px]
-                    font-bold
-                    text-[#111C2D]
-                    sm:text-[28px]
-                  "
-                >
-                  تفاصيل التقييم
-                </h1>
-
-                <p className="m-0 mt-1 text-[13px] text-[#64748B]">
-                  أمل أحمد صيام - شركة القدس للاتصالات
-                </p>
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() =>
-                    navigate("/admin/evaluations")
-                  }
-                  className="
-                    flex
-                    h-[44px]
-                    items-center
-                    gap-2
-                    rounded-[8px]
-                    border
-                    border-[#E0E7F2]
-                    bg-white
-                    px-4
-                    text-[11px]
-                  "
-                >
-                  <ArrowRight size={16} />
-                  التقييمات
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handlePrint}
-                  className="
-                    flex
-                    h-[44px]
-                    items-center
-                    gap-2
-                    rounded-[8px]
-                    border
-                    border-[#E0E7F2]
-                    bg-white
-                    px-4
-                    text-[11px]
-                  "
-                >
-                  <Printer size={16} />
-                  طباعة
-                </button>
-              </div>
-            </section>
-
-            {/* GRID */}
-
-            <div
-              className="
-                grid
-                grid-cols-1
-                gap-5
-                xl:grid-cols-[minmax(0,1.65fr)_400px]
-              "
-            >
-              {/* RIGHT */}
-
-              <div className="space-y-5">
-                <section
-                  className="
-                    rounded-[12px]
-                    border
-                    border-[#E0E7F2]
-                    bg-white
-                    p-6
-                  "
-                >
-                  <h2
-                    className="
-                      m-0
-                      border-b
-                      border-[#E6EBF5]
-                      pb-4
-                      text-[17px]
-                      font-bold
-                      text-[#062569]
-                    "
-                  >
-                    معايير تقييم المشرف الميداني
-                  </h2>
-
-                  <div>
-                    {CRITERIA.map((item) => (
-                      <div
-                        key={item.title}
-                        className="
-                          flex
-                          min-h-[56px]
-                          items-center
-                          justify-between
-                          gap-4
-                          border-b
-                          border-[#E6EBF5]
-                          last:border-b-0
-                        "
-                      >
-                        <span className="text-[12px] font-bold">
-                          {item.title}
-                        </span>
-
-                        <RatingStars score={item.score} />
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-                <section
-                  className="
-                    rounded-[12px]
-                    border
-                    border-[#E0E7F2]
-                    bg-white
-                    p-6
-                  "
-                >
-                  <h2
-                    className="
-                      m-0
-                      border-b
-                      border-[#E6EBF5]
-                      pb-4
-                      text-[17px]
-                      font-bold
-                      text-[#062569]
-                    "
-                  >
-                    ملاحظات المشرف الميداني
-                  </h2>
-
-                  <p
-                    className="
-                      m-0
-                      pt-4
-                      text-[12px]
-                      leading-7
-                      text-[#64748B]
-                    "
-                  >
-                    أظهرت الطالبة مهارات جيدة في بناء الواجهات
-                    والتزاماً تاماً بساعات الدوام.
-                  </p>
-                </section>
-              </div>
-
-              {/* LEFT */}
-
-              <div className="space-y-5">
-                <section
-                  className="
-                    rounded-[12px]
-                    border
-                    border-[#E0E7F2]
-                    bg-white
-                    p-6
-                    text-center
-                  "
-                >
-                  <h2
-                    className="
-                      m-0
-                      border-b
-                      border-[#E6EBF5]
-                      pb-4
-                      text-[17px]
-                      font-bold
-                      text-[#062569]
-                    "
-                  >
-                    الدرجة النهائية
-                  </h2>
-
-                  <div
-                    className="
-                      mt-4
-                      text-[44px]
-                      font-bold
-                      leading-none
-                      text-[#062569]
-                    "
-                  >
-                    4.25
-                  </div>
-
-                  <p className="mt-2 text-[10px] text-[#64748B]">
-                    من 5 - الدرجة النهائية
-                  </p>
-
-                  <span
-                    className="
-                      mt-2
-                      inline-flex
-                      items-center
-                      gap-2
-                      rounded-full
-                      bg-[#DCFCE7]
-                      px-3
-                      py-1
-                      text-[10px]
-                      font-semibold
-                      text-[#15803D]
-                    "
-                  >
-                    <span className="h-[5px] w-[5px] rounded-full bg-current" />
-                    مكتمل
-                  </span>
-                </section>
-
-                <section
-                  className="
-                    rounded-[12px]
-                    border
-                    border-[#E0E7F2]
-                    bg-white
-                    p-6
-                  "
-                >
-                  <h2
-                    className="
-                      m-0
-                      border-b
-                      border-[#E6EBF5]
-                      pb-4
-                      text-[17px]
-                      font-bold
-                      text-[#062569]
-                    "
-                  >
-                    الدرجات
-                  </h2>
-
-                  <div
-                    className="
-                      mt-5
-                      grid
-                      grid-cols-2
-                      gap-6
-                    "
-                  >
-                    <ScoreItem
-                      label="المشرف الميداني"
-                      value="4.0 من 5"
-                    />
-
-                    <ScoreItem
-                      label="المشرف الأكاديمي"
-                      value="4.5 من 5"
-                    />
-                  </div>
-                </section>
-              </div>
-            </div>
-
-            <Footer />
+            {children}
           </div>
         </main>
       </div>
@@ -502,78 +457,15 @@ export default function EvaluationDetails() {
   );
 }
 
-function RatingStars({ score }) {
-  return (
-    <div
-      dir="ltr"
-      className="flex items-center gap-[2px]"
-    >
-      {[1, 2, 3, 4, 5].map((number) => (
-        <Star
-          key={number}
-          size={17}
-          fill={
-            number <= score
-              ? "#F59E0B"
-              : "transparent"
-          }
-          className="text-[#F59E0B]"
-        />
-      ))}
-    </div>
-  );
-}
-
-function ScoreItem({ label, value }) {
-  return (
-    <div>
-      <p className="m-0 text-[10px] text-[#64748B]">
-        {label}
-      </p>
-
-      <strong
-        className="
-          mt-2
-          block
-          text-[12px]
-          text-[#111C2D]
-        "
-      >
-        {value}
-      </strong>
-    </div>
-  );
-}
+// =====================================================
+// FOOTER
+// =====================================================
 
 function Footer() {
   return (
-    <footer
-      className="
-        mt-[250px]
-        flex
-        flex-col
-        gap-3
-        pb-2
-        text-[11px]
-        text-[#64748B]
-        sm:flex-row
-        sm:items-center
-        sm:justify-between
-      "
-    >
-      <p className="m-0">
-        جميع الحقوق محفوظة © 2025 كلية الدراسات المتوسطة - جامعة الأزهر - غزة
-      </p>
-
-      <div className="flex items-center gap-3">
-        <span className="text-[#09379A]">
-          الدعم الفني والأكاديمي
-        </span>
-        <span>•</span>
-        <span className="text-[#09379A]">
-          دليل الطالب للتدريب الميداني
-        </span>
-      </div>
+    <footer className="mt-10 pb-3 text-center text-[11px] text-[#64748B] print:hidden">
+      جميع الحقوق محفوظة © 2025 كلية الدراسات المتوسطة -
+      جامعة الأزهر - غزة
     </footer>
   );
 }

@@ -34,6 +34,7 @@ import FinishTraining from "./pages/student/FinishTraining";
 import Certificate from "./pages/student/Certificate";
 import Notifications from "./pages/student/Notifications";
 import Profile from "./pages/student/Profile";
+import StudentSettings from "./pages/student/StudentSettings";
 
 // ========================================
 // ADMIN PAGES
@@ -61,17 +62,19 @@ import ApprovalsTrainingProviders from "./pages/admin/ApprovalsTrainingProviders
 
 import Approvals from "./pages/admin/Approvals";
 import ApprovalDetails from "./pages/admin/ApprovalDetails";
-import CompleteTraining from "./pages/admin/CompleteTraining";
 import Visits from "./pages/admin/Visits";
-import StudentTrainingDetails from "./pages/admin/StudentTrainingDetails";
 import StudentAttendance from "./pages/admin/StudentAttendance";
 import TrainingProgress from "./pages/admin/TrainingProgress";
+import TrainingMonitoring from "./pages/admin/TrainingMonitoring";
+import StudentTrainingDetails from "./pages/admin/StudentTrainingDetails";
+import CompleteTraining from "./pages/admin/CompleteTraining";
 import ReportsAdmin from "./pages/admin/Reports";
 import ReportDetails from "./pages/admin/ReportDetails";
 import ReviewReport from "./pages/admin/ReviewReport";
 import Evaluations from "./pages/admin/Evaluations";
 import EvaluationDetails from "./pages/admin/EvaluationDetails";
-import StudentEvaluation from "./pages/admin/StudentEvaluation";
+import AddEvaluation from "./pages/admin/AddEvaluation";
+import FinalEvaluationReview from "./pages/admin/FinalEvaluationReview";
 import Announcements from "./pages/admin/Announcements";
 
 import AdminProfile from "./pages/admin/Profile";
@@ -209,6 +212,10 @@ function App() {
         <Route
           path="/student/profile"
           element={<Profile />}
+        />
+        <Route
+          path="/student/settings"
+          element={<StudentSettings />}
         />
 
         {/* =================================
@@ -348,23 +355,18 @@ function App() {
         {/* Training Visits */}
 
         <Route
-          path="/admin/visits"
-          element={<Visits />}
+          path="/admin/training-monitoring"
+          element={<TrainingMonitoring />}
         />
 
         <Route
-          path="/admin/visits/:id"
+          path="/admin/training-monitoring/:studentId"
           element={<StudentTrainingDetails />}
         />
 
         <Route
-          path="/admin/visits/:id/attendance"
-          element={<StudentAttendance />}
-        />
-
-        <Route
-          path="/admin/visits/progress"
-          element={<TrainingProgress />}
+          path="/admin/training-monitoring/:studentId/complete"
+          element={<CompleteTraining />}
         />
 
         {/* Reports */}
@@ -394,9 +396,15 @@ function App() {
           path="/admin/evaluations/:id"
           element={<EvaluationDetails />}
         />
+
         <Route
-          path="/admin/evaluations/add"
-          element={<StudentEvaluation />}
+          path="/admin/evaluations/:id/add"
+          element={<AddEvaluation />}
+        />
+
+        <Route
+          path="/admin/evaluations/:id/final-review"
+          element={<FinalEvaluationReview />}
         />
 
         {/* Announcements */}

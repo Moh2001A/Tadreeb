@@ -66,7 +66,7 @@ export default function Sidebar() {
     {
       name: "متابعة التدريب",
       icon: Activity,
-      path: "/admin/visits",
+      path: "/admin/training-monitoring",
     },
     {
       name: "التقارير",

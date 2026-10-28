@@ -1,4 +1,6 @@
+
 import { useEffect, useState } from "react";
+
 import {
   NavLink,
   useLocation,
@@ -16,6 +18,7 @@ import {
   GraduationCap,
   Bell,
   UserRound,
+  Settings,
   LogOut,
   X,
 } from "lucide-react";
@@ -82,8 +85,16 @@ export default function Sidebar() {
       icon: UserRound,
       path: "/student/profile",
     },
+
+    // NEW: STUDENT SETTINGS
+    {
+      name: "الإعدادات",
+      icon: Settings,
+      path: "/student/settings",
+    },
   ];
 
+  // MOBILE SIDEBAR TOGGLE
   useEffect(() => {
     const handleToggleSidebar = () => {
       setIsMobileOpen((prev) => !prev);
@@ -102,10 +113,12 @@ export default function Sidebar() {
     };
   }, []);
 
+  // CLOSE SIDEBAR AFTER NAVIGATION
   useEffect(() => {
     setIsMobileOpen(false);
   }, [location.pathname]);
 
+  // ESCAPE KEY & BODY SCROLL
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === "Escape") {
@@ -329,18 +342,18 @@ export default function Sidebar() {
                       ${
                         isActive
                           ? `
-                            bg-white
-                            text-[#09379A]
-                            font-bold
-                            shadow-[0_1px_2px_rgba(0,0,0,0.05)]
-                          `
+                              bg-white
+                              text-[#09379A]
+                              font-bold
+                              shadow-[0_1px_2px_rgba(0,0,0,0.05)]
+                            `
                           : `
-                            bg-transparent
-                            text-white/90
-                            font-medium
-                            hover:bg-white/10
-                            hover:text-white
-                          `
+                              bg-transparent
+                              text-white/90
+                              font-medium
+                              hover:bg-white/10
+                              hover:text-white
+                            `
                       }
                     `}
                   >
