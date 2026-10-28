@@ -1,7 +1,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
 import {
   Bell,
   Menu,
@@ -24,7 +23,8 @@ import Sidebar from "../../components/admin/Sidebar";
 // DATA
 // =====================================================
 
-const DELETED_STUDENTS_KEY = "cis-deleted-student-ids-v1";
+const STORAGE_KEY = "cis-deleted-student-ids-v1";
+const PAGE_SIZE = 6;
 
 const INITIAL_STUDENTS = [
   {
@@ -154,22 +154,14 @@ const STATUS_STYLES = {
   "مرفوض": "bg-[#FEE2E2] text-[#DC2626]",
 };
 
-const SORT_OPTIONS = [
-  { value: "name", label: "حسب اسم الطالب" },
-  { value: "id", label: "حسب الرقم الجامعي" },
-  { value: "date", label: "حسب تاريخ البدء" },
-];
-
-const PAGE_SIZE = 6;
-
 // =====================================================
 // LOCAL STORAGE
 // =====================================================
 
-function getDeletedStudentIds() {
+function getDeletedIds() {
   try {
     const saved = JSON.parse(
-      localStorage.getItem(DELETED_STUDENTS_KEY) || "[]"
+      localStorage.getItem(STORAGE_KEY) || "[]"
     );
 
     return Array.isArray(saved) ? saved.map(String) : [];
@@ -179,20 +171,20 @@ function getDeletedStudentIds() {
 }
 
 function readStudents() {
-  const deletedIds = new Set(getDeletedStudentIds());
+  const deleted = new Set(getDeletedIds());
 
   return INITIAL_STUDENTS.filter(
-    (student) => !deletedIds.has(String(student.id))
+    (student) => !deleted.has(student.id)
   );
 }
 
-function saveDeletedStudent(studentId) {
+function saveDeletedId(id) {
   try {
-    const ids = new Set(getDeletedStudentIds());
-    ids.add(String(studentId));
+    const ids = new Set(getDeletedIds());
+    ids.add(String(id));
 
     localStorage.setItem(
-      DELETED_STUDENTS_KEY,
+      STORAGE_KEY,
       JSON.stringify([...ids])
     );
 
@@ -213,63 +205,57 @@ export default function Students() {
   const [students, setStudents] = useState(readStudents);
 
   const [search, setSearch] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState("الكل");
-  const [selectedMajor, setSelectedMajor] = useState("الكل");
+  const [statusFilter, setStatusFilter] = useState("الكل");
+  const [majorFilter, setMajorFilter] = useState("الكل");
   const [sortOrder, setSortOrder] = useState("name");
-  const [currentPage, setCurrentPage] = useState(1);
 
   const [showFilters, setShowFilters] = useState(false);
   const [showSort, setShowSort] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  // DELETE MODAL
   const [studentToDelete, setStudentToDelete] = useState(null);
   const [deleteError, setDeleteError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Refresh if data was changed in another tab
-  useEffect(() => {
-    const refreshStudents = () => {
-      setStudents(readStudents());
-    };
-
-    window.addEventListener("storage", refreshStudents);
-
-    return () => {
-      window.removeEventListener("storage", refreshStudents);
-    };
-  }, []);
-
-  // Refresh on returning to this route
   useEffect(() => {
     setStudents(readStudents());
   }, [location.key]);
 
-  // Close delete modal with Escape
+  useEffect(() => {
+    const refresh = () => setStudents(readStudents());
+
+    window.addEventListener("storage", refresh);
+
+    return () => {
+      window.removeEventListener("storage", refresh);
+    };
+  }, []);
+
   useEffect(() => {
     if (!studentToDelete) return;
 
-    const handleKeyDown = (event) => {
+    const onEscape = (event) => {
       if (event.key === "Escape") {
         setStudentToDelete(null);
         setDeleteError("");
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keydown", onEscape);
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keydown", onEscape);
     };
   }, [studentToDelete]);
 
   // =====================================================
-  // FILTER & SORT
+  // FILTERING & SORTING
   // =====================================================
 
   const majors = useMemo(
     () => [
       ...new Set(
-        students.map((student) => student.major).filter(Boolean)
+        students.map((student) => student.major)
       ),
     ],
     [students]
@@ -287,25 +273,23 @@ export default function Students() {
           student.major,
           student.organization,
         ].some((value) =>
-          String(value || "")
-            .toLowerCase()
-            .includes(query)
+          String(value || "").toLowerCase().includes(query)
         );
 
       const matchesStatus =
-        selectedStatus === "الكل" ||
-        student.status === selectedStatus;
+        statusFilter === "الكل" ||
+        student.status === statusFilter;
 
       const matchesMajor =
-        selectedMajor === "الكل" ||
-        student.major === selectedMajor;
+        majorFilter === "الكل" ||
+        student.major === majorFilter;
 
       return matchesSearch && matchesStatus && matchesMajor;
     });
 
     return [...result].sort((a, b) => {
       if (sortOrder === "id") {
-        return String(a.id).localeCompare(String(b.id));
+        return a.id.localeCompare(b.id);
       }
 
       if (sortOrder === "date") {
@@ -314,22 +298,15 @@ export default function Students() {
         );
       }
 
-      return String(a.name).localeCompare(
-        String(b.name),
-        "ar"
-      );
+      return a.name.localeCompare(b.name, "ar");
     });
   }, [
     students,
     search,
-    selectedStatus,
-    selectedMajor,
+    statusFilter,
+    majorFilter,
     sortOrder,
   ]);
-
-  // =====================================================
-  // PAGINATION
-  // =====================================================
 
   const totalPages = Math.max(
     1,
@@ -347,108 +324,77 @@ export default function Students() {
   // ACTIONS
   // =====================================================
 
-  const toggleSidebar = () => {
-    window.dispatchEvent(
-      new Event("toggle-admin-sidebar")
-    );
-  };
-
   const resetFilters = () => {
     setSearch("");
-    setSelectedStatus("الكل");
-    setSelectedMajor("الكل");
+    setStatusFilter("الكل");
+    setMajorFilter("الكل");
     setSortOrder("name");
     setCurrentPage(1);
     setShowFilters(false);
     setShowSort(false);
   };
 
-  const updateSearch = (value) => {
-    setSearch(value);
-    setCurrentPage(1);
-  };
-
-  const handleAddStudent = () => {
-    navigate("/admin/add-student");
-  };
-
-  const handleViewStudent = (student) => {
+  const handleView = (student) => {
     navigate(
       `/admin/students/${encodeURIComponent(student.id)}`,
       {
-        state: {
-          student: { ...student },
-        },
+        state: { student },
       }
     );
   };
 
-  const handleDeleteClick = (student) => {
+  const handleDelete = (student) => {
     setStudentToDelete(student);
     setDeleteError("");
     setShowFilters(false);
     setShowSort(false);
   };
 
-  const closeDeleteModal = () => {
-    setStudentToDelete(null);
-    setDeleteError("");
-  };
-
   const confirmDelete = () => {
     if (!studentToDelete) return;
 
-    const student = studentToDelete;
-
-    const saved = saveDeletedStudent(student.id);
-
-    if (!saved) {
-      setDeleteError(
-        "تعذر حفظ عملية الحذف، يرجى المحاولة مرة أخرى."
-      );
+    if (!saveDeletedId(studentToDelete.id)) {
+      setDeleteError("تعذر حفظ عملية الحذف. حاول مجددًا.");
       return;
     }
 
     setStudents((previous) =>
       previous.filter(
-        (item) => String(item.id) !== String(student.id)
+        (student) => student.id !== studentToDelete.id
       )
+    );
+
+    setSuccessMessage(
+      `تم حذف الطالب ${studentToDelete.name} بنجاح.`
     );
 
     setStudentToDelete(null);
     setDeleteError("");
-
-    setSuccessMessage(
-      `تم حذف الطالب ${student.name} من قائمة الطلاب بنجاح.`
-    );
   };
 
-  // =====================================================
-  // EXPORT CSV
-  // =====================================================
-
   const exportCSV = () => {
-    const headers = [
-      "اسم الطالب",
-      "الرقم الجامعي",
-      "التخصص",
-      "جهة التدريب",
-      "حالة التدريب",
-      "المشرف الأكاديمي",
-      "تاريخ البدء",
+    const rows = [
+      [
+        "اسم الطالب",
+        "الرقم الجامعي",
+        "التخصص",
+        "جهة التدريب",
+        "حالة التدريب",
+        "المشرف الأكاديمي",
+        "تاريخ البدء",
+      ],
+      ...filteredStudents.map((student) => [
+        student.name,
+        student.id,
+        student.major,
+        student.organization,
+        student.status,
+        student.supervisor,
+        student.startDate,
+      ]),
     ];
 
-    const rows = filteredStudents.map((student) => [
-      student.name,
-      student.id,
-      student.major,
-      student.organization,
-      student.status,
-      student.supervisor,
-      student.startDate,
-    ]);
-
-    const csv = [headers, ...rows]
+    const csv = rows
       .map((row) =>
         row
           .map((value) =>
@@ -459,7 +405,7 @@ export default function Students() {
       .join("\r\n");
 
     const blob = new Blob(["\uFEFF", csv], {
-      type: "text/csv;charset=utf-8;",
+      type: "text/csv;charset=utf-8",
     });
 
     const url = URL.createObjectURL(blob);
@@ -467,7 +413,6 @@ export default function Students() {
 
     link.href = url;
     link.download = "students.csv";
-
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -475,15 +420,11 @@ export default function Students() {
     URL.revokeObjectURL(url);
   };
 
-  const inputClass =
+  const toolButton =
+    "inline-flex h-[44px] items-center justify-center gap-2 rounded-[8px] border border-[#E0E7F2] bg-white px-4 text-[12px] transition hover:border-[#09379A]";
+
+  const inputStyle =
     "h-[40px] w-full rounded-[8px] border border-[#E0E7F2] bg-white px-3 text-[12px] outline-none focus:border-[#09379A]";
-
-  const toolButtonClass =
-    "inline-flex h-[44px] items-center justify-center gap-2 rounded-[8px] border border-[#E0E7F2] bg-white px-4 text-[12px] transition hover:border-[#B9C9E8]";
-
-  // =====================================================
-  // PAGE JSX
-  // =====================================================
 
   return (
     <div
@@ -493,29 +434,32 @@ export default function Students() {
       <Sidebar />
 
       <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
-
         {/* HEADER */}
-        <header className="z-30 flex h-[72px] w-full shrink-0 items-center justify-between border-b border-[#E6EBF5] bg-white px-4 sm:px-6 lg:px-8">
+        <header className="z-30 flex h-[72px] shrink-0 items-center justify-between border-b border-[#E6EBF5] bg-white px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={toggleSidebar}
               aria-label="فتح القائمة"
-              className="flex h-[38px] w-[38px] items-center justify-center rounded-[8px] text-[#09379A] hover:bg-[#F1F5F9] lg:hidden"
+              onClick={() =>
+                window.dispatchEvent(
+                  new Event("toggle-admin-sidebar")
+                )
+              }
+              className="rounded-lg p-2 text-[#09379A] lg:hidden"
             >
               <Menu size={21} />
             </button>
 
             <button
               type="button"
+              aria-label="الإشعارات"
               onClick={() =>
                 navigate("/admin/announcements")
               }
-              aria-label="الإشعارات"
-              className="relative flex h-[38px] w-[38px] items-center justify-center rounded-[8px] hover:bg-[#F8FAFC]"
+              className="relative rounded-lg p-2"
             >
               <Bell size={20} />
-              <span className="absolute right-[6px] top-[5px] h-[7px] w-[7px] rounded-full bg-[#FF6B35]" />
+              <span className="absolute right-[7px] top-[6px] h-[7px] w-[7px] rounded-full bg-[#FF6534]" />
             </button>
           </div>
 
@@ -524,7 +468,7 @@ export default function Students() {
             onClick={() => navigate("/admin/profile")}
             className="flex items-center gap-2 text-right"
           >
-            <div className="flex h-[44px] w-[44px] shrink-0 items-center justify-center rounded-full bg-[#E6EBF5] text-[12px] font-bold text-[#09379A]">
+            <div className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#E6EBF5] text-[12px] font-bold text-[#09379A]">
               سم
             </div>
 
@@ -539,18 +483,15 @@ export default function Students() {
           </button>
         </header>
 
-        {/* MAIN CONTENT */}
-        <main className="w-full min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-6 pt-5 sm:px-6 lg:px-8">
+        {/* MAIN */}
+        <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-3 pb-6 pt-5 sm:px-6 lg:px-8">
           <div className="mx-auto w-full min-w-0 max-w-[1450px]">
 
             {/* BREADCRUMB */}
-            <div className="mb-2 flex items-center gap-2 text-[12px] text-[#64748B]">
+            <div className="mb-3 flex items-center gap-2 text-[12px] text-[#64748B]">
               <button
                 type="button"
-                onClick={() =>
-                  navigate("/admin/dashboard")
-                }
-                className="hover:text-[#09379A]"
+                onClick={() => navigate("/admin/dashboard")}
               >
                 الرئيسية
               </button>
@@ -562,50 +503,47 @@ export default function Students() {
               </span>
             </div>
 
-            {/* PAGE TITLE */}
-            <section className="mb-6 flex min-w-0 flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="min-w-0">
-                <h1 className="m-0 text-[23px] font-bold leading-9 text-[#111C2D] sm:text-[26px]">
+            {/* TITLE */}
+            <section className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h1 className="m-0 text-[25px] font-bold">
                   إدارة الطلاب
                 </h1>
 
-                <p className="m-0 mt-1 text-[13px] leading-6 text-[#64748B]">
+                <p className="m-0 mt-1 text-[12px] text-[#64748B]">
                   قائمة الطلاب المتدربين ومتابعة حالتهم
                 </p>
               </div>
 
               <button
                 type="button"
-                onClick={handleAddStudent}
-                className="inline-flex h-[44px] shrink-0 items-center justify-center gap-2 rounded-[9px] bg-[#FF6534] px-5 text-[13px] font-semibold text-white transition-colors hover:bg-[#E95526]"
+                onClick={() => navigate("/admin/add-student")}
+                className="inline-flex h-[44px] items-center justify-center gap-2 self-start rounded-[8px] bg-[#FF6534] px-5 text-[12px] font-bold text-white hover:bg-[#E95526]"
               >
                 <Plus size={18} />
                 إضافة طالب
               </button>
             </section>
 
-            {/* SUCCESS MESSAGE */}
+            {/* SUCCESS */}
             {successMessage && (
               <div
                 role="status"
-                className="mb-5 flex items-center justify-between gap-3 rounded-[9px] border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-[12px] text-[#15803D]"
+                className="mb-5 flex items-center justify-between gap-3 rounded-lg border border-[#BBF7D0] bg-[#F0FDF4] px-4 py-3 text-[12px] text-[#15803D]"
               >
-                <span>{successMessage}</span>
+                {successMessage}
 
                 <button
                   type="button"
-                  aria-label="إغلاق رسالة النجاح"
                   onClick={() => setSuccessMessage("")}
                 >
-                  <X size={16} />
+                  <X size={17} />
                 </button>
               </div>
             )}
 
-            {/* SEARCH & TOOLS */}
-            <section className="mb-5 flex min-w-0 flex-col gap-3 xl:flex-row xl:items-center">
-
-              {/* SEARCH */}
+            {/* SEARCH + TOOLS */}
+            <section className="mb-5 flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center">
               <div className="relative min-w-0 flex-1">
                 <Search
                   size={18}
@@ -615,74 +553,47 @@ export default function Students() {
                 <input
                   type="search"
                   value={search}
-                  onChange={(event) =>
-                    updateSearch(event.target.value)
-                  }
+                  onChange={(event) => {
+                    setSearch(event.target.value);
+                    setCurrentPage(1);
+                  }}
                   placeholder="ابحث بالاسم أو الرقم الجامعي..."
-                  aria-label="البحث عن طالب"
-                  className="h-[44px] w-full min-w-0 rounded-[8px] border border-[#E0E7F2] bg-white pl-10 pr-11 text-[13px] outline-none focus:border-[#09379A] focus:ring-2 focus:ring-[#09379A]/10"
+                  className="h-[44px] w-full rounded-[8px] border border-[#E0E7F2] bg-white pl-4 pr-11 text-[12px] outline-none focus:border-[#09379A]"
                 />
-
-                {search && (
-                  <button
-                    type="button"
-                    aria-label="مسح البحث"
-                    onClick={() => updateSearch("")}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 rounded p-1 text-[#64748B] hover:bg-[#F1F5F9]"
-                  >
-                    <X size={15} />
-                  </button>
-                )}
               </div>
 
-              {/* TOOLS */}
-              <div className="flex flex-wrap items-center gap-2">
-
+              <div className="flex flex-wrap gap-2">
                 {/* FILTER */}
                 <div className="relative">
                   <button
                     type="button"
+                    className={toolButton}
                     onClick={() => {
                       setShowFilters((value) => !value);
                       setShowSort(false);
                     }}
-                    className={`${toolButtonClass} ${
-                      showFilters
-                        ? "border-[#09379A] bg-[#EEF4FF] text-[#09379A]"
-                        : ""
-                    }`}
                   >
                     <SlidersHorizontal size={17} />
                     تصفية
                   </button>
 
                   {showFilters && (
-                    <div className="absolute right-0 top-[50px] z-20 w-[260px] max-w-[calc(100vw-32px)] rounded-[12px] border border-[#E0E7F2] bg-white p-4 shadow-lg">
-                      <div className="mb-4 flex items-center justify-between">
-                        <h3 className="m-0 text-[13px] font-bold">
-                          تصفية الطلاب
-                        </h3>
+                    <div className="absolute right-0 top-[50px] z-20 w-[260px] max-w-[calc(100vw-32px)] rounded-[10px] border border-[#E0E7F2] bg-white p-4 shadow-lg">
+                      <h3 className="mb-4 text-[13px] font-bold">
+                        تصفية الطلاب
+                      </h3>
 
-                        <button
-                          type="button"
-                          aria-label="إغلاق التصفية"
-                          onClick={() => setShowFilters(false)}
-                        >
-                          <X size={16} />
-                        </button>
-                      </div>
-
-                      <label className="mb-2 block text-[11px] font-semibold text-[#475569]">
+                      <label className="mb-2 block text-[11px]">
                         حالة التدريب
                       </label>
 
                       <select
-                        value={selectedStatus}
+                        className={`${inputStyle} mb-4`}
+                        value={statusFilter}
                         onChange={(event) => {
-                          setSelectedStatus(event.target.value);
+                          setStatusFilter(event.target.value);
                           setCurrentPage(1);
                         }}
-                        className={`${inputClass} mb-4`}
                       >
                         {STATUS_OPTIONS.map((status) => (
                           <option key={status} value={status}>
@@ -691,22 +602,19 @@ export default function Students() {
                         ))}
                       </select>
 
-                      <label className="mb-2 block text-[11px] font-semibold text-[#475569]">
+                      <label className="mb-2 block text-[11px]">
                         التخصص
                       </label>
 
                       <select
-                        value={selectedMajor}
+                        className={`${inputStyle} mb-4`}
+                        value={majorFilter}
                         onChange={(event) => {
-                          setSelectedMajor(event.target.value);
+                          setMajorFilter(event.target.value);
                           setCurrentPage(1);
                         }}
-                        className={`${inputClass} mb-4`}
                       >
-                        <option value="الكل">
-                          كل التخصصات
-                        </option>
-
+                        <option value="الكل">كل التخصصات</option>
                         {majors.map((major) => (
                           <option key={major} value={major}>
                             {major}
@@ -718,7 +626,7 @@ export default function Students() {
                         <button
                           type="button"
                           onClick={resetFilters}
-                          className="inline-flex h-[36px] flex-1 items-center justify-center gap-1 rounded-[7px] border border-[#E0E7F2] text-[11px]"
+                          className="flex h-[36px] flex-1 items-center justify-center gap-1 rounded-lg border border-[#E0E7F2] text-[11px]"
                         >
                           <RotateCcw size={13} />
                           إعادة ضبط
@@ -727,7 +635,7 @@ export default function Students() {
                         <button
                           type="button"
                           onClick={() => setShowFilters(false)}
-                          className="h-[36px] flex-1 rounded-[7px] bg-[#09379A] text-[11px] font-semibold text-white"
+                          className="h-[36px] flex-1 rounded-lg bg-[#09379A] text-[11px] text-white"
                         >
                           تطبيق
                         </button>
@@ -740,11 +648,11 @@ export default function Students() {
                 <div className="relative">
                   <button
                     type="button"
+                    className={toolButton}
                     onClick={() => {
                       setShowSort((value) => !value);
                       setShowFilters(false);
                     }}
-                    className={toolButtonClass}
                   >
                     <ArrowDownUp size={17} />
                     ترتيب
@@ -752,21 +660,25 @@ export default function Students() {
 
                   {showSort && (
                     <div className="absolute left-0 top-[50px] z-20 w-[190px] rounded-[10px] border border-[#E0E7F2] bg-white p-2 shadow-lg">
-                      {SORT_OPTIONS.map((option) => (
+                      {[
+                        ["name", "حسب اسم الطالب"],
+                        ["id", "حسب الرقم الجامعي"],
+                        ["date", "حسب تاريخ البدء"],
+                      ].map(([value, label]) => (
                         <button
-                          key={option.value}
+                          key={value}
                           type="button"
                           onClick={() => {
-                            setSortOrder(option.value);
+                            setSortOrder(value);
                             setShowSort(false);
                           }}
-                          className={`w-full rounded-[7px] px-3 py-2 text-right text-[12px] ${
-                            sortOrder === option.value
-                              ? "bg-[#EEF4FF] font-semibold text-[#09379A]"
+                          className={`w-full rounded-lg px-3 py-2 text-right text-[12px] ${
+                            sortOrder === value
+                              ? "bg-[#EEF4FF] text-[#09379A]"
                               : "hover:bg-[#F8FAFC]"
                           }`}
                         >
-                          {option.label}
+                          {label}
                         </button>
                       ))}
                     </div>
@@ -776,8 +688,8 @@ export default function Students() {
                 {/* EXPORT */}
                 <button
                   type="button"
+                  className={toolButton}
                   onClick={exportCSV}
-                  className={toolButtonClass}
                 >
                   <Download size={16} />
                   تصدير
@@ -786,42 +698,39 @@ export default function Students() {
             </section>
 
             {/* STATUS FILTERS */}
-            <section className="mb-6 flex min-w-0 flex-wrap items-center gap-2">
-              {STATUS_OPTIONS.map((status) => {
-                const active = selectedStatus === status;
-
-                return (
-                  <button
-                    key={status}
-                    type="button"
-                    onClick={() => {
-                      setSelectedStatus(status);
-                      setCurrentPage(1);
-                    }}
-                    className={`inline-flex h-[36px] items-center gap-2 rounded-full border px-4 text-[11px] transition ${
-                      active
-                        ? "border-[#09379A] bg-[#09379A] font-semibold text-white"
-                        : "border-[#E0E7F2] bg-white text-[#475569] hover:border-[#B9C9E8]"
-                    }`}
-                  >
-                    {status}
-                    {status === "الكل" && ` ${students.length}`}
-                  </button>
-                );
-              })}
+            <section className="mb-5 flex flex-wrap gap-2">
+              {STATUS_OPTIONS.map((status) => (
+                <button
+                  key={status}
+                  type="button"
+                  onClick={() => {
+                    setStatusFilter(status);
+                    setCurrentPage(1);
+                  }}
+                  className={`rounded-full border px-4 py-2 text-[11px] transition ${
+                    statusFilter === status
+                      ? "border-[#09379A] bg-[#09379A] font-semibold text-white"
+                      : "border-[#E0E7F2] bg-white text-[#475569]"
+                  }`}
+                >
+                  {status}
+                  {status === "الكل" && ` ${students.length}`}
+                </button>
+              ))}
             </section>
 
             {/* =============================================
-                STUDENTS TABLE - NO HORIZONTAL SCROLL
+                STUDENTS TABLE
+                MOBILE: HORIZONTAL SCROLL
+                DESKTOP: FIT TO PAGE
             ============================================= */}
-            <section className="w-full min-w-0 rounded-[12px] border border-[#E0E7F2] bg-white p-2 sm:p-4 xl:p-5">
+            <section className="w-full min-w-0 rounded-[12px] border border-[#E0E7F2] bg-white p-3 sm:p-4 xl:p-5">
 
-              <div className="mb-4 flex min-w-0 flex-wrap items-center justify-between gap-2">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <h2 className="m-0 text-[15px] font-bold text-[#062569]">
                     قائمة الطلاب
                   </h2>
-
                   <p className="m-0 mt-1 text-[11px] text-[#64748B]">
                     بيانات الطلاب وحالة التدريب الحالية
                   </p>
@@ -832,159 +741,160 @@ export default function Students() {
                 </span>
               </div>
 
-              {/* IMPORTANT: NO overflow-x-auto */}
-              <div className="w-full min-w-0 overflow-hidden rounded-[9px] border border-[#E0E7F2]">
+              {/* MOBILE HINT */}
+              <div className="mb-3 flex items-center gap-2 text-[11px] text-[#64748B] lg:hidden">
+                <ArrowDownUp
+                  size={14}
+                  className="rotate-90 text-[#09379A]"
+                />
+                اسحب الجدول أفقيًا لعرض جميع البيانات والإجراءات
+              </div>
 
-                <table className="w-full table-fixed border-collapse text-right">
+              {/* 
+                Scroll stays INSIDE this container on mobile.
+                The entire page won't scroll horizontally.
+              */}
+              <div
+                dir="rtl"
+                role="region"
+                aria-label="جدول الطلاب - يمكن تمريره أفقيًا"
+                tabIndex={0}
+                className="w-full min-w-0 max-w-full overflow-x-auto overflow-y-hidden overscroll-x-contain rounded-[9px] border border-[#E0E7F2] focus:outline-none focus:ring-2 focus:ring-[#09379A]/20 lg:overflow-x-hidden"
+                style={{ WebkitOverflowScrolling: "touch" }}
+              >
+                <table className="w-full min-w-[880px] table-auto border-collapse text-right lg:min-w-0 lg:table-fixed">
 
-                  {/* COLUMN WIDTHS */}
-                  <colgroup>
-                    <col style={{ width: "15%" }} />
-                    <col style={{ width: "11%" }} />
-                    <col style={{ width: "17%" }} />
-                    <col style={{ width: "16%" }} />
-                    <col style={{ width: "13%" }} />
-                    <col style={{ width: "12%" }} />
-                    <col style={{ width: "16%" }} />
-                  </colgroup>
-
-                  {/* TABLE HEADER */}
                   <thead>
-                    <tr className="bg-[#F1F5F9] text-[9px] font-semibold text-[#475569] lg:text-[10px] xl:text-[11px]">
-                      <th className="break-words px-1 py-4 sm:px-2">
+                    <tr className="bg-[#F1F5F9] text-[11px] font-semibold text-[#475569]">
+                      <th className="min-w-[145px] px-3 py-4 lg:min-w-0 lg:w-[15%]">
                         اسم الطالب
                       </th>
 
-                      <th className="break-words px-1 py-4 sm:px-2">
+                      <th className="min-w-[105px] px-3 py-4 lg:min-w-0 lg:w-[11%]">
                         الرقم الجامعي
                       </th>
 
-                      <th className="break-words px-1 py-4 sm:px-2">
+                      <th className="min-w-[170px] px-3 py-4 lg:min-w-0 lg:w-[17%]">
                         التخصص
                       </th>
 
-                      <th className="break-words px-1 py-4 sm:px-2">
+                      <th className="min-w-[165px] px-3 py-4 lg:min-w-0 lg:w-[16%]">
                         جهة التدريب
                       </th>
 
-                      <th className="break-words px-1 py-4 sm:px-2">
+                      <th className="min-w-[125px] px-3 py-4 lg:min-w-0 lg:w-[13%]">
                         حالة التدريب
                       </th>
 
-                      <th className="break-words px-1 py-4 sm:px-2">
+                      <th className="min-w-[120px] px-3 py-4 lg:min-w-0 lg:w-[12%]">
                         المشرف الأكاديمي
                       </th>
 
-                      <th className="break-words px-1 py-4 text-center sm:px-2">
+                      <th className="min-w-[150px] px-2 py-4 text-center lg:min-w-0 lg:w-[16%]">
                         الإجراءات
                       </th>
                     </tr>
                   </thead>
 
-                  {/* TABLE BODY */}
                   <tbody>
                     {visibleStudents.map((student) => (
                       <tr
                         key={student.id}
-                        className="border-t border-[#E6EBF5] text-[9px] transition-colors hover:bg-[#FAFBFE] lg:text-[10px] xl:text-[11px]"
+                        className="border-t border-[#E6EBF5] text-[11px] hover:bg-[#FAFBFE]"
                       >
                         {/* NAME */}
-                        <td className="break-words px-1 py-4 font-semibold leading-5 sm:px-2">
-                          {student.name}
+                        <td className="px-3 py-4 font-semibold leading-6">
+                          <span className="block min-w-0 break-words">
+                            {student.name}
+                          </span>
                         </td>
 
-                        {/* STUDENT ID */}
-                        <td className="px-0.5 py-4 text-center sm:px-1">
+                        {/* ID */}
+                        <td className="px-3 py-4">
                           <span
                             dir="ltr"
-                            className="inline-block max-w-full break-all text-[8px] sm:text-[9px] lg:text-[10px]"
+                            className="inline-block whitespace-nowrap font-medium tabular-nums"
                           >
                             {student.id}
                           </span>
                         </td>
 
                         {/* MAJOR */}
-                        <td className="break-words px-1 py-4 leading-5 sm:px-2">
-                          {student.major}
+                        <td className="px-3 py-4 leading-6">
+                          <span className="block break-words">
+                            {student.major}
+                          </span>
                         </td>
 
                         {/* ORGANIZATION */}
-                        <td className="break-words px-1 py-4 leading-5 sm:px-2">
-                          {student.organization}
+                        <td className="px-3 py-4 leading-6">
+                          <span className="block break-words">
+                            {student.organization}
+                          </span>
                         </td>
 
                         {/* STATUS */}
-                        <td className="px-0.5 py-4 sm:px-1">
+                        <td className="px-2 py-4">
                           <StatusBadge status={student.status} />
                         </td>
 
                         {/* SUPERVISOR */}
-                        <td className="break-words px-1 py-4 leading-5 sm:px-2">
-                          {student.supervisor}
+                        <td className="px-3 py-4 leading-6">
+                          <span className="block break-words">
+                            {student.supervisor}
+                          </span>
                         </td>
 
-                        {/* VIEW + DELETE */}
-                        <td className="px-0.5 py-4 text-center align-middle sm:px-1">
-                          <div className="flex flex-wrap items-center justify-center gap-1">
+                        {/* ACTIONS */}
+                        <td className="px-2 py-4">
+                          <div className="flex items-center justify-center gap-1.5">
 
                             <button
                               type="button"
-                              onClick={() =>
-                                handleViewStudent(student)
-                              }
-                              className="inline-flex min-h-[29px] min-w-0 items-center justify-center gap-1 rounded-[7px] border border-[#E0E7F2] bg-white px-1.5 py-1 text-[9px] transition hover:border-[#09379A] hover:text-[#09379A] sm:px-2 lg:text-[10px]"
+                              onClick={() => handleView(student)}
                               aria-label={`عرض تفاصيل ${student.name}`}
+                              className="inline-flex h-[34px] shrink-0 items-center justify-center gap-1 rounded-[7px] border border-[#E0E7F2] bg-white px-2 text-[10px] transition hover:border-[#09379A] hover:text-[#09379A]"
                             >
-                              <Eye
-                                size={13}
-                                className="hidden shrink-0 sm:block"
-                              />
+                              <Eye size={14} />
                               عرض
                             </button>
 
                             <button
                               type="button"
-                              onClick={() =>
-                                handleDeleteClick(student)
-                              }
-                              className="inline-flex min-h-[29px] min-w-0 items-center justify-center gap-1 rounded-[7px] border border-[#FECACA] bg-white px-1.5 py-1 text-[9px] text-[#DC2626] transition hover:bg-[#FEF2F2] sm:px-2 lg:text-[10px]"
-                              aria-label={`حذف الطالب ${student.name}`}
+                              onClick={() => handleDelete(student)}
+                              aria-label={`حذف ${student.name}`}
+                              className="inline-flex h-[34px] shrink-0 items-center justify-center gap-1 rounded-[7px] border border-[#FECACA] bg-white px-2 text-[10px] text-[#DC2626] transition hover:bg-[#FEF2F2]"
                             >
-                              <Trash2
-                                size={12}
-                                className="hidden shrink-0 sm:block"
-                              />
+                              <Trash2 size={14} />
                               حذف
                             </button>
+
                           </div>
                         </td>
                       </tr>
                     ))}
 
-                    {/* EMPTY STATE */}
+                    {/* EMPTY */}
                     {visibleStudents.length === 0 && (
                       <tr>
                         <td
                           colSpan={7}
-                          className="px-3 py-14 text-center"
+                          className="px-4 py-12 text-center"
                         >
-                          <div className="mx-auto flex max-w-[300px] flex-col items-center">
-                            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#F1F5F9] text-[#64748B]">
-                              <Search size={21} />
-                            </div>
+                          <div className="flex flex-col items-center gap-3">
+                            <Search
+                              size={28}
+                              className="text-[#94A3B8]"
+                            />
 
-                            <p className="m-0 text-[13px] font-semibold text-[#334155]">
+                            <p className="m-0 text-[13px] font-bold">
                               لا توجد نتائج مطابقة
-                            </p>
-
-                            <p className="m-0 mt-1 text-[11px] text-[#64748B]">
-                              جرّب تعديل البحث أو معايير التصفية.
                             </p>
 
                             <button
                               type="button"
                               onClick={resetFilters}
-                              className="mt-4 text-[11px] font-semibold text-[#09379A] hover:underline"
+                              className="text-[12px] text-[#09379A] hover:underline"
                             >
                               مسح عوامل التصفية
                             </button>
@@ -997,7 +907,8 @@ export default function Students() {
               </div>
 
               {/* PAGINATION */}
-              <div className="mt-4 flex min-w-0 flex-wrap items-center justify-between gap-4">
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+
                 <p className="m-0 text-[11px] text-[#64748B]">
                   عرض{" "}
                   {filteredStudents.length === 0
@@ -1012,7 +923,7 @@ export default function Students() {
                   {filteredStudents.length} طالبًا
                 </p>
 
-                <div className="flex max-w-full flex-wrap items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
                     disabled={safePage === 1}
@@ -1021,7 +932,7 @@ export default function Students() {
                         Math.max(1, page - 1)
                       )
                     }
-                    className="inline-flex h-[35px] items-center gap-1 rounded-full border border-[#E0E7F2] px-3 text-[11px] disabled:opacity-40"
+                    className="flex h-[35px] items-center gap-1 rounded-full border border-[#E0E7F2] px-3 text-[11px] disabled:opacity-40"
                   >
                     <ChevronRight size={14} />
                     السابق
@@ -1037,8 +948,8 @@ export default function Students() {
                       onClick={() => setCurrentPage(page)}
                       className={`h-[35px] min-w-[35px] rounded-full border text-[11px] ${
                         safePage === page
-                          ? "border-[#09379A] bg-[#09379A] font-semibold text-white"
-                          : "border-[#E0E7F2] bg-white hover:border-[#09379A]"
+                          ? "border-[#09379A] bg-[#09379A] font-bold text-white"
+                          : "border-[#E0E7F2] bg-white"
                       }`}
                     >
                       {page}
@@ -1053,7 +964,7 @@ export default function Students() {
                         Math.min(totalPages, page + 1)
                       )
                     }
-                    className="inline-flex h-[35px] items-center gap-1 rounded-full border border-[#E0E7F2] px-3 text-[11px] disabled:opacity-40"
+                    className="flex h-[35px] items-center gap-1 rounded-full border border-[#E0E7F2] px-3 text-[11px] disabled:opacity-40"
                   >
                     التالي
                     <ChevronLeft size={14} />
@@ -1063,42 +974,23 @@ export default function Students() {
             </section>
 
             {/* FOOTER */}
-            <footer className="mt-8 flex min-w-0 flex-wrap items-center justify-between gap-3 pb-2 text-[11px] text-[#64748B]">
-              <p className="m-0 leading-5">
-                جميع الحقوق محفوظة © 2025 كلية الدراسات المتوسطة -
-                جامعة الأزهر - غزة
-              </p>
-
-              <div className="flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => navigate("/admin/settings")}
-                  className="text-[#09379A] hover:underline"
-                >
-                  الدعم الفني والأكاديمي
-                </button>
-
-                <span>•</span>
-
-                <button
-                  type="button"
-                  onClick={() => navigate("/admin/settings")}
-                  className="text-[#09379A] hover:underline"
-                >
-                  دليل بوابة التدريب الميداني
-                </button>
-              </div>
+            <footer className="mt-8 pb-3 text-center text-[11px] leading-6 text-[#64748B]">
+              جميع الحقوق محفوظة © 2025 كلية الدراسات المتوسطة -
+              جامعة الأزهر - غزة
             </footer>
+
           </div>
         </main>
       </div>
 
-      {/* DELETE CONFIRMATION MODAL */}
+      {/* DELETE MODAL */}
       {studentToDelete && (
         <DeleteStudentModal
-          student={studentToDelete}
           error={deleteError}
-          onCancel={closeDeleteModal}
+          onCancel={() => {
+            setStudentToDelete(null);
+            setDeleteError("");
+          }}
           onConfirm={confirmDelete}
         />
       )}
@@ -1107,12 +999,28 @@ export default function Students() {
 }
 
 // =====================================================
-// DELETE STUDENT MODAL
+// STATUS BADGE
 // =====================================================
 
+function StatusBadge({ status }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[10px] font-semibold ${
+        STATUS_STYLES[status] ||
+        "bg-[#F1F5F9] text-[#475569]"
+      }`}
+    >
+      <span className="h-[6px] w-[6px] shrink-0 rounded-full bg-current" />
+      {status}
+    </span>
+  );
+}
+
+// =====================================================
+// DELETE MODAL - FIGMA DESIGN
+// =====================================================
 
 function DeleteStudentModal({
-  student,
   error,
   onCancel,
   onConfirm,
@@ -1120,13 +1028,7 @@ function DeleteStudentModal({
   return (
     <div
       dir="rtl"
-      className="
-        fixed inset-0 z-[9999]
-        flex items-center justify-center
-        bg-[#0F172A]/55
-        p-4
-        font-['Cairo']
-      "
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0F172A]/55 p-4 font-['Cairo']"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) {
           onCancel();
@@ -1138,40 +1040,17 @@ function DeleteStudentModal({
         aria-modal="true"
         aria-labelledby="delete-student-title"
         aria-describedby="delete-student-description"
-        className="
-          w-full max-w-[520px]
-          rounded-[12px]
-          bg-white
-          px-[28px] py-[28px]
-          shadow-[0_20px_60px_rgba(15,23,42,0.18)]
-          sm:px-[28px]
-        "
+        className="w-full max-w-[520px] rounded-[12px] bg-white px-6 py-7 shadow-xl sm:px-7"
       >
-        {/* DELETE ICON */}
-        <div
-          className="
-            mb-[20px]
-            flex h-[56px] w-[56px]
-            items-center justify-center
-            rounded-full
-            bg-[#FEE2E2]
-            text-[#DC2626]
-          "
-        >
+        {/* ICON */}
+        <div className="mb-5 flex h-[56px] w-[56px] items-center justify-center rounded-full bg-[#FEE2E2] text-[#DC2626]">
           <Trash2 size={25} strokeWidth={2} />
         </div>
 
         {/* TITLE */}
         <h2
           id="delete-student-title"
-          className="
-            m-0
-            text-right
-            text-[20px]
-            font-bold
-            leading-[32px]
-            text-[#111C2D]
-          "
+          className="m-0 text-[20px] font-bold text-[#111C2D]"
         >
           حذف الطالب
         </h2>
@@ -1179,96 +1058,41 @@ function DeleteStudentModal({
         {/* DESCRIPTION */}
         <p
           id="delete-student-description"
-          className="
-            mb-0 mt-[13px]
-            text-right
-            text-[13px]
-            leading-[26px]
-            text-[#64748B]
-          "
+          className="m-0 mt-3 text-[13px] leading-7 text-[#64748B]"
         >
-          سيتم حذف الطالب بشكل نهائي من سجل تدريبه، لا يمكن
-          التراجع عن هذا الإجراء.
+          سيتم حذف الطالب بشكل نهائي من سجل تدريبه،
+          لا يمكن التراجع عن هذا الإجراء.
         </p>
 
-        {/* ERROR MESSAGE */}
         {error && (
           <p
             role="alert"
-            className="
-              mb-0 mt-3
-              text-right text-[12px]
-              text-[#DC2626]
-            "
+            className="mt-3 text-[12px] text-[#DC2626]"
           >
             {error}
           </p>
         )}
 
-        {/* ACTION BUTTONS */}
-        <div className="mt-[17px] flex flex-wrap items-center gap-[12px]">
-          {/* CONFIRM */}
+        {/* BUTTONS */}
+        <div className="mt-5 flex flex-wrap items-center gap-3">
           <button
             type="button"
             onClick={onConfirm}
-            className="
-              inline-flex h-[44px]
-              items-center justify-center gap-[10px]
-              rounded-[8px]
-              bg-[#09379A]
-              px-[21px]
-              text-[12px]
-              font-bold
-              text-white
-              transition-colors
-              hover:bg-[#072E81]
-            "
+            className="inline-flex h-[44px] items-center justify-center gap-2 rounded-[8px] bg-[#09379A] px-5 text-[12px] font-bold text-white transition hover:bg-[#072E81]"
           >
-            <Trash2 size={16} strokeWidth={1.9} />
+            <Trash2 size={16} />
             تأكيد الحذف
           </button>
 
-          {/* CANCEL */}
           <button
             type="button"
             onClick={onCancel}
-            className="
-              inline-flex h-[44px]
-              items-center justify-center
-              rounded-[8px]
-              border border-[#E0E7F2]
-              bg-white
-              px-[20px]
-              text-[12px]
-              font-semibold
-              text-[#111C2D]
-              transition-colors
-              hover:bg-[#F8FAFC]
-            "
+            className="inline-flex h-[44px] items-center justify-center rounded-[8px] border border-[#E0E7F2] bg-white px-5 text-[12px] font-semibold hover:bg-[#F8FAFC]"
           >
             إلغاء
           </button>
         </div>
       </section>
     </div>
-  );
-}
-
-
-// =====================================================
-// STATUS BADGE
-// =====================================================
-
-function StatusBadge({ status }) {
-  return (
-    <span
-      className={`inline-flex max-w-full items-center gap-1 rounded-full px-1 py-1 text-[8px] font-semibold leading-4 sm:px-2 sm:text-[9px] lg:text-[10px] ${
-        STATUS_STYLES[status] ||
-        "bg-[#F1F5F9] text-[#475569]"
-      }`}
-    >
-      <span className="h-[5px] w-[5px] shrink-0 rounded-full bg-current" />
-      <span className="min-w-0 break-words">{status}</span>
-    </span>
   );
 }
