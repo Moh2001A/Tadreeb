@@ -1,3 +1,4 @@
+import AdminHeader from "../../components/admin/Header";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -164,83 +165,7 @@ export default function Visits() {
       <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
         {/* HEADER */}
 
-        <header
-          className="
-            z-30
-            flex
-            h-[72px]
-            shrink-0
-            items-center
-            justify-between
-            border-b
-            border-[#E6EBF5]
-            bg-white
-            px-4
-            sm:px-6
-            lg:px-8
-          "
-        >
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              className="text-[#09379A] lg:hidden"
-            >
-              <Menu size={21} />
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/admin/announcements")
-              }
-              className="relative p-2"
-            >
-              <Bell size={20} />
-
-              <span
-                className="
-                  absolute
-                  right-[7px]
-                  top-[6px]
-                  h-[7px]
-                  w-[7px]
-                  rounded-full
-                  bg-[#FF6534]
-                "
-              />
-            </button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <div
-              className="
-                flex
-                h-[44px]
-                w-[44px]
-                items-center
-                justify-center
-                rounded-full
-                bg-[#E8EEF9]
-                text-[12px]
-                font-bold
-                text-[#09379A]
-              "
-            >
-              سم
-            </div>
-
-            <div>
-              <p className="m-0 text-[12px] font-bold">
-                د. سامر يوسف
-              </p>
-
-              <p className="m-0 text-[10px] text-[#64748B]">
-                مشرف أكاديمي
-              </p>
-            </div>
-          </div>
-        </header>
+        <AdminHeader />
 
         {/* CONTENT */}
 

@@ -1,3 +1,4 @@
+import AdminHeader from "../../components/admin/Header";
 
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -180,7 +181,7 @@ export default function TrainingMonitoring() {
       <Sidebar />
 
       <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
-        <Header navigate={navigate} />
+        <AdminHeader />
 
         <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-5 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-[1450px]">
@@ -627,50 +628,7 @@ function Breadcrumb({ navigate }) {
   );
 }
 
-function Header({ navigate }) {
-  return (
-    <header className="flex h-[72px] shrink-0 items-center justify-between border-b border-[#E6EBF5] bg-white px-4 sm:px-6 lg:px-8">
-      <div className="flex gap-3">
-        <button
-          onClick={() =>
-            window.dispatchEvent(
-              new Event("toggle-admin-sidebar")
-            )
-          }
-          className="p-2 lg:hidden"
-          aria-label="القائمة"
-        >
-          <Menu size={21} />
-        </button>
-        <button
-          onClick={() => navigate("/admin/announcements")}
-          className="relative p-2"
-          aria-label="الإشعارات"
-        >
-          <Bell size={20} />
-          <span className="absolute right-[7px] top-[6px] h-[7px] w-[7px] rounded-full bg-[#FF6534]" />
-        </button>
-      </div>
 
-      <button
-        onClick={() => navigate("/admin/profile")}
-        className="flex items-center gap-2"
-      >
-        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#E6EBF5] text-[12px] font-bold text-[#09379A]">
-          سم
-        </span>
-        <span className="text-right">
-          <span className="block text-[12px] font-bold">
-            د. سامر يوسف
-          </span>
-          <span className="block text-[10px] text-[#64748B]">
-            مشرف أكاديمي
-          </span>
-        </span>
-      </button>
-    </header>
-  );
-}
 
 function Footer() {
   return (

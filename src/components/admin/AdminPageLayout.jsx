@@ -1,3 +1,4 @@
+import Header from "./Header";
 
 import { useNavigate } from "react-router-dom";
 import { Bell, Menu, ChevronLeft } from "lucide-react";
@@ -18,51 +19,7 @@ export default function AdminPageLayout({
       <Sidebar />
 
       <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="z-30 flex h-[72px] shrink-0 items-center justify-between border-b border-[#E6EBF5] bg-white px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={() =>
-                window.dispatchEvent(
-                  new Event("toggle-admin-sidebar")
-                )
-              }
-              aria-label="فتح القائمة"
-              className="rounded-lg p-2 text-[#09379A] lg:hidden"
-            >
-              <Menu size={21} />
-            </button>
-
-            <button
-              type="button"
-              onClick={() => navigate("/admin/announcements")}
-              aria-label="الإشعارات"
-              className="relative rounded-lg p-2 hover:bg-[#F8FAFC]"
-            >
-              <Bell size={20} />
-              <span className="absolute right-[7px] top-[5px] h-[7px] w-[7px] rounded-full bg-[#FF6534]" />
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => navigate("/admin/profile")}
-            className="flex items-center gap-3 text-right"
-          >
-            <span className="flex h-[43px] w-[43px] shrink-0 items-center justify-center rounded-full bg-[#E8EDF8] text-[12px] font-bold text-[#09379A]">
-              سم
-            </span>
-
-            <span>
-              <span className="block text-[12px] font-bold">
-                د. سامر يوسف
-              </span>
-              <span className="block text-[10px] text-[#64748B]">
-                مشرف أكاديمي
-              </span>
-            </span>
-          </button>
-        </header>
+        <Header />
 
         <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-7 pt-5 sm:px-6 lg:px-8">
           <div

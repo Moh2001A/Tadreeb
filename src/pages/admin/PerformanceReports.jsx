@@ -1,3 +1,4 @@
+import AdminHeader from "../../components/admin/Header";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -140,73 +141,7 @@ ${report.period}
       >
         {/* HEADER */}
 
-        <header
-          className="
-            z-30
-            flex
-            h-[72px]
-            shrink-0
-            items-center
-            justify-between
-            border-b
-            border-[#E6EBF5]
-            bg-white
-            px-4
-            sm:px-6
-            lg:px-8
-          "
-        >
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              className="
-                flex
-                h-[38px]
-                w-[38px]
-                items-center
-                justify-center
-                text-[#09379A]
-                lg:hidden
-              "
-            >
-              <Menu size={21} />
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate(
-                  "/admin/announcements"
-                )
-              }
-              className="
-                relative
-                flex
-                h-[38px]
-                w-[38px]
-                items-center
-                justify-center
-              "
-            >
-              <Bell size={20} />
-
-              <span
-                className="
-                  absolute
-                  right-[6px]
-                  top-[5px]
-                  h-[7px]
-                  w-[7px]
-                  rounded-full
-                  bg-[#FF6B35]
-                "
-              />
-            </button>
-          </div>
-
-          <UserInfo />
-        </header>
+        <AdminHeader />
 
         {/* CONTENT */}
 

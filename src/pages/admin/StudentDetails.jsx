@@ -1,3 +1,4 @@
+import AdminHeader from "../../components/admin/Header";
 
 import { useMemo, useState } from "react";
 import {
@@ -466,51 +467,7 @@ export default function StudentDetails() {
       <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
 
         {/* HEADER */}
-        <header className="z-30 flex h-[69px] shrink-0 items-center justify-between border-b border-[#E2E8F0] bg-white px-5 lg:px-9">
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={toggleSidebar}
-              aria-label="فتح القائمة"
-              className="rounded-lg p-2 text-[#09379A] lg:hidden"
-            >
-              <Menu size={22} />
-            </button>
-
-            <button
-              type="button"
-              onClick={() =>
-                navigate("/admin/announcements")
-              }
-              aria-label="الإشعارات"
-              className="relative rounded-lg p-2 hover:bg-[#F1F5F9]"
-            >
-              <Bell size={19} />
-
-              <span className="absolute right-[7px] top-[5px] h-[7px] w-[7px] rounded-full bg-[#FF6534]" />
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => navigate("/admin/profile")}
-            className="flex items-center gap-3 text-right"
-          >
-            <div className="flex h-[43px] w-[43px] items-center justify-center rounded-full bg-[#E8EDF8] text-[13px] font-bold text-[#09379A]">
-              سم
-            </div>
-
-            <div>
-              <p className="m-0 text-[12px] font-bold">
-                د. سامر يوسف
-              </p>
-
-              <p className="m-0 text-[11px] text-[#64748B]">
-                مشرف أكاديمي
-              </p>
-            </div>
-          </button>
-        </header>
+        <AdminHeader />
 
         {/* SCROLLABLE CONTENT */}
         <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-3 sm:px-6 lg:px-9">

@@ -1,3 +1,4 @@
+import AdminHeader from "../../components/admin/Header";
 
 import { useEffect, useState } from "react";
 import {
@@ -452,10 +453,7 @@ export default function TrainingRequestDetails() {
       <Sidebar />
 
       <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
-        <Header
-          navigate={navigate}
-          toggleSidebar={toggleSidebar}
-        />
+        <AdminHeader />
 
         <main className="min-w-0 flex-1 overflow-x-hidden overflow-y-auto px-4 pb-8 pt-5 sm:px-6 lg:px-8">
           <div className="mx-auto w-full max-w-[1450px]">
@@ -1282,55 +1280,4 @@ function StatusBadge({ status }) {
 // HEADER
 // =====================================================
 
-function Header({ navigate, toggleSidebar }) {
-  return (
-    <header className="z-30 flex h-[72px] shrink-0 items-center justify-between border-b border-[#E6EBF5] bg-white px-4 sm:px-6 lg:px-8">
-      <div className="flex items-center gap-3">
-        {/* MOBILE SIDEBAR BUTTON */}
-        <button
-          type="button"
-          onClick={toggleSidebar}
-          aria-label="فتح القائمة"
-          className="flex h-[38px] w-[38px] items-center justify-center rounded-[8px] text-[#09379A] hover:bg-[#F1F5F9] lg:hidden"
-        >
-          <Menu size={21} />
-        </button>
 
-        {/* NOTIFICATIONS */}
-        <button
-          type="button"
-          onClick={() =>
-            navigate("/admin/announcements")
-          }
-          aria-label="الإشعارات"
-          className="relative rounded-[8px] p-2 hover:bg-[#F8FAFC]"
-        >
-          <Bell size={20} />
-
-          <span className="absolute right-[7px] top-[6px] h-[7px] w-[7px] rounded-full bg-[#FF6B35]" />
-        </button>
-      </div>
-
-      {/* USER PROFILE */}
-      <button
-        type="button"
-        onClick={() => navigate("/admin/profile")}
-        className="flex items-center gap-2 text-right"
-      >
-        <div className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#E6EBF5] text-[12px] font-bold text-[#09379A]">
-          سم
-        </div>
-
-        <div>
-          <p className="m-0 text-[12px] font-bold">
-            د. سامر يوسف
-          </p>
-
-          <p className="m-0 text-[10px] text-[#64748B]">
-            مشرف أكاديمي
-          </p>
-        </div>
-      </button>
-    </header>
-  );
-}

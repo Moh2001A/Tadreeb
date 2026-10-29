@@ -1,8 +1,7 @@
+
 import {
   Bell,
-  ChevronDown,
   Menu,
-  UserRound,
 } from "lucide-react";
 
 export default function Header() {
@@ -14,202 +13,116 @@ export default function Header() {
 
   return (
     <header
-      dir="rtl"
       className="
-        relative
-        z-20
-
-        flex
         h-[72px]
         w-full
-        shrink-0
-        items-center
-        justify-between
-
-        border-b
-        border-[#E9EEF5]
-
         bg-white
-
+        shadow-[0_1px_4px_rgba(0,0,0,0.16)]
+        flex
+        items-center
         px-4
-
-        font-['Cairo']
-
         sm:px-6
-        lg:px-[32px]
-        xl:px-[40px]
+        lg:px-[43px]
+        shrink-0
+        relative
+        z-20
       "
+      dir="ltr"
     >
-      {/* =====================================================
-          RIGHT SIDE
-          PAGE / SYSTEM INFO
-      ====================================================== */}
-
-      <div
-        className="
-          flex
-          min-w-0
-          items-center
-          gap-[10px]
-        "
-      >
-        {/* MOBILE MENU */}
-
-        <button
-          type="button"
-          aria-label="فتح القائمة"
-          onClick={openSidebar}
-          className="
-            hidden
-            h-[42px]
-            w-[42px]
-            shrink-0
-            items-center
-            justify-center
-
-            rounded-[9px]
-
-            border
-            border-[#E2E8F0]
-
-            bg-white
-
-            text-[#09379A]
-
-            transition-all
-            duration-200
-
-            hover:border-[#C8D5E7]
-            hover:bg-[#F8FAFC]
-
-            active:scale-[0.97]
-
-            max-lg:flex
-          "
-        >
-          <Menu
-            size={22}
-            strokeWidth={1.8}
-          />
-        </button>
-
-        {/* DESKTOP PAGE AREA */}
-
+      {/* =========================================
+          LEFT SIDE - ADMIN HEADER CONTENT
+      ========================================== */}
+      <div className="flex items-center min-w-0">
+        {/* Avatar */}
         <div
           className="
-            hidden
-            min-w-0
+            w-[40px]
+            h-[40px]
+            rounded-full
+            bg-[#09379A]/10
+            border
+            border-[#09379A]/20
+            flex
             items-center
-            gap-[10px]
-
-            lg:flex
+            justify-center
+            text-[#09379A]
+            text-[14px]
+            font-semibold
+            font-['Cairo']
+            shrink-0
           "
         >
-          <div
-            className="
-              flex
-              h-[36px]
-              w-[36px]
-              shrink-0
-              items-center
-              justify-center
-
-              rounded-[9px]
-
-              bg-[#EEF3FF]
-
-              text-[#09379A]
-            "
-          >
-            <UserRound
-              size={17}
-              strokeWidth={1.8}
-            />
-          </div>
-
-          <div
-            className="
-              min-w-0
-              text-right
-            "
-          >
-            <p
-              className="
-                m-0
-
-                text-[12px]
-                font-bold
-                leading-[18px]
-
-                text-[#334155]
-              "
-            >
-              لوحة إدارة النظام
-            </p>
-
-            <p
-              className="
-                m-0
-                mt-[1px]
-
-                text-[10px]
-                font-medium
-                leading-[15px]
-
-                text-[#94A3B8]
-              "
-            >
-              بوابة التدريب الجامعية
-            </p>
-          </div>
+          سم
         </div>
-      </div>
 
-      {/* =====================================================
-          LEFT SIDE
-          USER / NOTIFICATIONS
-      ====================================================== */}
+        {/* Admin Data */}
+        <div
+          dir="rtl"
+          className="
+            ml-[16px]
+            mr-0
+            min-w-[59px]
+            text-right
+            font-['Cairo']
+            shrink-0
+          "
+        >
+          <p
+            className="
+              m-0
+              text-[14px]
+              leading-[18px]
+              font-semibold
+              text-[#1E293B]
+              whitespace-nowrap
+            "
+          >
+            د. سامر يوسف
+          </p>
 
-      <div
-        className="
-          flex
-          shrink-0
-          items-center
-          gap-[8px]
-        "
-      >
-        {/* NOTIFICATION */}
+          <p
+            className="
+              m-0
+              mt-[2px]
+              text-[12px]
+              leading-[14px]
+              font-normal
+              text-[#64748B]
+            "
+          >
+            مشرف أكاديمي
+          </p>
+        </div>
 
+        {/* Separator */}
+        <div
+          className="
+            w-px
+            h-[32px]
+            bg-[#E2E8F0]
+            ml-[16px]
+            mr-[15px]
+            shrink-0
+          "
+        />
+
+        {/* Notification */}
         <button
           type="button"
           aria-label="الإشعارات"
           className="
             relative
-
-            flex
-            h-[40px]
             w-[40px]
-            shrink-0
+            h-[40px]
+            rounded-[8px]
+            flex
             items-center
             justify-center
-
-            rounded-[9px]
-
-            border
-            border-transparent
-
-            bg-transparent
-
             text-[#475569]
-
-            transition-all
-            duration-200
-
-            hover:border-[#E2E8F0]
+            transition
             hover:bg-[#F8FAFC]
             hover:text-[#09379A]
-
-            active:scale-[0.97]
+            shrink-0
           "
         >
           <Bell
@@ -220,163 +133,52 @@ export default function Header() {
           <span
             className="
               absolute
-              left-[7px]
-              top-[6px]
-
-              h-[8px]
+              top-[8px]
+              left-[8px]
               w-[8px]
-
+              h-[8px]
               rounded-full
-
               bg-[#FF6B35]
-
               ring-2
               ring-white
             "
           />
         </button>
-
-        {/* SEPARATOR */}
-
-        <div
-          className="
-            mx-[4px]
-
-            hidden
-            h-[30px]
-            w-px
-
-            bg-[#E2E8F0]
-
-            sm:block
-          "
-        />
-
-        {/* USER */}
-
-        <button
-          type="button"
-          className="
-            group
-
-            flex
-            min-h-[48px]
-            items-center
-
-            gap-[10px]
-
-            rounded-[10px]
-
-            border-0
-
-            bg-transparent
-
-            px-[5px]
-            py-[4px]
-
-            transition-all
-            duration-200
-
-            hover:bg-[#F8FAFC]
-          "
-        >
-          {/* AVATAR */}
-
-          <div
-            className="
-              flex
-              h-[40px]
-              w-[40px]
-              shrink-0
-              items-center
-              justify-center
-
-              rounded-full
-
-              border
-              border-[#D7E5FF]
-
-              bg-[#EEF3FF]
-
-              text-[12px]
-              font-bold
-              text-[#09379A]
-
-              transition-all
-              duration-200
-
-              group-hover:border-[#BFCFEA]
-            "
-          >
-            أم
-          </div>
-
-          {/* USER TEXT */}
-
-          <div
-            className="
-              hidden
-              min-w-0
-              text-right
-
-              sm:block
-            "
-          >
-            <p
-              className="
-                m-0
-
-                whitespace-nowrap
-
-                text-[12px]
-                font-bold
-                leading-[18px]
-
-                text-[#1E293B]
-              "
-            >
-              أ. أحمد محمد
-            </p>
-
-            <p
-              className="
-                m-0
-                mt-[1px]
-
-                whitespace-nowrap
-
-                text-[10px]
-                font-medium
-                leading-[15px]
-
-                text-[#64748B]
-              "
-            >
-              مدير النظام
-            </p>
-          </div>
-
-          {/* ARROW */}
-
-          <ChevronDown
-            size={15}
-            strokeWidth={1.8}
-            className="
-              hidden
-              shrink-0
-
-              text-[#94A3B8]
-
-              transition-transform
-              duration-200
-
-              group-hover:text-[#64748B]
-
-              sm:block
-            "
-          />
-        </button>
       </div>
+
+      {/* =========================================
+          MOBILE MENU BUTTON
+      ========================================== */}
+      <button
+        type="button"
+        aria-label="فتح القائمة"
+        onClick={openSidebar}
+        className="
+          ml-auto
+          w-[42px]
+          h-[42px]
+          rounded-[9px]
+          border
+          border-[#E2E8F0]
+          bg-white
+          text-[#09379A]
+          hidden
+          max-lg:flex
+          items-center
+          justify-center
+          shrink-0
+          cursor-pointer
+          transition
+          hover:bg-[#F8FAFC]
+          hover:border-[#C8D5E7]
+          active:scale-[0.97]
+        "
+      >
+        <Menu
+          size={22}
+          strokeWidth={1.8}
+        />
+      </button>
     </header>
   );
 }
