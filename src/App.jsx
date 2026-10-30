@@ -62,12 +62,10 @@ import ApprovalsTrainingProviders from "./pages/admin/ApprovalsTrainingProviders
 
 import Approvals from "./pages/admin/Approvals";
 import ApprovalDetails from "./pages/admin/ApprovalDetails";
-import Visits from "./pages/admin/Visits";
-import StudentAttendance from "./pages/admin/StudentAttendance";
-import TrainingProgress from "./pages/admin/TrainingProgress";
 import TrainingMonitoring from "./pages/admin/TrainingMonitoring";
 import StudentTrainingDetails from "./pages/admin/StudentTrainingDetails";
 import CompleteTraining from "./pages/admin/CompleteTraining";
+import TrainingCertificate from "./pages/admin/TrainingCertificate";
 import ReportsAdmin from "./pages/admin/Reports";
 import ReportDetails from "./pages/admin/ReportDetails";
 import ReviewReport from "./pages/admin/ReviewReport";
@@ -364,6 +362,7 @@ function App() {
           element={<StudentTrainingDetails />}
         />
 
+        <Route path="/admin/training-monitoring/:studentId/certificate" element={<TrainingCertificate />} />
         <Route
           path="/admin/training-monitoring/:studentId/complete"
           element={<CompleteTraining />}
@@ -412,13 +411,6 @@ function App() {
         <Route
           path="/admin/announcements"
           element={<Announcements />}
-        />
-
-        {/* Recent Activities */}
-
-        <Route
-          path="/admin/recent-activities"
-          element={<RecentActivities />}
         />
 
         {/* Admin Profile */}

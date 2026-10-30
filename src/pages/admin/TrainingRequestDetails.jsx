@@ -23,212 +23,11 @@ import {
 } from "lucide-react";
 
 import Sidebar from "../../components/admin/Sidebar";
+import { getRequest, decideRequest } from "./trainingRequestsStore";
 
 // =====================================================
-// STORAGE
+// SHARED REQUEST STORE
 // =====================================================
-
-const STORAGE_KEY = "cis-field-training-requests-v1";
-
-// =====================================================
-// DEMO REQUESTS
-// =====================================================
-
-const REQUESTS = [
-  {
-    id: "APP-0412",
-    studentId: "20231234",
-    studentName: "أمل أحمد",
-    fullName: "أمل أحمد صيام أبو زيد",
-    major: "البرمجيات وقواعد البيانات",
-    gpa: "3.42",
-    organization: "شركة القدس للاتصالات",
-    requestDate: "2025/10/01",
-    position: "تدريب تطوير الويب",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "pending",
-    note: "",
-  },
-  {
-    id: "APP-0409",
-    studentId: "20231045",
-    studentName: "محمود رضوان",
-    fullName: "محمود إبراهيم رضوان",
-    major: "تكنولوجيا علم البيانات",
-    gpa: "3.65",
-    organization: "شركة المشرق الرقمية",
-    requestDate: "2025/09/29",
-    position: "تدريب تحليل البيانات",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "approved",
-    note: "",
-  },
-  {
-    id: "APP-0405",
-    studentId: "20231533",
-    studentName: "بلال الشيخ",
-    fullName: "بلال مصطفى الشيخ",
-    major: "صيانة الحاسب الآلي",
-    gpa: "2.90",
-    organization: "شركة جوال",
-    requestDate: "2025/09/27",
-    position: "تدريب صيانة ودعم فني",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "rejected",
-    note: "",
-  },
-  {
-    id: "APP-0401",
-    studentId: "20231450",
-    studentName: "هدى شهير",
-    fullName: "هدى شهير",
-    major: "التصميم الجرافيكي والفنون الرقمية",
-    gpa: "3.50",
-    organization: "استوديو بيكسل الإبداعية",
-    requestDate: "2025/09/25",
-    position: "تدريب تصميم جرافيكي",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "pending",
-    note: "",
-  },
-  {
-    id: "APP-0398",
-    studentId: "20231744",
-    studentName: "أحمد ناصر",
-    fullName: "أحمد سامي ناصر",
-    major: "إلكترونيات صناعية وتحكم",
-    gpa: "3.10",
-    organization: "شركة التقنية الحديثة",
-    requestDate: "2025/09/21",
-    position: "تدريب أنظمة التحكم",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "approved",
-    note: "",
-  },
-  {
-    id: "APP-0394",
-    studentId: "20231628",
-    studentName: "نور خليل",
-    fullName: "نور أحمد خليل",
-    major: "تكنولوجيا علم البيانات",
-    gpa: "3.70",
-    organization: "شركة الأمل للأنظمة",
-    requestDate: "2025/09/19",
-    position: "تدريب معالجة البيانات",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "pending",
-    note: "",
-  },
-  {
-    id: "APP-0390",
-    studentId: "20231712",
-    studentName: "ياسمين محمود",
-    fullName: "ياسمين محمود",
-    major: "التصميم الجرافيكي والفنون الرقمية",
-    gpa: "3.30",
-    organization: "شركة جوال",
-    requestDate: "2025/09/17",
-    position: "تدريب التصميم الرقمي",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "rejected",
-    note: "",
-  },
-  {
-    id: "APP-0388",
-    studentId: "20231601",
-    studentName: "محمد العطار",
-    fullName: "محمد خالد العطار",
-    major: "البرمجيات وقواعد البيانات",
-    gpa: "3.60",
-    organization: "شركة القدس للاتصالات",
-    requestDate: "2025/09/15",
-    position: "تدريب تطوير البرمجيات",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "approved",
-    note: "",
-  },
-];
-
-// =====================================================
-// STORAGE HELPERS
-// =====================================================
-
-function readSavedRequests() {
-  try {
-    const data = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-
-    return Array.isArray(data) ? data : [];
-  } catch {
-    return [];
-  }
-}
-
-function findRequest(id, passedRequest) {
-  const demoRequest = REQUESTS.find(
-    (request) => String(request.id) === String(id)
-  );
-
-  const savedRequest = readSavedRequests().find(
-    (request) => String(request.id) === String(id)
-  );
-
-  const validPassedRequest =
-    passedRequest &&
-    String(passedRequest.id) === String(id)
-      ? passedRequest
-      : null;
-
-  if (
-    !demoRequest &&
-    !savedRequest &&
-    !validPassedRequest
-  ) {
-    return null;
-  }
-
-  return {
-    ...(demoRequest || {}),
-    ...(validPassedRequest || {}),
-    ...(savedRequest || {}),
-  };
-}
-
-function persistRequest(request) {
-  try {
-    const stored = readSavedRequests();
-
-    const exists = stored.some(
-      (item) => String(item.id) === String(request.id)
-    );
-
-    const updated = exists
-      ? stored.map((item) =>
-          String(item.id) === String(request.id)
-            ? { ...item, ...request }
-            : item
-        )
-      : [...stored, request];
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(updated)
-    );
-
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 // =====================================================
 // MAIN PAGE
@@ -240,7 +39,7 @@ export default function TrainingRequestDetails() {
   const { id } = useParams();
 
   const [request, setRequest] = useState(() =>
-    findRequest(id, location.state?.request)
+    getRequest(id)
   );
 
   // General note written in the page
@@ -262,10 +61,7 @@ export default function TrainingRequestDetails() {
 
   // Reload correct request if URL changes
   useEffect(() => {
-    const nextRequest = findRequest(
-      id,
-      location.state?.request
-    );
+    const nextRequest = getRequest(id);
 
     setRequest(nextRequest);
     setNote(nextRequest?.note || "");
@@ -377,13 +173,12 @@ export default function TrainingRequestDetails() {
 
     setSaving(true);
 
-    const saved = persistRequest(updatedRequest);
-
-    if (!saved) {
+    let saved;
+    try {
+      saved = decideRequest(updatedRequest, updatedRequest.status);
+    } catch (error) {
       setSaving(false);
-      setError(
-        "تعذر حفظ القرار محليًا. يرجى المحاولة مرة أخرى."
-      );
+      setError(error?.message || "تعذر حفظ القرار. يرجى المحاولة مرة أخرى.");
       return;
     }
 

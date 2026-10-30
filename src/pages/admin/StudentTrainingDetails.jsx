@@ -55,11 +55,13 @@ export default function StudentTrainingDetails() {
     window.addEventListener("focus", refresh);
     window.addEventListener("storage", refresh);
     window.addEventListener("training-monitoring-updated", refresh);
+    window.addEventListener("admin-students-updated", refresh);
 
     return () => {
       window.removeEventListener("focus", refresh);
       window.removeEventListener("storage", refresh);
       window.removeEventListener("training-monitoring-updated", refresh);
+      window.removeEventListener("admin-students-updated", refresh);
     };
   }, [studentId]);
 
@@ -383,6 +385,16 @@ function Overview({ student, navigate, setTab }) {
               ? "تم إنهاء التدريب"
               : "إنهاء التدريب"}
           </button>
+          {student.status === "completed" && (
+            <button
+              type="button"
+              onClick={() => navigate(`/admin/training-monitoring/${student.id}/certificate`)}
+              className="mt-3 inline-flex h-[43px] w-full items-center justify-center gap-2 rounded-lg border border-[#09379A] bg-white px-4 text-[12px] font-bold text-[#09379A]"
+            >
+              <GraduationCap size={17} />
+              معاينة شهادة التدريب
+            </button>
+          )}
         </Panel>
       </div>
     </div>

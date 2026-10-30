@@ -1,3 +1,4 @@
+import { getOrganizations, ORGANIZATIONS_EVENT } from "./trainingOrganizationsStore";
 import AdminHeader from "../../components/admin/Header";
 
 import { useEffect, useMemo, useState } from "react";
@@ -10,151 +11,8 @@ import {
 
 import Sidebar from "../../components/admin/Sidebar";
 
-const STORAGE_KEY = "cis-training-organizations-v1";
 const PAGE_SIZE = 5;
-
-// Same demo organization IDs used in the other two pages
-const INITIAL_ORGANIZATIONS = [
-  {
-    id: 1,
-    name: "شركة القدس للاتصالات",
-    type: "تقنية معلومات",
-    location: "غزة - الرمال",
-    students: 42,
-    status: "approved",
-  },
-  {
-    id: 2,
-    name: "شركة الأمل للأنظمة الصناعية",
-    type: "صناعي",
-    location: "غزة - المنطقة الصناعية",
-    students: 14,
-    status: "approved",
-  },
-  {
-    id: 3,
-    name: "مركز الصيانة الفنية المتقدم",
-    type: "صيانة",
-    location: "خان يونس",
-    students: 25,
-    status: "renewal",
-    requestDate: "2025/12/02",
-  },
-  {
-    id: 4,
-    name: "استوديو بيكسل للتصميم",
-    type: "تصميم",
-    location: "غزة - الرمال",
-    students: 8,
-    status: "pending",
-    requestDate: "2025/11/28",
-  },
-  {
-    id: 5,
-    name: "شركة المشرق الرقمية",
-    type: "تقنية معلومات",
-    location: "غزة - النصر",
-    students: 21,
-    status: "approved",
-  },
-  {
-    id: 6,
-    name: "شركة الشرق للصناعات",
-    type: "صناعي",
-    location: "دير البلح",
-    students: 11,
-    status: "renewal",
-  },
-  {
-    id: 7,
-    name: "مركز المستقبل للصيانة",
-    type: "صيانة",
-    location: "غزة",
-    students: 18,
-    status: "approved",
-  },
-  {
-    id: 8,
-    name: "استوديو رؤية",
-    type: "تصميم",
-    location: "رفح",
-    students: 6,
-    status: "approved",
-  },
-  {
-    id: 9,
-    name: "شركة الهيدروليك الحديثة",
-    type: "صناعي",
-    location: "غزة",
-    students: 0,
-    status: "pending",
-    requestDate: "2025/11/20",
-  },
-  {
-    id: 10,
-    name: "شركة التقنية الحديثة",
-    type: "تقنية معلومات",
-    location: "غزة",
-    students: 0,
-    status: "pending",
-    requestDate: "2025/11/17",
-  },
-  {
-    id: 11,
-    name: "مركز الأمل للتدريب",
-    type: "صيانة",
-    location: "خان يونس",
-    students: 0,
-    status: "pending",
-    requestDate: "2025/11/12",
-  },
-  {
-    id: 12,
-    name: "مؤسسة المستقبل",
-    type: "تصميم",
-    location: "غزة",
-    students: 0,
-    status: "pending",
-    requestDate: "2025/11/08",
-  },
-];
-
-function readOrganizations() {
-  try {
-    const stored = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-
-    if (!Array.isArray(stored)) {
-      return INITIAL_ORGANIZATIONS;
-    }
-
-    const savedById = new Map(
-      stored
-        .filter((item) => item && item.id != null)
-        .map((item) => [String(item.id), item])
-    );
-
-    const initialIds = new Set(
-      INITIAL_ORGANIZATIONS.map((item) => String(item.id))
-    );
-
-    const initial = INITIAL_ORGANIZATIONS.map((item) => ({
-      ...item,
-      ...(savedById.get(String(item.id)) || {}),
-    }));
-
-    const additional = stored.filter(
-      (item) =>
-        item?.id != null &&
-        !initialIds.has(String(item.id))
-    );
-
-    return [...additional, ...initial];
-  } catch {
-    return INITIAL_ORGANIZATIONS;
-  }
-}
+const readOrganizations = getOrganizations;
 
 const STATUS_CONFIG = {
   pending: {
@@ -210,10 +68,12 @@ export default function ApprovalsTrainingProviders() {
     const refresh = () => setOrganizations(readOrganizations());
 
     window.addEventListener("storage", refresh);
+    window.addEventListener(ORGANIZATIONS_EVENT, refresh);
     window.addEventListener("focus", refresh);
 
     return () => {
       window.removeEventListener("storage", refresh);
+      window.removeEventListener(ORGANIZATIONS_EVENT, refresh);
       window.removeEventListener("focus", refresh);
     };
   }, []);

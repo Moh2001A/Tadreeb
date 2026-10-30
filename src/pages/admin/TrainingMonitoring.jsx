@@ -34,11 +34,13 @@ export default function TrainingMonitoring() {
     window.addEventListener("storage", refresh);
     window.addEventListener("focus", refresh);
     window.addEventListener("training-monitoring-updated", refresh);
+    window.addEventListener("admin-students-updated", refresh);
 
     return () => {
       window.removeEventListener("storage", refresh);
       window.removeEventListener("focus", refresh);
       window.removeEventListener("training-monitoring-updated", refresh);
+      window.removeEventListener("admin-students-updated", refresh);
     };
   }, []);
 

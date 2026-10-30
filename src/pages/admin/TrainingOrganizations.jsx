@@ -1,3 +1,4 @@
+import { getOrganizations, ORGANIZATIONS_EVENT } from "./trainingOrganizationsStore";
 import AdminHeader from "../../components/admin/Header";
 
 import { useEffect, useMemo, useState } from "react";
@@ -11,53 +12,9 @@ import {
 
 import Sidebar from "../../components/admin/Sidebar";
 
-const STORAGE_KEY = "cis-training-organizations-v1";
 const APPROVALS_PATH = "/admin/approvals/training-providers";
 const PAGE_SIZE = 4;
-
-const INITIAL_ORGANIZATIONS = [
-  { id: 1, name: "شركة القدس للاتصالات", type: "تقنية معلومات", location: "غزة - الرمال", students: 42, status: "approved", phone: "0599 000 111" },
-  { id: 2, name: "شركة الأمل للأنظمة الصناعية", type: "صناعي", location: "غزة - المنطقة الصناعية", students: 14, status: "approved", phone: "08 282 3000" },
-  { id: 3, name: "مركز الصيانة الفنية المتقدم", type: "صيانة", location: "خان يونس", students: 25, status: "renewal", phone: "08 205 4400", requestDate: "2025/12/02" },
-  { id: 4, name: "استوديو بيكسل للتصميم", type: "تصميم", location: "غزة - الرمال", students: 8, status: "pending", phone: "08 288 9122", requestDate: "2025/11/28" },
-  { id: 5, name: "شركة المشرق الرقمية", type: "تقنية معلومات", location: "غزة - النصر", students: 21, status: "approved", phone: "0598 440 220" },
-  { id: 6, name: "شركة الشرق للصناعات", type: "صناعي", location: "دير البلح", students: 11, status: "renewal", phone: "08 255 1190" },
-  { id: 7, name: "مركز المستقبل للصيانة", type: "صيانة", location: "غزة", students: 18, status: "approved", phone: "0597 881 120" },
-  { id: 8, name: "استوديو رؤية", type: "تصميم", location: "رفح", students: 6, status: "approved", phone: "0599 761 550" },
-  { id: 9, name: "شركة الهيدروليك الحديثة", type: "صناعي", location: "غزة", students: 0, status: "pending", phone: "—", requestDate: "2025/11/20" },
-  { id: 10, name: "شركة التقنية الحديثة", type: "تقنية معلومات", location: "غزة", students: 0, status: "pending", phone: "—", requestDate: "2025/11/17" },
-  { id: 11, name: "مركز الأمل للتدريب", type: "صيانة", location: "خان يونس", students: 0, status: "pending", phone: "—", requestDate: "2025/11/12" },
-  { id: 12, name: "مؤسسة المستقبل", type: "تصميم", location: "غزة", students: 0, status: "pending", phone: "—", requestDate: "2025/11/08" },
-];
-
-function readOrganizations() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    if (!Array.isArray(stored)) return INITIAL_ORGANIZATIONS;
-
-    const saved = new Map(
-      stored.filter((item) => item?.id != null)
-        .map((item) => [String(item.id), item])
-    );
-
-    const initialIds = new Set(
-      INITIAL_ORGANIZATIONS.map((item) => String(item.id))
-    );
-
-    const initial = INITIAL_ORGANIZATIONS.map((item) => ({
-      ...item,
-      ...(saved.get(String(item.id)) || {}),
-    }));
-
-    const additional = stored.filter(
-      (item) => item?.id != null && !initialIds.has(String(item.id))
-    );
-
-    return [...additional, ...initial];
-  } catch {
-    return INITIAL_ORGANIZATIONS;
-  }
-}
+const readOrganizations = getOrganizations;
 
 const STATUS_CONFIG = {
   approved: { label: "معتمدة", style: "bg-[#DCFCE7] text-[#15803D]" },
@@ -107,10 +64,12 @@ export default function TrainingOrganizations() {
   useEffect(() => {
     const refresh = () => setOrganizations(readOrganizations());
     window.addEventListener("storage", refresh);
+    window.addEventListener(ORGANIZATIONS_EVENT, refresh);
     window.addEventListener("focus", refresh);
 
     return () => {
       window.removeEventListener("storage", refresh);
+      window.removeEventListener(ORGANIZATIONS_EVENT, refresh);
       window.removeEventListener("focus", refresh);
     };
   }, []);

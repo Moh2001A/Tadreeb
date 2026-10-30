@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 
 import Sidebar from "../../components/admin/Sidebar";
+import { getStudent } from "./studentsStore";
 
 // =====================================================
 // STUDENTS DATA
@@ -319,21 +320,16 @@ export default function StudentDetails() {
   const passedStudent = location.state?.student;
 
   const student = useMemo(() => {
-    const savedStudent = STUDENTS[id];
+    const sharedStudent = getStudent(id);
+    if (!sharedStudent) return null;
 
-    if (!savedStudent) return null;
-
-    if (
-      passedStudent &&
-      String(passedStudent.id) === String(id)
-    ) {
-      return {
-        ...savedStudent,
-        ...passedStudent,
-      };
-    }
-
-    return savedStudent;
+    return {
+      ...(STUDENTS[id] || {}),
+      ...(passedStudent && String(passedStudent.id) === String(id)
+        ? passedStudent
+        : {}),
+      ...sharedStudent,
+    };
   }, [id, passedStudent]);
 
   const [activeTab, setActiveTab] = useState("reports");

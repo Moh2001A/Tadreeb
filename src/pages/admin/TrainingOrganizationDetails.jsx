@@ -1,3 +1,5 @@
+import { getOrganization as getSharedOrganization, saveOrganization } from "./trainingOrganizationsStore";
+import { getStudents } from "./studentsStore";
 import AdminHeader from "../../components/admin/Header";
 
 import { useMemo, useState } from "react";
@@ -98,88 +100,26 @@ const STATUS_CONFIG = {
   rejected: { label: "مرفوضة", style: "bg-[#FEE2E2] text-[#DC2626]" },
 };
 
-function readSavedOrganizations() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    return Array.isArray(saved) ? saved : [];
-  } catch {
-    return [];
-  }
-}
-
 function loadOrganization(id, passed) {
-  const initial = DEMO_ORGANIZATIONS.find(
-    (item) => String(item.id) === String(id)
-  );
-
-  const saved = readSavedOrganizations().find(
-    (item) => String(item.id) === String(id)
-  );
-
-  const validPassed =
-    passed && String(passed.id) === String(id) ? passed : null;
-
-  if (!initial && !saved && !validPassed) return null;
-
-  const item = {
-    ...(initial || {}),
-    ...(validPassed || {}),
-    ...(saved || {}),
-  };
-
-  const activeStudents = Number(
-    item.activeStudents ?? item.students ?? 0
-  );
-
+  const initial = DEMO_ORGANIZATIONS.find(item => String(item.id) === String(id));
+  const shared = getSharedOrganization(id);
+  if (!shared) return null;
+  const item = {...(initial || {}), ...((passed && String(passed.id)===String(id)) ? passed : {}), ...shared};
+  const activeStudents = Number(item.activeStudents ?? item.students ?? 0);
   const seats = Number(item.seats ?? item.capacity ?? 0);
-
   return {
-    ...item,
-    id: item.id ?? id,
-    name: item.name || "جهة تدريب",
-    type: item.type || "—",
-    location: item.location || "—",
-    phone: item.phone || "—",
-    email: item.email || "—",
-    supervisor: item.supervisor || item.supervisorName || "—",
-    activeStudents,
-    availableSeats: Number(
-      item.availableSeats ?? Math.max(0, seats - activeStudents)
-    ),
-    agreementExpiry:
-      item.agreementExpiry || item.agreementEndDate || "—",
-    renewalDate:
-      item.renewalDate ||
-      (item.agreementExpiry
-        ? String(item.agreementExpiry).slice(0, 7)
-        : "—"),
-    specializations: Array.isArray(item.specializations)
-      ? item.specializations
-      : [],
-    status: item.status || "pending",
+    ...item, id: item.id ?? id, name: item.name || "جهة تدريب",
+    type:item.type || "—", location:item.location || "—", phone:item.phone || "—",
+    email:item.email || "—", supervisor:item.supervisor || item.supervisorName || "—",
+    activeStudents, availableSeats:Number(item.availableSeats ?? Math.max(0,seats-activeStudents)),
+    agreementExpiry:item.agreementExpiry || item.agreementEndDate || "—",
+    renewalDate:item.renewalDate || (item.agreementExpiry ? String(item.agreementExpiry).slice(0,7) : "—"),
+    specializations:Array.isArray(item.specializations) ? item.specializations : [],
+    status:item.status || "pending"
   };
 }
-
 function persistOrganization(item) {
-  try {
-    const saved = readSavedOrganizations();
-    const exists = saved.some(
-      (entry) => String(entry.id) === String(item.id)
-    );
-
-    const updated = exists
-      ? saved.map((entry) =>
-          String(entry.id) === String(item.id)
-            ? { ...entry, ...item }
-            : entry
-        )
-      : [...saved, item];
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    return true;
-  } catch {
-    return false;
-  }
+  try { saveOrganization(item); return true; } catch { return false; }
 }
 
 export default function TrainingOrganizationDetails() {
@@ -203,8 +143,11 @@ export default function TrainingOrganizationDetails() {
   );
 
   const students = useMemo(
-    () => String(id) === "1" ? DEMO_STUDENTS : [],
-    [id]
+    () => getStudents().filter(student => student.organization === organization?.name).map(student => ({
+      id:student.id, name:student.name, specialization:student.major,
+      status: student.status === "منتهٍ" ? "completed" : student.status === "قيد التدريب" ? "training" : "waiting"
+    })),
+    [id, organization?.name]
   );
 
   const totalPages = Math.max(

@@ -19,124 +19,13 @@ import {
 } from "lucide-react";
 
 import Sidebar from "../../components/admin/Sidebar";
+import { getStudents, deleteStudent } from "./studentsStore";
 
 // =====================================================
 // DATA
 // =====================================================
 
-const STORAGE_KEY = "cis-deleted-student-ids-v1";
 const PAGE_SIZE = 6;
-
-const INITIAL_STUDENTS = [
-  {
-    id: "20231234",
-    name: "أمل أحمد صيام",
-    major: "البرمجيات وقواعد البيانات",
-    organization: "شركة القدس للاتصالات",
-    status: "قيد التدريب",
-    supervisor: "د. سامر يوسف",
-    startDate: "2025/12/01",
-  },
-  {
-    id: "20231045",
-    name: "محمود إبراهيم رضوان",
-    major: "تكنولوجيا علم البيانات",
-    organization: "شركة المشرق الرقمية",
-    status: "قيد التدريب",
-    supervisor: "د. سامر يوسف",
-    startDate: "2025/12/01",
-  },
-  {
-    id: "20231188",
-    name: "سارة عبد الرحمن",
-    major: "الاتصالات وإنترنت الأشياء",
-    organization: "شركة جوال",
-    status: "بانتظار الاعتماد",
-    supervisor: "د. سامر يوسف",
-    startDate: "—",
-  },
-  {
-    id: "20231302",
-    name: "أنس كمال البيطار",
-    major: "إلكترونيات صناعية وتحكم",
-    organization: "شركة الأمل للأنظمة الصناعية",
-    status: "منتهٍ",
-    supervisor: "د. سامر يوسف",
-    startDate: "2025/09/15",
-  },
-  {
-    id: "20231450",
-    name: "هدى يوسف شهر",
-    major: "التصميم الجرافيكي والفنون الرقمية",
-    organization: "استوديو بيكسل للتصميم",
-    status: "لم يبدأ",
-    supervisor: "د. سامر يوسف",
-    startDate: "2026/01/10",
-  },
-  {
-    id: "20231533",
-    name: "بلال مصطفى الشيخ",
-    major: "صيانة الحاسب الآلي",
-    organization: "—",
-    status: "مرفوض",
-    supervisor: "د. سامر يوسف",
-    startDate: "—",
-  },
-  {
-    id: "20231601",
-    name: "محمد خالد العطار",
-    major: "البرمجيات وقواعد البيانات",
-    organization: "شركة التقنية الحديثة",
-    status: "قيد التدريب",
-    supervisor: "د. سامر يوسف",
-    startDate: "2026/01/15",
-  },
-  {
-    id: "20231628",
-    name: "نور أحمد خليل",
-    major: "تكنولوجيا علم البيانات",
-    organization: "شركة المشرق الرقمية",
-    status: "لم يبدأ",
-    supervisor: "د. سامر يوسف",
-    startDate: "—",
-  },
-  {
-    id: "20231712",
-    name: "ياسمين محمود",
-    major: "التصميم الجرافيكي والفنون الرقمية",
-    organization: "استوديو بيكسل للتصميم",
-    status: "منتهٍ",
-    supervisor: "د. سامر يوسف",
-    startDate: "2025/08/20",
-  },
-  {
-    id: "20231744",
-    name: "أحمد سامي ناصر",
-    major: "إلكترونيات صناعية وتحكم",
-    organization: "—",
-    status: "بانتظار الاعتماد",
-    supervisor: "د. سامر يوسف",
-    startDate: "—",
-  },
-  {
-    id: "20231805",
-    name: "رنا محمد علي",
-    major: "الاتصالات وإنترنت الأشياء",
-    organization: "شركة جوال",
-    status: "قيد التدريب",
-    supervisor: "د. سامر يوسف",
-    startDate: "2026/01/05",
-  },
-  {
-    id: "20231840",
-    name: "خالد عادل حسن",
-    major: "صيانة الحاسب الآلي",
-    organization: "شركة التقنية الحديثة",
-    status: "مرفوض",
-    supervisor: "د. سامر يوسف",
-    startDate: "—",
-  },
-];
 
 const STATUS_OPTIONS = [
   "الكل",
@@ -156,46 +45,6 @@ const STATUS_STYLES = {
 };
 
 // =====================================================
-// LOCAL STORAGE
-// =====================================================
-
-function getDeletedIds() {
-  try {
-    const saved = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-
-    return Array.isArray(saved) ? saved.map(String) : [];
-  } catch {
-    return [];
-  }
-}
-
-function readStudents() {
-  const deleted = new Set(getDeletedIds());
-
-  return INITIAL_STUDENTS.filter(
-    (student) => !deleted.has(student.id)
-  );
-}
-
-function saveDeletedId(id) {
-  try {
-    const ids = new Set(getDeletedIds());
-    ids.add(String(id));
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify([...ids])
-    );
-
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-// =====================================================
 // MAIN PAGE
 // =====================================================
 
@@ -203,7 +52,7 @@ export default function Students() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [students, setStudents] = useState(readStudents);
+  const [students, setStudents] = useState(getStudents);
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("الكل");
@@ -219,16 +68,18 @@ export default function Students() {
   const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
-    setStudents(readStudents());
+    setStudents(getStudents());
   }, [location.key]);
 
   useEffect(() => {
-    const refresh = () => setStudents(readStudents());
+    const refresh = () => setStudents(getStudents());
 
     window.addEventListener("storage", refresh);
+    window.addEventListener("admin-students-updated", refresh);
 
     return () => {
       window.removeEventListener("storage", refresh);
+      window.removeEventListener("admin-students-updated", refresh);
     };
   }, []);
 
@@ -354,7 +205,9 @@ export default function Students() {
   const confirmDelete = () => {
     if (!studentToDelete) return;
 
-    if (!saveDeletedId(studentToDelete.id)) {
+    try {
+      deleteStudent(studentToDelete.id);
+    } catch {
       setDeleteError("تعذر حفظ عملية الحذف. حاول مجددًا.");
       return;
     }

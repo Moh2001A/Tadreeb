@@ -245,6 +245,7 @@ export function saveEvaluation(updatedEvaluation) {
   );
 
   window.dispatchEvent(new Event("evaluations-updated"));
+  window.dispatchEvent(new Event("training-monitoring-updated"));
 }
 
 export function formatScore(value, digits = 2) {

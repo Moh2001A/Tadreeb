@@ -1,3 +1,4 @@
+import { getStudent, saveStudent } from "./studentsStore";
 import AdminHeader from "../../components/admin/Header";
 
 import { useEffect, useState } from "react";
@@ -80,6 +81,10 @@ export default function CompleteTraining() {
 
     try {
       saveTrainingStudent(updated);
+      const registryStudent = getStudent(updated.id);
+      if (registryStudent) {
+        saveStudent({ ...registryStudent, status: "منتهٍ" });
+      }
       setStudent(updated);
       setConfirmOpen(false);
 

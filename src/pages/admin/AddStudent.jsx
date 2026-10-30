@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 
 import Sidebar from "../../components/admin/Sidebar";
+import { getStudent, saveStudent } from "./studentsStore";
 
 export default function AddStudent() {
   const navigate = useNavigate();
@@ -42,7 +43,33 @@ export default function AddStudent() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    navigate("/admin/students");
+    const id = form.studentId.trim();
+    if (!id || !form.name.trim() || !form.major.trim()) {
+      window.alert("يرجى إدخال الاسم والرقم الجامعي والتخصص.");
+      return;
+    }
+    if (getStudent(id)) {
+      window.alert("يوجد طالب مسجل بنفس الرقم الجامعي.");
+      return;
+    }
+    try {
+      saveStudent({
+        id,
+        name: form.name.trim(),
+        major: form.major,
+        level: form.level || "الدبلوم المتوسط",
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        supervisor: form.supervisor,
+        organization: form.organization,
+        notes: form.notes.trim(),
+        status: "لم يبدأ",
+        startDate: "—",
+      });
+      navigate("/admin/students");
+    } catch {
+      window.alert("تعذر حفظ الطالب. تأكد من مساحة التخزين وحاول مجددًا.");
+    }
   };
 
   return (

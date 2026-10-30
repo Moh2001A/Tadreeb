@@ -1,7 +1,7 @@
 import Header from "./Header";
 
 import { useNavigate } from "react-router-dom";
-import { Bell, Menu, ChevronLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Sidebar from "./Sidebar";
 
 export default function AdminPageLayout({

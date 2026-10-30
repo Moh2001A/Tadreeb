@@ -1,4 +1,5 @@
 import AdminHeader from "../../components/admin/Header";
+import { updateReport } from "./reportsStore";
 
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -48,15 +49,13 @@ export default function ReviewReport() {
   };
 
   const approve = () => {
-    // Demo only; connect to the backend later.
-    console.log({
-      reportId,
-      approved: true,
-      checks,
-      note: note.trim(),
-    });
-
-    navigate("/admin/reports");
+    if (!Object.values(checks).every(Boolean)) return;
+    try {
+      updateReport(reportId, { status: "approved", note: note.trim() });
+      navigate("/admin/reports");
+    } catch (error) {
+      console.error("تعذر اعتماد التقرير", error);
+    }
   };
 
   return (

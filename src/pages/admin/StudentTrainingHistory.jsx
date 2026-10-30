@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import Sidebar from "../../components/admin/Sidebar";
+import { getStudent } from "./studentsStore";
 
 // =====================================================
 // STUDENT TRAINING HISTORY
@@ -27,11 +28,7 @@ export default function StudentTrainingHistory() {
   const location = useLocation();
 
   // بيانات الطالب القادمة من صفحة تفاصيل الطالب
-  const student =
-    location.state?.student &&
-    String(location.state.student.id) === String(id)
-      ? location.state.student
-      : null;
+  const student = getStudent(id || location.state?.student?.id);
 
   const studentId = id || student?.id || "";
 

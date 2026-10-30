@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import Sidebar from "../../components/admin/Sidebar";
+import { getStudent, saveStudent } from "./studentsStore";
 
 // =====================================================
 // OPTIONS
@@ -61,10 +62,7 @@ export default function EditStudent() {
   const location = useLocation();
 
   // بيانات الطالب القادمة من StudentDetails
-  const student =
-    location.state?.student?.id === id
-      ? location.state.student
-      : null;
+  const student = getStudent(id || location.state?.student?.id);
 
   // رقم الطالب الحالي لا يتغير أثناء التعديل
   const studentId = id || student?.id || "";
@@ -166,6 +164,13 @@ export default function EditStudent() {
       organization: form.organization,
       notes: form.notes.trim(),
     };
+
+    try {
+      saveStudent(updatedStudent);
+    } catch {
+      setError("تعذر حفظ بيانات الطالب. حاول مجددًا.");
+      return;
+    }
 
     // الرجوع إلى تفاصيل نفس الطالب
     navigate(

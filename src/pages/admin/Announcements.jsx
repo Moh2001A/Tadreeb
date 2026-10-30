@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 import {
   Bell,
-  Menu,
   ChevronLeft,
   CheckCheck,
   FileCheck,
@@ -222,24 +221,18 @@ export default function Announcements() {
     }
 
     if (notification.type === "completed") {
-      navigate("/admin/visits");
+      navigate("/admin/training-monitoring");
       return;
     }
 
     if (notification.type === "alerts") {
-      navigate("/admin/visits");
+      navigate("/admin/reports");
     }
   };
 
   /* =======================================================
      MOBILE SIDEBAR
   ======================================================= */
-
-  const toggleSidebar = () => {
-    window.dispatchEvent(
-      new Event("toggle-student-sidebar")
-    );
-  };
 
   return (
     <div

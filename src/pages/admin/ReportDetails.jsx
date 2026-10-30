@@ -1,4 +1,5 @@
 import AdminHeader from "../../components/admin/Header";
+import { getReport, updateReport } from "./reportsStore";
 
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -45,6 +46,8 @@ const REPORT = {
 export default function ReportDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const currentReport = getReport(id || REPORT.id);
+  const reportStatus = currentReport?.status === "approved" ? "معتمد" : currentReport?.status === "revision" ? "مطلوب تعديل" : "بانتظار المراجعة";
 
   const [showRevisionModal, setShowRevisionModal] = useState(false);
   const [revisionNote, setRevisionNote] = useState("");
@@ -70,12 +73,12 @@ export default function ReportDetails() {
 
     if (!revisionNote.trim()) return;
 
-    // Demo only. Replace with API when backend is ready.
-    console.log({
-      reportId: id || REPORT.id,
-      action: "request_revision",
-      revisionNote: revisionNote.trim(),
-    });
+    try {
+      updateReport(id || REPORT.id, { status: "revision", note: revisionNote.trim() });
+    } catch (error) {
+      console.error("تعذر طلب تعديل التقرير", error);
+      return;
+    }
 
     setShowRevisionModal(false);
     setRevisionNote("");
@@ -177,11 +180,11 @@ export default function ReportDetails() {
 
                 <div className="mt-2 rounded-[10px] border border-[#E0E7F2] p-5 sm:p-6">
                   <h3 className="m-0 text-[15px] font-bold text-[#111C2D]">
-                    {REPORT.title}
+                    {String(currentReport?.id) === "1" ? REPORT.title : (currentReport?.type || REPORT.type)}
                   </h3>
 
                   <p className="m-0 mt-4 text-[12px] leading-7 text-[#64748B]">
-                    {REPORT.description}
+                    {String(currentReport?.id) === "1" ? REPORT.description : "لا تتوفر تفاصيل نصية إضافية لهذا التقرير في البيانات التجريبية."}
                   </p>
 
                   <h4 className="m-0 mt-5 text-[13px] font-bold">
@@ -189,7 +192,7 @@ export default function ReportDetails() {
                   </h4>
 
                   <ul className="mt-3 list-disc space-y-2 pr-5 text-[12px] leading-6 text-[#475569]">
-                    {REPORT.achievements.map((item) => (
+                    {(String(currentReport?.id) === "1" ? REPORT.achievements : []).map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
@@ -199,7 +202,7 @@ export default function ReportDetails() {
                   </h4>
 
                   <p className="m-0 mt-3 text-[12px] leading-7 text-[#475569]">
-                    {REPORT.challenges}
+                    {String(currentReport?.id) === "1" ? REPORT.challenges : "—"}
                   </p>
                 </div>
               </section>
@@ -215,22 +218,22 @@ export default function ReportDetails() {
                   <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-5">
                     <InfoItem
                       label="الطالب"
-                      value={REPORT.student}
+                      value={currentReport?.student || REPORT.student}
                     />
 
                     <InfoItem
                       label="نوع التقرير"
-                      value={REPORT.type}
+                      value={currentReport?.type || REPORT.type}
                     />
 
                     <InfoItem
                       label="تاريخ الإرسال"
-                      value={REPORT.date}
+                      value={currentReport?.date || REPORT.date}
                     />
 
                     <InfoItem
                       label="الحالة"
-                      value={REPORT.status}
+                      value={reportStatus}
                     />
                   </div>
                 </section>

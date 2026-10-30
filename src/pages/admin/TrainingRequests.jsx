@@ -19,179 +19,13 @@ import {
 } from "lucide-react";
 
 import Sidebar from "../../components/admin/Sidebar";
+import { getRequests } from "./trainingRequestsStore";
 
 // =====================================================
 // DATA & STORAGE
 // =====================================================
 
-const STORAGE_KEY = "cis-field-training-requests-v1";
 const PAGE_SIZE = 4;
-
-// بيانات تجريبية حاليًا.
-// عند ربط Backend سنستبدل مصدر البيانات فقط.
-const INITIAL_REQUESTS = [
-  {
-    id: "APP-0412",
-    studentId: "20231234",
-    studentName: "أمل أحمد",
-    fullName: "أمل أحمد صيام أبو زيد",
-    major: "البرمجيات وقواعد البيانات",
-    gpa: "3.42",
-    organization: "شركة القدس للاتصالات",
-    requestDate: "2025/10/01",
-    position: "تدريب تطوير الويب",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "pending",
-    note: "",
-  },
-  {
-    id: "APP-0409",
-    studentId: "20231045",
-    studentName: "محمود رضوان",
-    fullName: "محمود إبراهيم رضوان",
-    major: "تكنولوجيا علم البيانات",
-    gpa: "3.65",
-    organization: "شركة المشرق الرقمية",
-    requestDate: "2025/09/29",
-    position: "تدريب تحليل البيانات",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "approved",
-    note: "",
-  },
-  {
-    id: "APP-0405",
-    studentId: "20231533",
-    studentName: "بلال الشيخ",
-    fullName: "بلال مصطفى الشيخ",
-    major: "صيانة الحاسب الآلي",
-    gpa: "2.90",
-    organization: "شركة جوال",
-    requestDate: "2025/09/27",
-    position: "تدريب صيانة ودعم فني",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "rejected",
-    note: "",
-  },
-  {
-    id: "APP-0401",
-    studentId: "20231450",
-    studentName: "هدى شهير",
-    fullName: "هدى شهير",
-    major: "التصميم الجرافيكي والفنون الرقمية",
-    gpa: "3.50",
-    organization: "استوديو بيكسل الإبداعية",
-    requestDate: "2025/09/25",
-    position: "تدريب تصميم جرافيكي",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "pending",
-    note: "",
-  },
-  {
-    id: "APP-0398",
-    studentId: "20231744",
-    studentName: "أحمد ناصر",
-    fullName: "أحمد سامي ناصر",
-    major: "إلكترونيات صناعية وتحكم",
-    gpa: "3.10",
-    organization: "شركة التقنية الحديثة",
-    requestDate: "2025/09/21",
-    position: "تدريب أنظمة التحكم",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "approved",
-    note: "",
-  },
-  {
-    id: "APP-0394",
-    studentId: "20231628",
-    studentName: "نور خليل",
-    fullName: "نور أحمد خليل",
-    major: "تكنولوجيا علم البيانات",
-    gpa: "3.70",
-    organization: "شركة الأمل للأنظمة",
-    requestDate: "2025/09/19",
-    position: "تدريب معالجة البيانات",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "pending",
-    note: "",
-  },
-  {
-    id: "APP-0390",
-    studentId: "20231712",
-    studentName: "ياسمين محمود",
-    fullName: "ياسمين محمود",
-    major: "التصميم الجرافيكي والفنون الرقمية",
-    gpa: "3.30",
-    organization: "شركة جوال",
-    requestDate: "2025/09/17",
-    position: "تدريب التصميم الرقمي",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "rejected",
-    note: "",
-  },
-  {
-    id: "APP-0388",
-    studentId: "20231601",
-    studentName: "محمد العطار",
-    fullName: "محمد خالد العطار",
-    major: "البرمجيات وقواعد البيانات",
-    gpa: "3.60",
-    organization: "شركة القدس للاتصالات",
-    requestDate: "2025/09/15",
-    position: "تدريب تطوير البرمجيات",
-    duration: "120 ساعة",
-    attendanceMode: "حضوري",
-    status: "approved",
-    note: "",
-  },
-];
-
-// للتجربة فقط:
-// إذا جعلت INITIAL_REQUESTS = []، ستظهر حالة الصفحة الفارغة.
-// أعد البيانات بعد التجربة.
-
-function getRequests() {
-  try {
-    const stored = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-
-    if (!Array.isArray(stored)) {
-      return INITIAL_REQUESTS;
-    }
-
-    const savedById = new Map(
-      stored
-        .filter((item) => item && item.id != null)
-        .map((item) => [String(item.id), item])
-    );
-
-    const defaultIds = new Set(
-      INITIAL_REQUESTS.map((request) => String(request.id))
-    );
-
-    const merged = INITIAL_REQUESTS.map((request) => ({
-      ...request,
-      ...(savedById.get(String(request.id)) || {}),
-    }));
-
-    const additional = stored.filter(
-      (request) =>
-        request?.id != null &&
-        !defaultIds.has(String(request.id))
-    );
-
-    return [...merged, ...additional];
-  } catch {
-    return INITIAL_REQUESTS;
-  }
-}
 
 // =====================================================
 // FILTER & SORT CONFIG
@@ -242,10 +76,12 @@ export default function TrainingRequests() {
     const refresh = () => setRequests(getRequests());
 
     window.addEventListener("storage", refresh);
+    window.addEventListener("admin-training-requests-updated", refresh);
     window.addEventListener("focus", refresh);
 
     return () => {
       window.removeEventListener("storage", refresh);
+      window.removeEventListener("admin-training-requests-updated", refresh);
       window.removeEventListener("focus", refresh);
     };
   }, []);

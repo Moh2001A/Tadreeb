@@ -1,5 +1,6 @@
 import AdminHeader from "../../components/admin/Header";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { getReports, updateReport } from "./reportsStore";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -20,73 +21,6 @@ import Sidebar from "../../components/admin/Sidebar";
 /* =========================================================
    DATA
 ========================================================= */
-
-const INITIAL_REPORTS = [
-  {
-    id: 1,
-    student: "أمل أحمد",
-    type: "تقرير أسبوعي - الأسبوع 3",
-    date: "2025/12/22",
-    status: "pending",
-    note: "",
-  },
-  {
-    id: 2,
-    student: "محمود رضوان",
-    type: "تقرير أسبوعي - الأسبوع 3",
-    date: "2025/12/21",
-    status: "pending",
-    note: "",
-  },
-  {
-    id: 3,
-    student: "أنس البيطار",
-    type: "التقرير النهائي",
-    date: "2025/12/18",
-    status: "approved",
-    note: "عمل ممتاز",
-  },
-  {
-    id: 4,
-    student: "سارة عبد الرحمن",
-    type: "تقرير أسبوعي - الأسبوع 2",
-    date: "2025/12/15",
-    status: "revision",
-    note: "أضف المخرجات",
-  },
-  {
-    id: 5,
-    student: "هدى شهير",
-    type: "تقرير أسبوعي - الأسبوع 1",
-    date: "2025/12/13",
-    status: "approved",
-    note: "مقبول",
-  },
-  {
-    id: 6,
-    student: "بلال الشيخ",
-    type: "تقرير أسبوعي - الأسبوع 2",
-    date: "2025/12/12",
-    status: "pending",
-    note: "",
-  },
-  {
-    id: 7,
-    student: "نور خليل",
-    type: "التقرير النهائي",
-    date: "2025/12/10",
-    status: "approved",
-    note: "ممتاز",
-  },
-  {
-    id: 8,
-    student: "محمد العطار",
-    type: "تقرير أسبوعي - الأسبوع 4",
-    date: "2025/12/09",
-    status: "revision",
-    note: "يرجى إضافة تفاصيل أكثر",
-  },
-];
 
 const STATUS_FILTERS = [
   {
@@ -114,7 +48,19 @@ const STATUS_FILTERS = [
 export default function Reports() {
   const navigate = useNavigate();
 
-  const [reports, setReports] = useState(INITIAL_REPORTS);
+  const [reports, setReports] = useState(getReports);
+
+  useEffect(() => {
+    const refresh = () => setReports(getReports());
+    window.addEventListener("admin-reports-updated", refresh);
+    window.addEventListener("storage", refresh);
+    window.addEventListener("focus", refresh);
+    return () => {
+      window.removeEventListener("admin-reports-updated", refresh);
+      window.removeEventListener("storage", refresh);
+      window.removeEventListener("focus", refresh);
+    };
+  }, []);
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -227,7 +173,7 @@ export default function Reports() {
 
   const toggleSidebar = () => {
     window.dispatchEvent(
-      new Event("toggle-student-sidebar")
+      new Event("toggle-admin-sidebar")
     );
   };
 
@@ -242,16 +188,12 @@ export default function Reports() {
   };
 
   const approveReport = (id) => {
-    setReports((previous) =>
-      previous.map((report) =>
-        report.id === id
-          ? {
-              ...report,
-              status: "approved",
-            }
-          : report
-      )
-    );
+    try {
+      updateReport(id, { status: "approved" });
+      setReports(getReports());
+    } catch (error) {
+      console.error("تعذر اعتماد التقرير", error);
+    }
   };
 
   return (

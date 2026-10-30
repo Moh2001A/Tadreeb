@@ -1,3 +1,4 @@
+import { getOrganization as getSharedOrganization, saveOrganization } from "./trainingOrganizationsStore";
 import AdminHeader from "../../components/admin/Header";
 
 import { useState } from "react";
@@ -69,72 +70,13 @@ const DEFAULT_ORGANIZATION = {
 };
 
 function getOrganization(id, passed) {
-  let stored = null;
-
-  try {
-    const all = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-
-    if (Array.isArray(all)) {
-      stored = all.find(
-        (item) => String(item.id) === String(id)
-      );
-    }
-  } catch {
-    // Storage may be unavailable
-  }
-
-  const validPassed =
-    passed && String(passed.id) === String(id)
-      ? passed
-      : null;
-
-  const fallback =
-    String(id) === "1" ? DEFAULT_ORGANIZATION : null;
-
-  if (!stored && !validPassed && !fallback) {
-    return null;
-  }
-
-  return {
-    ...(fallback || {}),
-    ...(validPassed || {}),
-    ...(stored || {}),
-  };
+  const saved = getSharedOrganization(id);
+  if (!saved) return null;
+  const fallback = String(id) === "1" ? DEFAULT_ORGANIZATION : {};
+  return {...fallback, ...((passed && String(passed.id)===String(id)) ? passed : {}), ...saved};
 }
-
 function saveOrganizationLocally(organization) {
-  try {
-    const saved = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) || "[]"
-    );
-
-    const items = Array.isArray(saved) ? saved : [];
-
-    const index = items.findIndex(
-      (item) =>
-        String(item.id) === String(organization.id)
-    );
-
-    const updated =
-      index === -1
-        ? [...items, organization]
-        : items.map((item) =>
-            String(item.id) === String(organization.id)
-              ? { ...item, ...organization }
-              : item
-          );
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(updated)
-    );
-
-    return true;
-  } catch {
-    return false;
-  }
+  try { saveOrganization(organization); return true; } catch { return false; }
 }
 
 const inputClass =
